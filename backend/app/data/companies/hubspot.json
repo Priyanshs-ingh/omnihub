@@ -1,0 +1,99 @@
+{
+  "company": {
+    "slug": "hubspot",
+    "name": "HubSpot",
+    "domain": "hubspot.com",
+    "industry": "SaaS",
+    "tagline": "CRM and marketing automation",
+    "mark": { "bg": "#FF7A59", "char": "H" },
+    "tier": "catalog"
+  },
+  "ingest": {
+    "signal_count": 33680,
+    "runtime_seconds": 34,
+    "sentiment_pct": { "positive": 22, "neutral": 36, "negative": 42 },
+    "sources": [
+      { "name": "X / Twitter",        "category": "external", "count": 12180 },
+      { "name": "Reddit",             "category": "external", "count":  3420 },
+      { "name": "App Store reviews",  "category": "external", "count":   840 },
+      { "name": "Zendesk",            "category": "internal", "count":  8240 },
+      { "name": "Intercom",           "category": "internal", "count":  2960 },
+      { "name": "Slack (internal)",   "category": "internal", "count":  3680 },
+      { "name": "GitHub Issues",      "category": "external", "count":   720 },
+      { "name": "Jira (dev logs)",    "category": "internal", "count":  1640 }
+    ],
+    "stream_samples": [
+      { "source": "X",          "sentiment": "negative", "text": "HubSpot workflow with 'wait 3 business days' fired after 5 days for half my contacts last week. our nurture sequence is now offset for everyone in EU timezones.", "is_simulated": false },
+      { "source": "Reddit",     "sentiment": "negative", "text": "Merged two duplicate contacts and lost the entire deal-association history on the surviving record. 4 years of touchpoints just gone, no warning, no undo window.", "is_simulated": false },
+      { "source": "Zendesk",    "sentiment": "negative", "text": "[#CRM-7841 P1] enterprise customer: contact merge wiped 1,200 lifecycle stage transitions, breaking their attribution reporting", "is_simulated": false },
+      { "source": "Slack",      "sentiment": "negative", "text": "workflow-engine SLO breach: p95 'wait until' delay drift went from 12 min to 4.2 hours since the scheduler partition rebalance on Tuesday", "is_simulated": false },
+      { "source": "Reddit",     "sentiment": "negative", "text": "Created a new custom property and the active list rebuild took 9 hours to reflect it. campaign launch missed because the segment was empty when sequences fired.", "is_simulated": false },
+      { "source": "X",          "sentiment": "negative", "text": "Sequence kept emailing a prospect who already replied — reply detection missed an HTML-only response. embarrassing in front of a $200k account.", "is_simulated": false },
+      { "source": "Zendesk",    "sentiment": "negative", "text": "[#MAR-5612 P2] timing precision: 'send at 9:00 AM contact local time' is sending at 9:42 on average, breaking deliverability on cold sequences", "is_simulated": false },
+      { "source": "Intercom",   "sentiment": "negative", "text": "Custom property API: hitting 100/10s limit on bulk updates for our nightly enrichment job, no way to request burst capacity short of enterprise contract", "is_simulated": false },
+      { "source": "App Store",  "sentiment": "negative", "text": "iOS app: push notifications for new lead assignments arrive 6-8 minutes after the assignment in-app. SDR team is missing fast-response window.", "is_simulated": false },
+      { "source": "Slack",      "sentiment": "negative", "text": "support: 31% of inbound P1s this week are workflow timing or contact merge data loss. CSAT for Sales Hub Pro down 6pp this month.", "is_simulated": false },
+      { "source": "X",          "sentiment": "negative", "text": "Sales Hub deal stage automation regressed — moving to 'closed-won' no longer triggers our linked invoice workflow since the v3 migration", "is_simulated": false },
+      { "source": "Zendesk",    "sentiment": "negative", "text": "Sequence reply detection is missing replies that are sent from a different email alias on the same domain", "is_simulated": false },
+      { "source": "X",          "sentiment": "positive", "text": "HubSpot Breeze AI generated a follow-up sequence variant that out-converted my hand-written one by 18%. genuine value.", "is_simulated": false },
+      { "source": "Reddit",     "sentiment": "neutral",  "text": "anyone else seeing list refresh take 6+ hours after creating a property? is there an admin setting to force priority recompute?", "is_simulated": false },
+      { "source": "Jira",       "sentiment": "negative", "text": "[workflow-engine] 'wait until' delay node uses scheduler partition affinity that doesn't survive rebalance, drift accumulates on rotated partitions" , "is_simulated": false }
+    ]
+  },
+  "clusters": [
+    { "title": "Workflow 'wait until' timing drift",                "signal_count": 2180, "rice_score": 88.5, "is_top": true },
+    { "title": "Contact merge data loss on associations",          "signal_count": 1520, "rice_score": 82.1, "is_top": false },
+    { "title": "List refresh delays after new property",           "signal_count": 1180, "rice_score": 74.6, "is_top": false },
+    { "title": "Sequence reply detection misses",                  "signal_count":  860, "rice_score": 67.8, "is_top": false },
+    { "title": "Custom property API rate limit pain",              "signal_count":  640, "rice_score": 60.2, "is_top": false },
+    { "title": "Sales Hub deal stage automation regression",       "signal_count":  480, "rice_score": 52.4, "is_top": false },
+    { "title": "Mobile push delays on lead assignment",            "signal_count":  340, "rice_score": 45.7, "is_top": false }
+  ],
+  "top_epic": {
+    "title": "Restore workflow timing precision after scheduler rebalance",
+    "rationale": "2,180 signals across Zendesk, X and Slack converge on a single regression: workflow 'wait until' p95 drift went from 12 minutes to 4.2 hours after Tuesday's scheduler partition rebalance, and 'send at contact local time' is firing 42 minutes late on average. 31% of this week's P1s are timing-related, deliverability on cold sequences is dropping, and Sales Hub Pro CSAT fell 6 points. Customers built revenue-critical sequences on the precision SLO we shipped.",
+    "verdict": "Revenue-critical — timing precision is the implicit promise customers paid for.",
+    "recommendation": "Restore partition affinity for delay nodes, ship a per-portal timing SLO dashboard, and gate scheduler rebalances behind a canary that verifies p95 drift before promotion.",
+    "rice": {
+      "reach":      85,
+      "impact":     87,
+      "confidence": 91,
+      "effort":     20,
+      "urgency":    85,
+      "strategy":   83,
+      "risk_inv":   77,
+      "composite":  88.5
+    },
+    "acceptance_criteria": [
+      "Workflow 'wait until' p95 drift < 5 min across all portal sizes",
+      "'Send at contact local time' fires within 2 min of target window",
+      "Per-portal timing SLO surfaced in admin console with breach alerts",
+      "Scheduler rebalance blocked unless canary p95 drift stays < 8 min"
+    ],
+    "evidence": [
+      { "quote": "Workflow with 'wait 3 business days' fired after 5 days for half my contacts last week.",  "source": "X · marketing ops lead" },
+      { "quote": "p95 'wait until' delay drift went from 12 min to 4.2 hours since the scheduler rebalance.", "source": "Slack · workflow-engine" },
+      { "quote": "Delay node uses scheduler partition affinity that doesn't survive rebalance, drift accumulates.", "source": "Jira · workflow-engine" }
+    ]
+  },
+  "sync": {
+    "jira": {
+      "id": "MAR-3318",
+      "project": "MAR",
+      "type": "Epic",
+      "story_points": 21,
+      "status": "Created"
+    },
+    "confluence": {
+      "space": "MAR",
+      "title": "PRD · Workflow timing precision SLO",
+      "linked_jira": "MAR-3318",
+      "status": "Draft published"
+    }
+  },
+  "meta": {
+    "generated_at": "2026-04-26T12:34:56Z",
+    "generator": "catalog",
+    "seed": "hubspot.com"
+  }
+}

@@ -1,0 +1,99 @@
+{
+  "company": {
+    "slug": "atlassian",
+    "name": "Atlassian",
+    "domain": "atlassian.com",
+    "industry": "Developer",
+    "tagline": "collaboration tools for software teams",
+    "mark": { "bg": "#0052CC", "char": "A" },
+    "tier": "catalog"
+  },
+  "ingest": {
+    "signal_count": 47820,
+    "runtime_seconds": 41,
+    "sentiment_pct": { "positive": 17, "neutral": 35, "negative": 48 },
+    "sources": [
+      { "name": "X / Twitter",        "category": "external", "count": 14620 },
+      { "name": "Reddit",             "category": "external", "count":  4980 },
+      { "name": "Atlassian Community","category": "external", "count":  3120 },
+      { "name": "Zendesk",            "category": "internal", "count": 11840 },
+      { "name": "Intercom",           "category": "internal", "count":  2940 },
+      { "name": "Slack (internal)",   "category": "internal", "count":  6210 },
+      { "name": "GitHub Issues",      "category": "external", "count":  1480 },
+      { "name": "Jira (dev logs)",    "category": "internal", "count":  2630 }
+    ],
+    "stream_samples": [
+      { "source": "X",          "sentiment": "negative", "text": "JQL query 'project in (...) AND assignee = currentUser()' takes 28 seconds on our instance. it was 3 seconds last quarter. nothing changed on our side.", "is_simulated": false },
+      { "source": "Reddit",     "sentiment": "negative", "text": "we have 1.2M issues and the new search backend is timing out on saved filters that worked yesterday. JQL hint says 'add an indexed field' — we have one.", "is_simulated": false },
+      { "source": "Zendesk",    "sentiment": "negative", "text": "[#JRA-14820 P1] enterprise customer: 18 of their 22 saved JQL dashboards return 504 after the search index migration on May 2", "is_simulated": false },
+      { "source": "Slack",      "sentiment": "negative", "text": "search-platform metrics: p95 JQL latency on instances >500k issues went from 1.8s to 9.4s post-migration. 23% of large customers affected.", "is_simulated": false },
+      { "source": "Reddit",     "sentiment": "negative", "text": "Confluence pages over ~8MB take 12+ seconds to first interactive. our runbook page is now slower than the system it documents.", "is_simulated": false },
+      { "source": "Atlassian Community", "sentiment": "negative", "text": "Jira automation rule timing out at 60s on 'when issue created → update 14 linked issues'. used to complete in 8s. our release pipeline depends on this.", "is_simulated": false },
+      { "source": "Zendesk",    "sentiment": "negative", "text": "[#CONF-9320 P2] long Confluence page (47k words) freezes browser tab on Chrome 132 — table virtualization not kicking in until scroll", "is_simulated": false },
+      { "source": "X",          "sentiment": "negative", "text": "Bitbucket Pipelines runner cold-start went from 18s to 90s this week. our CI for trunk-based teams is a coffee-break now.", "is_simulated": false },
+      { "source": "Intercom",   "sentiment": "negative", "text": "Jira Service Desk SLA timer is drifting — pause/resume on 'waiting for customer' is double-counting business hours after DST shift", "is_simulated": false },
+      { "source": "Slack",      "sentiment": "negative", "text": "support: 38% of inbound enterprise tickets this week are JQL performance. CSMs are escalating renewal risk on three top-50 accounts.", "is_simulated": false },
+      { "source": "Zendesk",    "sentiment": "negative", "text": "Mobile app sync delay 4-6 minutes for issue updates on iOS, push notifications fire but app shows stale state", "is_simulated": false },
+      { "source": "Reddit",     "sentiment": "negative", "text": "integrations dashboard has been throwing 500s when I try to view OAuth-installed apps for 3 days. opened a ticket, no response.", "is_simulated": false },
+      { "source": "X",          "sentiment": "positive", "text": "Atlassian Intelligence summarized a 200-comment ticket into 4 actionable items today. when AI lands in their tools it really lands.", "is_simulated": false },
+      { "source": "Atlassian Community", "sentiment": "neutral",  "text": "is there a way to force the new JQL planner off and use the legacy one? legacy is 5x faster for our queries", "is_simulated": false },
+      { "source": "Jira",       "sentiment": "negative", "text": "[search-index] post-migration query planner picks sequential scan when issue count > 800k, ignoring composite index on (project_id, assignee, status)", "is_simulated": false }
+    ]
+  },
+  "clusters": [
+    { "title": "JQL performance regression on large instances",    "signal_count": 3280, "rice_score": 91.4, "is_top": true },
+    { "title": "Confluence long-page freeze on Chrome",            "signal_count": 1640, "rice_score": 82.7, "is_top": false },
+    { "title": "Jira automation rule 60s timeouts",                "signal_count": 1380, "rice_score": 76.3, "is_top": false },
+    { "title": "Bitbucket Pipelines cold-start latency",           "signal_count":  920, "rice_score": 68.9, "is_top": false },
+    { "title": "Service Desk SLA drift after DST",                 "signal_count":  640, "rice_score": 58.5, "is_top": false },
+    { "title": "Integrations dashboard 500s on OAuth apps",        "signal_count":  420, "rice_score": 50.2, "is_top": false },
+    { "title": "Mobile app sync lag on issue updates",             "signal_count":  310, "rice_score": 43.6, "is_top": false }
+  ],
+  "top_epic": {
+    "title": "Restore JQL query performance on large instances",
+    "rationale": "3,280 signals across Zendesk, Reddit and Atlassian Community converge on the same failure: JQL p95 latency on instances over 500k issues went from 1.8s to 9.4s after the May search-index migration. Three top-50 accounts have CSMs flagging renewal risk, 38% of inbound enterprise tickets this week are this exact regression, and the query planner is ignoring composite indexes when issue count exceeds 800k. Customers cannot run the dashboards they bought the product for.",
+    "verdict": "Renewal-critical — performance regressions on the core query engine break the value proposition for enterprise.",
+    "recommendation": "Fix the planner regression with statistics-based hints, ship a per-customer JQL latency SLO with rollback flag, and gate further index-format changes behind a measured ramp.",
+    "rice": {
+      "reach":      90,
+      "impact":     88,
+      "confidence": 94,
+      "effort":     26,
+      "urgency":    90,
+      "strategy":   86,
+      "risk_inv":   80,
+      "composite":  91.4
+    },
+    "acceptance_criteria": [
+      "JQL p95 < 2.5s on instances up to 2M issues for top-20 query shapes",
+      "Planner uses composite index (project_id, assignee, status) when issue_count > 800k",
+      "Admin-visible JQL latency SLO with one-click rollback to legacy planner",
+      "Index-format changes gated behind per-shard ramp with auto-halt on regression"
+    ],
+    "evidence": [
+      { "quote": "JQL latency on instances >500k issues went from 1.8s to 9.4s post-migration.",       "source": "Slack · search-platform" },
+      { "quote": "18 of 22 saved JQL dashboards return 504 after the search index migration.",         "source": "Zendesk · enterprise P1" },
+      { "quote": "Query planner picks sequential scan when issue count > 800k, ignoring composite idx.", "source": "Jira · search-index" }
+    ]
+  },
+  "sync": {
+    "jira": {
+      "id": "JRA-14920",
+      "project": "JRA",
+      "type": "Epic",
+      "story_points": 34,
+      "status": "Created"
+    },
+    "confluence": {
+      "space": "JRA",
+      "title": "PRD · JQL performance restoration on large instances",
+      "linked_jira": "JRA-14920",
+      "status": "Draft published"
+    }
+  },
+  "meta": {
+    "generated_at": "2026-04-26T12:34:56Z",
+    "generator": "catalog",
+    "seed": "atlassian.com"
+  }
+}

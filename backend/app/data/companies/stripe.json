@@ -1,0 +1,99 @@
+{
+  "company": {
+    "slug": "stripe",
+    "name": "Stripe",
+    "domain": "stripe.com",
+    "industry": "Fintech",
+    "tagline": "payments infrastructure",
+    "mark": { "bg": "#635BFF", "char": "S" },
+    "tier": "catalog"
+  },
+  "ingest": {
+    "signal_count": 38163,
+    "runtime_seconds": 38,
+    "sentiment_pct": { "positive": 18, "neutral": 34, "negative": 48 },
+    "sources": [
+      { "name": "X / Twitter",      "category": "external", "count": 14820 },
+      { "name": "Reddit",           "category": "external", "count":  3940 },
+      { "name": "Zendesk",          "category": "internal", "count":  8250 },
+      { "name": "Intercom",         "category": "internal", "count":  2104 },
+      { "name": "App Store",        "category": "external", "count":   612 },
+      { "name": "Slack (internal)", "category": "internal", "count":  4812 },
+      { "name": "GitHub Issues",    "category": "external", "count":  1420 },
+      { "name": "Jira (dev logs)",  "category": "internal", "count":  2205 }
+    ],
+    "stream_samples": [
+      { "source": "X",          "sentiment": "negative", "text": "payment_intent fails silently after 3DS redirect on safari 18", "is_simulated": false },
+      { "source": "Reddit",     "sentiment": "negative", "text": "Apple Pay falls back to a full-page redirect when our checkout iframe is blocked. Customers assume it broke.", "is_simulated": false },
+      { "source": "Slack",      "sentiment": "negative", "text": "Auth rate dropped 2.1pp week-over-week. Cohort filter says it's all Safari.", "is_simulated": false },
+      { "source": "Zendesk",    "sentiment": "negative", "text": "[#8812 P1] customer completes 3DS challenge, payment_intent stays in requires_action forever", "is_simulated": false },
+      { "source": "Reddit",     "sentiment": "negative", "text": "Radar flagged 12% of valid orders after the v3 rollout. Our chargeback rate didn't even move.", "is_simulated": false },
+      { "source": "X",          "sentiment": "negative", "text": "stripe atlas onboarding broke for me at the EIN step yesterday, support said \"known issue\"", "is_simulated": false },
+      { "source": "GitHub",     "sentiment": "negative", "text": "Webhook idempotency docs unclear — replays caused duplicate charges in our staging env", "is_simulated": false },
+      { "source": "Zendesk",    "sentiment": "negative", "text": "Subscription proration math is off by a cent when changing plans mid-cycle on annual", "is_simulated": false },
+      { "source": "Intercom",   "sentiment": "negative", "text": "Connect Express dashboard 2FA loops on Chrome 130 mobile, can't get past the SMS step", "is_simulated": false },
+      { "source": "Jira",       "sentiment": "negative", "text": "[checkout-link] Stripe Checkout link returns 500 when locale param is invalid instead of falling back", "is_simulated": false },
+      { "source": "X",          "sentiment": "positive", "text": "finally pulled the trigger on Stripe Tax. ripping out our internal calc this sprint, huge win", "is_simulated": false },
+      { "source": "Reddit",     "sentiment": "neutral",  "text": "why does the dashboard say 'requires_action' but the customer swears they paid? what am I missing", "is_simulated": false },
+      { "source": "Zendesk",    "sentiment": "negative", "text": "Refund ETA in our customer email is wrong for non-USD payments — says 5-10 days, actual is 3", "is_simulated": false },
+      { "source": "Slack",      "sentiment": "negative", "text": "Embedded checkout taking 4-5s to first paint on slow 3G in the field. lost cart instrumentation confirms.", "is_simulated": false },
+      { "source": "Zendesk",    "sentiment": "negative", "text": "Identity verification rejecting valid Brazilian passports since the v2 ML model rolled out", "is_simulated": false }
+    ]
+  },
+  "clusters": [
+    { "title": "3DS auth failures on Safari",                    "signal_count": 2140, "rice_score": 93.2, "is_top": true },
+    { "title": "Radar v3 false-positive spike",                  "signal_count": 1820, "rice_score": 84.6, "is_top": false },
+    { "title": "Connect Express 2FA loop on mobile",             "signal_count": 1480, "rice_score": 78.4, "is_top": false },
+    { "title": "Identity Verification rejecting valid documents","signal_count": 1102, "rice_score": 71.9, "is_top": false },
+    { "title": "Embedded Checkout slow first paint",             "signal_count":  985, "rice_score": 67.5, "is_top": false },
+    { "title": "Subscription proration penny rounding",          "signal_count":  612, "rice_score": 54.8, "is_top": false },
+    { "title": "Atlas onboarding incompletes at EIN step",       "signal_count":  503, "rice_score": 48.2, "is_top": false }
+  ],
+  "top_epic": {
+    "title": "Resolve payment_intent 3DS failures on Safari",
+    "rationale": "Stripe's clearest live insight is a spike in 3DS authorization failures on Safari 18, reinforced by cross-channel evidence: 2,140 signals from X, Zendesk and Reddit, correlated to a 2-point auth-rate dip in production.",
+    "verdict": "Ship-critical — revenue-impacting in week one.",
+    "recommendation": "Prioritize payment success and onboarding trust before expanding account surfaces.",
+    "rice": {
+      "reach":      92,
+      "impact":     88,
+      "confidence": 96,
+      "effort":     18,
+      "urgency":    91,
+      "strategy":   84,
+      "risk_inv":   77,
+      "composite":  93.2
+    },
+    "acceptance_criteria": [
+      "Handle apple-pay 3DS redirect race on Safari 18",
+      "Fall back to native challenge when top-frame blocked",
+      "Emit payment_intent.auth_failed with frame_blocked reason",
+      "Dashboard surfaces affected merchants within 30 min"
+    ],
+    "evidence": [
+      { "quote": "My auth rate just dropped 2 points overnight. Only Safari users.",       "source": "X · merchant" },
+      { "quote": "#8812 — customer can complete 3DS but intent never confirms.",           "source": "Zendesk · P1" },
+      { "quote": "Radar flagged 12% of valid orders after the v3 rollout.",                 "source": "r/ecommerce" }
+    ]
+  },
+  "sync": {
+    "jira": {
+      "id": "PAY-2041",
+      "project": "Payments",
+      "type": "Epic",
+      "story_points": 21,
+      "status": "Created"
+    },
+    "confluence": {
+      "space": "PAY",
+      "title": "PRD · Safari 3DS auth resilience",
+      "linked_jira": "PAY-2041",
+      "status": "Draft published"
+    }
+  },
+  "meta": {
+    "generated_at": "2026-04-26T12:34:56Z",
+    "generator": "catalog",
+    "seed": "stripe.com"
+  }
+}

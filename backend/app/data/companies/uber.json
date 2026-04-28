@@ -1,0 +1,98 @@
+{
+  "company": {
+    "slug": "uber",
+    "name": "Uber",
+    "domain": "uber.com",
+    "industry": "Marketplace",
+    "tagline": "ride-hailing and mobility platform",
+    "mark": { "bg": "#000000", "char": "U" },
+    "tier": "catalog"
+  },
+  "ingest": {
+    "signal_count": 47620,
+    "runtime_seconds": 41,
+    "sentiment_pct": { "positive": 16, "neutral": 31, "negative": 53 },
+    "sources": [
+      { "name": "X / Twitter",        "category": "external", "count": 17240 },
+      { "name": "Reddit",             "category": "external", "count":  5180 },
+      { "name": "App Store reviews",  "category": "external", "count":  3920 },
+      { "name": "Zendesk",            "category": "internal", "count":  9410 },
+      { "name": "Driver Support",     "category": "internal", "count":  4280 },
+      { "name": "Slack (internal)",   "category": "internal", "count":  4610 },
+      { "name": "Jira (dev logs)",    "category": "internal", "count":  1860 },
+      { "name": "Play Store reviews", "category": "external", "count":  1120 }
+    ],
+    "stream_samples": [
+      { "source": "X",            "sentiment": "negative", "text": "uber quoted me $14, charged $32 after a 4-min wait. surge timer never appeared on the price screen, just on the receipt", "is_simulated": false },
+      { "source": "Reddit",       "sentiment": "negative", "text": "ETA in app said 3 min, driver was 11 min away and stuck behind a parade. Routing engine clearly didn't pull the SF closure feed.", "is_simulated": false },
+      { "source": "Zendesk",      "sentiment": "negative", "text": "[#RIDE-44218 P1] rider tipped $4.00, driver received $3.97. Rounding gap repro'd across 18 trips in NYC last week.", "is_simulated": false },
+      { "source": "Driver",       "sentiment": "negative", "text": "Got dispatched to a pickup 2.4 mi away when 6 drivers were idle within 0.5 mi. Pairing model is way off in Midtown after 6pm.", "is_simulated": false },
+      { "source": "App Store",    "sentiment": "negative", "text": "Uber One auto-renewed at $9.99 even though I cancelled in March. Took 4 chats to get a refund. iOS 18.2.", "is_simulated": false },
+      { "source": "X",            "sentiment": "negative", "text": "navigation in the driver app sent me down 14th Street which has been closed for construction since February. Google Maps knew.", "is_simulated": false },
+      { "source": "Slack",        "sentiment": "negative", "text": "Pairing latency p95 is up 480ms in dense urban tiles since the v3.4 dispatcher rollout. ETA accuracy regressed 9% in NYC/SF.", "is_simulated": false },
+      { "source": "Reddit",       "sentiment": "negative", "text": "Surge multiplier showed 1.0x on the map, then 1.8x on the confirm screen. Felt like a bait-and-switch even if it's a race condition.", "is_simulated": false },
+      { "source": "Zendesk",      "sentiment": "negative", "text": "[#RIDE-44551] driver canceled after accepting, rider charged a $5 cancellation fee. This is the third report this morning.", "is_simulated": false },
+      { "source": "Driver",       "sentiment": "negative", "text": "Tip from a 5-star rider showed in earnings, then disappeared 20 min later. Support said \"adjustment in progress\" with no detail.", "is_simulated": false },
+      { "source": "X",            "sentiment": "positive",  "text": "the new live activity for arriving drivers on iOS is genuinely great, finally don't have to keep the app open the whole time", "is_simulated": false },
+      { "source": "Jira",         "sentiment": "negative", "text": "[dispatcher-v3] supply-side cost function over-weights idle time, causing far-driver pairings in dense tiles. needs hotfix.", "is_simulated": false },
+      { "source": "Reddit",       "sentiment": "neutral",   "text": "anyone else notice the ETA always rounds DOWN now? feels like a UX choice but the variance is wild during rush hour", "is_simulated": false },
+      { "source": "Zendesk",      "sentiment": "negative", "text": "Routing took rider through a closed road in Boston, driver had to U-turn, rider charged extra time. Refunded but the root cause keeps recurring.", "is_simulated": false },
+      { "source": "App Store",    "sentiment": "negative", "text": "Driver showed up 7 min after the quoted ETA. App said \"arriving now\" the whole time. Android 14, Pixel 8.", "is_simulated": false }
+    ]
+  },
+  "clusters": [
+    { "title": "Driver-rider pairing regression in dense urban tiles", "signal_count": 2380, "rice_score": 90.4, "is_top": true },
+    { "title": "ETA accuracy degraded post dispatcher v3.4",            "signal_count": 1920, "rice_score": 82.6, "is_top": false },
+    { "title": "Surge multiplier mismatch between map and confirm",     "signal_count": 1640, "rice_score": 76.8, "is_top": false },
+    { "title": "Tip flow rounding and adjustment gaps",                 "signal_count":  980, "rice_score": 68.4, "is_top": false },
+    { "title": "Navigation routes through known closed roads",          "signal_count":  820, "rice_score": 62.1, "is_top": false },
+    { "title": "Uber One cancel-then-renewal billing edge cases",       "signal_count":  610, "rice_score": 55.7, "is_top": false }
+  ],
+  "top_epic": {
+    "title": "Fix driver-rider pairing regression in dense urban tiles",
+    "rationale": "2,380 cross-channel signals tie to the v3.4 dispatcher rollout: drivers report being pulled past closer idle peers, riders see ETA accuracy regress 9% in NYC/SF, and Jira flags an over-weighted idle-time term in the supply-side cost function. Pairing quality is the load-bearing primitive — when it slips, every downstream metric (ETA, cancellations, surge perception) slips with it.",
+    "verdict": "Marketplace-critical — pairing quality compounds across every trip.",
+    "recommendation": "Roll back the idle-time weight in dense tiles, ship a hotfix to the cost function, and gate future dispatcher changes behind tile-level shadow evals.",
+    "rice": {
+      "reach":      87,
+      "impact":     89,
+      "confidence": 92,
+      "effort":     20,
+      "urgency":    88,
+      "strategy":   85,
+      "risk_inv":   80,
+      "composite":  90.4
+    },
+    "acceptance_criteria": [
+      "Reweight idle-time term in dispatcher cost function for tiles with supply density > 4 drivers/km^2",
+      "Pairing distance p95 returns to baseline (under 0.9 mi) in NYC/SF/LA dense tiles within 7 days",
+      "ETA accuracy regression closes to within 2% of pre-v3.4 baseline across the top 25 metros",
+      "Shadow-eval gate added to dispatcher CI: any tile-level pairing-distance regression > 5% blocks merge"
+    ],
+    "evidence": [
+      { "quote": "Got dispatched to a pickup 2.4 mi away when 6 drivers were idle within 0.5 mi.",                       "source": "Driver Support · NYC" },
+      { "quote": "Pairing latency p95 up 480ms in dense urban tiles since v3.4. ETA accuracy regressed 9% in NYC/SF.",  "source": "Slack · #marketplace-health" },
+      { "quote": "supply-side cost function over-weights idle time, causing far-driver pairings in dense tiles.",       "source": "Jira · dispatcher-v3" }
+    ]
+  },
+  "sync": {
+    "jira": {
+      "id": "RIDE-7821",
+      "project": "Rides",
+      "type": "Epic",
+      "story_points": 26,
+      "status": "Created"
+    },
+    "confluence": {
+      "space": "RIDE",
+      "title": "PRD · Dispatcher v3.4 pairing hotfix + shadow-eval gate",
+      "linked_jira": "RIDE-7821",
+      "status": "Draft published"
+    }
+  },
+  "meta": {
+    "generated_at": "2026-04-26T12:34:56Z",
+    "generator": "catalog",
+    "seed": "uber.com"
+  }
+}

@@ -1,0 +1,98 @@
+{
+  "company": {
+    "slug": "walmart",
+    "name": "Walmart",
+    "domain": "walmart.com",
+    "industry": "Commerce",
+    "tagline": "everyday low prices retail",
+    "mark": { "bg": "#0071CE", "char": "W" },
+    "tier": "catalog"
+  },
+  "ingest": {
+    "signal_count": 58420,
+    "runtime_seconds": 47,
+    "sentiment_pct": { "positive": 16, "neutral": 32, "negative": 52 },
+    "sources": [
+      { "name": "X / Twitter",          "category": "external", "count": 22840 },
+      { "name": "Reddit",               "category": "external", "count":  6210 },
+      { "name": "App Store reviews",    "category": "external", "count":  4820 },
+      { "name": "Google Play reviews",  "category": "external", "count":  3180 },
+      { "name": "Zendesk",              "category": "internal", "count": 11420 },
+      { "name": "Slack (internal)",     "category": "internal", "count":  4820 },
+      { "name": "Jira (dev logs)",      "category": "internal", "count":  2610 },
+      { "name": "Walmart Connect Forum","category": "external", "count":  2520 }
+    ],
+    "stream_samples": [
+      { "source": "X",            "sentiment": "negative", "text": "Walmart+ pickup slot for grocery showing 'unavailable' for 3 days straight in Dallas. canceled my membership.", "is_simulated": false },
+      { "source": "App Store",    "sentiment": "negative", "text": "App says item is in stock at my store, get there, employee says we haven't carried it in 6 months. App is lying.", "is_simulated": false },
+      { "source": "Reddit",       "sentiment": "negative", "text": "Why does Walmart's grocery pickup keep substituting items I marked 'do not substitute'?", "is_simulated": false },
+      { "source": "Zendesk",      "sentiment": "negative", "text": "[#WMT-44120 P1] Pickup ETA in app shows 1pm slot, customer arrives, told slot was full hours ago", "is_simulated": false },
+      { "source": "X",            "sentiment": "negative", "text": "self-checkout at walmart asked me to scan my receipt before I'd even paid. system is broken", "is_simulated": false },
+      { "source": "Connect",      "sentiment": "negative", "text": "Walmart Connect double-charges when I edit a campaign mid-flight. support says 'expected behavior'.", "is_simulated": false },
+      { "source": "Zendesk",      "sentiment": "negative", "text": "Marketplace sellers reporting onboarding stuck on tax verification step since the v3 form rolled out", "is_simulated": false },
+      { "source": "App Store",    "sentiment": "negative", "text": "WIC EBT integration broken in my state for the last 2 weeks, just shows 'try again later'", "is_simulated": false },
+      { "source": "Slack",        "sentiment": "negative", "text": "App inventory accuracy in TX dropped to 84% this week, vs 92% baseline. p99 store-level errors up 3x.", "is_simulated": false },
+      { "source": "Google Play",  "sentiment": "negative", "text": "Walmart app crashes every time I try to add a credit card. Pixel 8, Android 14.", "is_simulated": false },
+      { "source": "X",            "sentiment": "positive", "text": "actually walmart+ saved me $40 on tires this week. credit where due.", "is_simulated": false },
+      { "source": "Reddit",       "sentiment": "neutral",  "text": "is anyone else's Walmart pharmacy refill button greyed out for active scripts?", "is_simulated": false },
+      { "source": "Zendesk",      "sentiment": "negative", "text": "Spark (driver app) directing dashers to wrong loading dock at 4 superstores in Houston", "is_simulated": false },
+      { "source": "Jira",         "sentiment": "negative", "text": "[grocery-pickup] slot allocation lambda timing out at p95 > 8s during peak windows in TX/CA", "is_simulated": false },
+      { "source": "X",            "sentiment": "negative", "text": "tried to return something with the receipt I have right here, app says order not found", "is_simulated": false }
+    ]
+  },
+  "clusters": [
+    { "title": "Walmart+ pickup slot availability in tier-1 metros",     "signal_count": 2580, "rice_score": 91.6, "is_top": true },
+    { "title": "App inventory accuracy mismatch with store reality",     "signal_count": 1840, "rice_score": 82.1, "is_top": false },
+    { "title": "Marketplace seller onboarding tax verification",         "signal_count": 1240, "rice_score": 75.4, "is_top": false },
+    { "title": "Walmart Connect double-billing on campaign edits",       "signal_count":  920, "rice_score": 69.0, "is_top": false },
+    { "title": "WIC EBT integration broken in select states",            "signal_count":  640, "rice_score": 60.5, "is_top": false },
+    { "title": "Spark driver app loading-dock routing errors",           "signal_count":  520, "rice_score": 54.0, "is_top": false }
+  ],
+  "top_epic": {
+    "title": "Recover Walmart+ pickup slot availability in tier-1 metros",
+    "rationale": "2,580 signals from Walmart+ members and store ops point at a single failure: slot allocation lambda timing out >8s during peak windows in TX, CA and TX-adjacent metros, surfacing as 'unavailable' slots that customers can't book. App inventory accuracy in the same regions has slipped from 92% to 84% — compounding the trust hit that drives the cancel-membership signal in the X feed.",
+    "verdict": "Membership-critical — pickup is the load-bearing benefit of the Walmart+ subscription.",
+    "recommendation": "Restore slot fill rate, fix the inventory reconciliation lag, and surface accurate slot ETAs before scaling the new substitution logic.",
+    "rice": {
+      "reach":      88,
+      "impact":     92,
+      "confidence": 92,
+      "effort":     22,
+      "urgency":    88,
+      "strategy":   84,
+      "risk_inv":   80,
+      "composite":  91.6
+    },
+    "acceptance_criteria": [
+      "Slot fill rate ≥ 95% in DFW, Houston, LA and Phoenix metros for 7 consecutive days",
+      "Slot allocation lambda p95 latency < 2s during peak booking windows",
+      "Customer-facing slot ETA reconciles with inventory mutations within 60s",
+      "Auto-reroute to overflow stores when primary slot capacity is exceeded"
+    ],
+    "evidence": [
+      { "quote": "Walmart+ pickup slot for grocery is showing 'unavailable' for 3 days straight in Dallas. Canceled my membership.", "source": "X · Walmart+ member" },
+      { "quote": "Slot allocation lambda timing out at p95 > 8s during peak windows in TX/CA.",                                       "source": "Jira · grocery-pickup" },
+      { "quote": "App inventory accuracy in TX dropped to 84% this week, vs 92% baseline.",                                          "source": "Slack · #ops-grocery" }
+    ]
+  },
+  "sync": {
+    "jira": {
+      "id": "WMT-2218",
+      "project": "Pickup",
+      "type": "Epic",
+      "story_points": 24,
+      "status": "Created"
+    },
+    "confluence": {
+      "space": "WMT",
+      "title": "PRD · Walmart+ pickup slot availability recovery",
+      "linked_jira": "WMT-2218",
+      "status": "Draft published"
+    }
+  },
+  "meta": {
+    "generated_at": "2026-04-26T12:34:56Z",
+    "generator": "catalog",
+    "seed": "walmart.com"
+  }
+}

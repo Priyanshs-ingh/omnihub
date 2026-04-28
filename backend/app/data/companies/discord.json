@@ -1,0 +1,97 @@
+{
+  "company": {
+    "slug": "discord",
+    "name": "Discord",
+    "domain": "discord.com",
+    "industry": "Consumer",
+    "tagline": "voice and text chat platform",
+    "mark": { "bg": "#5865F2", "char": "D" },
+    "tier": "catalog"
+  },
+  "ingest": {
+    "signal_count": 36420,
+    "runtime_seconds": 37,
+    "sentiment_pct": { "positive": 19, "neutral": 33, "negative": 48 },
+    "sources": [
+      { "name": "X / Twitter",        "category": "external", "count": 12640 },
+      { "name": "Reddit",             "category": "external", "count":  6310 },
+      { "name": "App Store reviews",  "category": "external", "count":  2480 },
+      { "name": "Play Store reviews", "category": "external", "count":  1840 },
+      { "name": "Zendesk",            "category": "internal", "count":  6920 },
+      { "name": "Trust & Safety",     "category": "internal", "count":  2210 },
+      { "name": "Slack (internal)",   "category": "internal", "count":  3050 },
+      { "name": "Jira (dev logs)",    "category": "internal", "count":   970 }
+    ],
+    "stream_samples": [
+      { "source": "X",          "sentiment": "negative", "text": "discord voice keeps cutting out on the brazil-south region tonight. 600ms RTT spikes every 30s, full disconnect every few minutes. ipv6 issue?", "is_simulated": false },
+      { "source": "Reddit",     "sentiment": "negative", "text": "AutoMod v3 nuked 40% of the messages in our gaming server today. Real users banned for saying \"gg ez\" in casual chat. Mods spent 5 hours unbanning.", "is_simulated": false },
+      { "source": "Zendesk",    "sentiment": "negative", "text": "[#VOICE-3340 P1] users in br-south and us-south-2 reporting jitter spikes >150ms p95 since the routing change Tuesday. Voice quality unusable.", "is_simulated": false },
+      { "source": "App Store",  "sentiment": "negative", "text": "Android push notifications for DMs delayed 4-8 minutes. Pixel 8 Pro on Android 14. Foreground service kept alive, doze mode disabled. Still late.", "is_simulated": false },
+      { "source": "Trust",      "sentiment": "negative", "text": "AutoMod v3 false-positive rate jumped from 3.1% to 14.8% on launch day. Mod queue backlog is at 92k items, oldest is 31 hours, growing 4k/hr.", "is_simulated": false },
+      { "source": "Reddit",     "sentiment": "negative", "text": "Tried to promote a speaker in our Stage channel — button just spins, never resolves. Audience can hear the speaker but can't see them in the speaker list.", "is_simulated": false },
+      { "source": "Slack",      "sentiment": "negative", "text": "Voice quality regression in br-south is real — UDP packet loss p95 up from 0.4% to 3.2% since we shifted carriers Tuesday. Drop-call rate doubled.", "is_simulated": false },
+      { "source": "X",          "sentiment": "negative", "text": "screen share at 60fps on linux drops to single-digit fps every 90 seconds. fedora 40, wayland, native client. been broken since the april update", "is_simulated": false },
+      { "source": "Zendesk",    "sentiment": "negative", "text": "[#MOD-1158] Subscribed to Nitro 9 hours ago, custom stickers and 100MB upload still locked. Refunded once already, retried, same issue.", "is_simulated": false },
+      { "source": "Reddit",     "sentiment": "negative", "text": "AutoMod v3 is flagging slang in non-English channels at 3-4x the rate of v2. Our Spanish community feels targeted. We turned it off entirely.", "is_simulated": false },
+      { "source": "Trust",      "sentiment": "neutral",   "text": "Mod-action appeal volume up 220% since Monday's AutoMod v3 push — appeal queue SLA breached for 38% of tickets. Need product decision.", "is_simulated": false },
+      { "source": "X",          "sentiment": "positive",  "text": "the new soundboard sounds in voice channels are a delight, my friend group is having way too much fun", "is_simulated": false },
+      { "source": "Jira",       "sentiment": "negative", "text": "[automod-v3] regex tokenizer was retrained without held-out non-English eval set. F1 collapsed on es-ES and pt-BR — needs immediate eval-gate before re-enable.", "is_simulated": false },
+      { "source": "Slack",      "sentiment": "negative", "text": "Nitro entitlement-grant pipeline lagging 4-12 hours after Stripe webhook. Renewals are fine, new subs and upgrades are the regression.", "is_simulated": false }
+    ]
+  },
+  "clusters": [
+    { "title": "AutoMod v3 false-positive surge across non-English locales", "signal_count": 2280, "rice_score": 89.1, "is_top": true },
+    { "title": "Voice quality drop in br-south / us-south-2 regions",        "signal_count": 1840, "rice_score": 83.7, "is_top": false },
+    { "title": "Android push notifications delayed 4-8 minutes",             "signal_count": 1210, "rice_score": 75.4, "is_top": false },
+    { "title": "Stage channel speaker promotion hangs",                      "signal_count":  720, "rice_score": 66.2, "is_top": false },
+    { "title": "Linux screen-share frame drops at 60fps",                    "signal_count":  540, "rice_score": 58.9, "is_top": false },
+    { "title": "Nitro entitlement grant lag for new subs/upgrades",          "signal_count":  410, "rice_score": 51.6, "is_top": false }
+  ],
+  "top_epic": {
+    "title": "Roll back AutoMod v3 + add non-English eval gate",
+    "rationale": "2,280 signals — split between user reports of false bans and internal Trust & Safety telemetry — pinpoint a single root cause: AutoMod v3 was retrained without a held-out non-English eval set, F1 collapsed on es-ES and pt-BR, and the false-positive rate jumped from 3.1% to 14.8% on launch day. Mod queue backlog is 92k and growing 4k/hr; appeal SLA is breached for 38% of tickets. Trust in moderation is the load-bearing primitive for community-led servers — every false-positive is a story that ends up on r/discordapp.",
+    "verdict": "Trust-critical — moderation false-positives erode community trust faster than any other surface.",
+    "recommendation": "Roll back AutoMod v3 to v2 thresholds, add a per-locale eval gate (held-out es-ES, pt-BR, ja-JP, ko-KR, ar-SA corpora), and re-enable v3 only when F1 holds across all locales.",
+    "rice": {
+      "reach":      86,
+      "impact":     87,
+      "confidence": 92,
+      "effort":     22,
+      "urgency":    89,
+      "strategy":   83,
+      "risk_inv":   78,
+      "composite":  89.1
+    },
+    "acceptance_criteria": [
+      "AutoMod v3 rolled back to v2 thresholds for all non-English locales within 24h",
+      "Per-locale held-out eval suite (es-ES, pt-BR, ja-JP, ko-KR, ar-SA, fr-FR, de-DE) gates AutoMod merges in CI",
+      "False-positive rate returns to under 4% across all locales before v3 re-enable",
+      "Appeal-queue SLA wired to PagerDuty: pages on-call when p95 appeal age > 4h"
+    ],
+    "evidence": [
+      { "quote": "AutoMod v3 false-positive rate jumped from 3.1% to 14.8% on launch day. Mod queue backlog is at 92k items.", "source": "Trust & Safety · daily report" },
+      { "quote": "regex tokenizer was retrained without held-out non-English eval set. F1 collapsed on es-ES and pt-BR.",       "source": "Jira · automod-v3" },
+      { "quote": "AutoMod v3 nuked 40% of the messages in our gaming server today. Real users banned for saying \"gg ez\".",   "source": "r/discordapp · server admin" }
+    ]
+  },
+  "sync": {
+    "jira": {
+      "id": "MOD-2814",
+      "project": "Moderation",
+      "type": "Epic",
+      "story_points": 23,
+      "status": "Created"
+    },
+    "confluence": {
+      "space": "MOD",
+      "title": "PRD · AutoMod v3 rollback + per-locale eval gate",
+      "linked_jira": "MOD-2814",
+      "status": "Draft published"
+    }
+  },
+  "meta": {
+    "generated_at": "2026-04-26T12:34:56Z",
+    "generator": "catalog",
+    "seed": "discord.com"
+  }
+}

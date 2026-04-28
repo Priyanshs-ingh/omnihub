@@ -1,0 +1,1977 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>OmniHub — Real-time product intelligence</title>
+<link rel="stylesheet" href="styles.css" />
+<link rel="stylesheet" href="console.css" />
+</head>
+<body>
+
+<!-- Mobile pitch (only visible <900px) -->
+<div class="mobile-pitch">
+  <div class="mp-card">
+    <div class="mp-brand">
+      <div class="brand-mark"></div>
+      <div class="mp-name">OMNIHUB</div>
+    </div>
+    <div class="mp-eyebrow">Decision OS for product teams</div>
+    <h1 class="mp-h">Built for desktop product workflows.</h1>
+    <p class="mp-p">Open this on your laptop for the full live demo — a real-time dashboard, animated 22-second prototype, and crisis-monitor view.</p>
+    <div class="mp-thumbs">
+      <div class="mp-thumb">
+        <div class="mp-tlab">Dashboard</div>
+        <div class="mp-tcanvas mp-canvas-dash"></div>
+      </div>
+      <div class="mp-thumb">
+        <div class="mp-tlab">Prototype</div>
+        <div class="mp-tcanvas mp-canvas-proto"></div>
+      </div>
+      <div class="mp-thumb">
+        <div class="mp-tlab">Crisis</div>
+        <div class="mp-tcanvas mp-canvas-crisis"></div>
+      </div>
+    </div>
+    <a class="mp-cta" href="prototype.html?co=stripe">Run prototype anyway →</a>
+    <p class="mp-foot">Built with Lotus X Ventures · OmniSignal Hub</p>
+  </div>
+</div>
+
+<!-- Page wrapper (hidden on mobile) -->
+<div class="desktop-only">
+
+<!-- Floating nav -->
+<nav class="topnav">
+  <div class="brand">
+    <div class="brand-mark"></div>
+    <div class="brand-text">
+      <div class="n">OMNIHUB</div>
+      <div class="s">Real-time product intelligence</div>
+    </div>
+  </div>
+  <div class="nav-tag">Real-time product intelligence for product teams</div>
+  <div class="links">
+    <a href="#platform">Platform</a>
+    <a href="prototype.html?co=stripe">Prototype</a>
+    <a href="#architecture">Architecture</a>
+    <a href="#roadmap">Roadmap</a>
+  </div>
+  <div class="pill"><span class="gdot"></span> </div>
+  <div class="lotus-badge">
+    <span class="lab">Built<br/>with</span>
+    <img src="assets/lotusx.png" alt="Lotus X Ventures" />
+  </div>
+  <span class="tip-wrap">
+    <button class="btn-pri proto-jump" data-co="stripe">Open prototype</button>
+    <span class="tip">Watch this exact decision happen end-to-end in 22 seconds.</span>
+  </span>
+</nav>
+
+<div class="shell">
+
+  <!-- ========== HERO ========== -->
+  <section class="hero" id="platform">
+    <div class="hero-grid">
+      <div>
+        <span class="kicker">OmniSignal Hub · Decision OS</span>
+        <h1>Turn scattered customer noise into the next <span class="grad">roadmap decision.</span></h1>
+        <p class="hero-sub">
+          The decision layer between customer voice and your roadmap. Signals in. Ranked, explainable epics out.
+        </p>
+        <div class="hero-ctas">
+          <button class="btn-gr proto-jump" data-co="stripe">Launch live demo →</button>
+          <a class="btn-outline" href="#roadmap">See rollout path</a>
+        </div>
+
+        <!-- Signal Compression animation (replaces static hero-stats) -->
+        <div class="compression-viz" id="compressionViz" aria-label="Signal compression demonstration">
+          <svg viewBox="0 0 520 160" preserveAspectRatio="xMidYMid meet">
+            <defs>
+              <linearGradient id="cvBrain" x1="0" x2="0" y1="0" y2="1">
+                <stop offset="0" stop-color="#4ED0B8"/>
+                <stop offset="1" stop-color="#1BA9C9"/>
+              </linearGradient>
+              <radialGradient id="cvHalo" cx="0.5" cy="0.5" r="0.5">
+                <stop offset="0" stop-color="#1BA9C9" stop-opacity=".25"/>
+                <stop offset="1" stop-color="#1BA9C9" stop-opacity="0"/>
+              </radialGradient>
+            </defs>
+            <!-- Brain bar -->
+            <rect x="248" y="10" width="24" height="140" rx="12" fill="url(#cvBrain)" opacity="0.18"/>
+            <rect x="252" y="10" width="16" height="140" rx="8" fill="url(#cvBrain)"/>
+            <ellipse cx="260" cy="80" rx="60" ry="80" fill="url(#cvHalo)"/>
+            <text x="260" y="78" text-anchor="middle" font-family="JetBrains Mono" font-size="9" fill="#fff" letter-spacing="2" font-weight="700">OMNI</text>
+            <text x="260" y="92" text-anchor="middle" font-family="JetBrains Mono" font-size="9" fill="#fff" letter-spacing="2" font-weight="700">HUB</text>
+            <!-- Cluster rings (right side, 7 rings) -->
+            <g id="cvRings"></g>
+            <!-- Source dots get appended dynamically -->
+            <g id="cvDots"></g>
+          </svg>
+          <div class="cv-counter">
+            <span class="cv-from"><b id="cvFrom">142</b><em>raw signals</em></span>
+            <span class="cv-arrow">→</span>
+            <span class="cv-to"><b id="cvTo">7</b><em>epic clusters</em></span>
+          </div>
+          <div class="cv-cap">100 : 1 signal compression, every minute · cross-channel · explainable</div>
+        </div>
+
+        <div class="hero-io">
+          <div class="k">Inputs</div>
+          <div class="v">Support · social · reviews · analytics · Jira · Slack · app stores</div>
+          <div class="k">Outputs</div>
+          <div class="v">Ranked epics · evidence · auto-RICE · Jira tickets · Confluence PRDs</div>
+        </div>
+      </div>
+
+      <!-- Live preview card (hero right) — Sample decision card mini-demo -->
+      <div class="preview-card">
+        <div class="pc-head">
+          <span class="t">Sample decision · Live</span>
+          <span class="pc-chip">Auto-replays</span>
+        </div>
+        <div class="pc-title">From a single complaint to a scored, evidence-backed epic.</div>
+
+        <div class="pc-label">Try a company</div>
+        <div class="pc-url">
+          <span class="proto">https://</span>
+          <input id="heroUrl" type="text" value="stripe.com" autocomplete="off" spellcheck="false" />
+          <button class="gen" id="heroGen">Generate demo →</button>
+        </div>
+        <div class="pc-url-cap">Demo runs on representative data. Live ingestion connects on customer install.</div>
+        <div class="pc-logos" id="heroLogos"></div>
+
+        <!-- Mini live-replaying decision card -->
+        <div class="mini-decision" id="miniDecision">
+          <div class="md-hdr">
+            <div class="md-meta">
+              <span class="md-eyebrow"><i></i> Auto-RICE in progress</span>
+              <div class="md-title" id="mdTitle">Resolve 3DS auth failures on Safari 18</div>
+            </div>
+            <div class="md-score">
+              <span class="md-score-v" id="mdScore">0.0</span>
+              <span class="md-score-k">/100</span>
+            </div>
+          </div>
+          <div class="md-bars">
+            <div class="md-bar"><span class="md-l">Reach</span><span class="md-tr"><i data-k="R"></i></span><span class="md-v" data-v="R">0</span></div>
+            <div class="md-bar"><span class="md-l">Impact</span><span class="md-tr"><i data-k="I"></i></span><span class="md-v" data-v="I">0</span></div>
+            <div class="md-bar"><span class="md-l">Confidence</span><span class="md-tr"><i data-k="C"></i></span><span class="md-v" data-v="C">0</span></div>
+            <div class="md-bar md-bar-e"><span class="md-l">Effort ↓</span><span class="md-tr"><i data-k="E"></i></span><span class="md-v" data-v="E">0</span></div>
+          </div>
+          <div class="md-evidence">
+            <span class="md-ev-h">Evidence stitched from</span>
+            <span class="md-ev-row" id="mdEvRow"></span>
+          </div>
+          <div class="md-foot">
+            <span class="md-foot-l">→ Pushed to Jira as <b id="mdJira">PAY-2041</b></span>
+            <span class="md-foot-r"><span class="md-replay">↻ replays</span></span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ========== WHY NOW / END-TO-END LOOP ========== -->
+  <section>
+    <div class="sec-head">
+      <div>
+        <div class="sec-kicker">Why now</div>
+        <h2 class="sec-title">Every product team has the data. Almost none have the intelligence layer.</h2>
+      </div>
+      <p class="sec-sub">OmniHub closes the loop from signal capture to execution. It shows the strongest issue, explains why it matters, and recommends what to ship next — then learns from the outcome.</p>
+    </div>
+
+    <!-- 7-step closed loop ribbon -->
+    <div class="loop-ribbon" aria-label="OmniHub end-to-end loop">
+      <div class="loop-track">
+        <div class="loop-node"><div class="ln-i">01</div><div class="ln-icon">⇣</div><div class="ln-h">Ingest</div><div class="ln-d">All channels, sub-second.</div></div>
+        <div class="loop-link"><span class="ll-num">1,000s/min</span></div>
+        <div class="loop-node"><div class="ln-i">02</div><div class="ln-icon">≡</div><div class="ln-h">Normalize</div><div class="ln-d">One schema, every source.</div></div>
+        <div class="loop-link"><span class="ll-num">de-duped</span></div>
+        <div class="loop-node"><div class="ln-i">03</div><div class="ln-icon">∴</div><div class="ln-h">Generate</div><div class="ln-d">Themes from raw evidence.</div></div>
+        <div class="loop-link"><span class="ll-num">~7 themes</span></div>
+        <div class="loop-node"><div class="ln-i">04</div><div class="ln-icon">⌬</div><div class="ln-h">Score</div><div class="ln-d">Auto-RICE, explainable.</div></div>
+        <div class="loop-link"><span class="ll-num">ranked list</span></div>
+        <div class="loop-node"><div class="ln-i">05</div><div class="ln-icon">▷</div><div class="ln-h">Recommend</div><div class="ln-d">Brief with evidence.</div></div>
+        <div class="loop-link"><span class="ll-num">1 top epic</span></div>
+        <div class="loop-node"><div class="ln-i">06</div><div class="ln-icon">↗</div><div class="ln-h">Automate</div><div class="ln-d">Push to Jira + Confluence.</div></div>
+        <div class="loop-link"><span class="ll-num">1 ticket</span></div>
+        <div class="loop-node loop-node-learn"><div class="ln-i">07</div><div class="ln-icon">↺</div><div class="ln-h">Learn</div><div class="ln-d">Outcomes feed the model.</div></div>
+      </div>
+      <div class="loop-return" aria-hidden="true">
+        <svg viewBox="0 0 1100 30" preserveAspectRatio="none">
+          <path d="M 1080 4 C 1100 18, 1100 22, 1080 26 L 20 26 C 0 22, 0 18, 20 4" fill="none" stroke="#1BA9C9" stroke-width="1.4" stroke-dasharray="4 5" opacity="0.55"/>
+          <polygon points="22,2 14,8 22,14" fill="#1BA9C9" opacity="0.7"/>
+        </svg>
+        <span class="lr-label">Outcomes loop back · model gets better with every shipped epic</span>
+      </div>
+    </div>
+
+    <div class="probs" style="margin-top:36px">
+      <div class="prob"><div class="i">01</div><h4>Siloed teams</h4><p>Signals live in support tools, social feeds, roadmaps, dashboards, and engineering logs.</p></div>
+      <div class="prob"><div class="i">02</div><h4>Opinion-driven prioritization</h4><p>Leaders still make roadmap calls without a transparent evidence chain.</p></div>
+      <div class="prob"><div class="i">03</div><h4>Scattered insights</h4><p>Customer sentiment is fragmented across channels with no unified lens.</p></div>
+      <div class="prob"><div class="i">04</div><h4>Low confidence</h4><p>Misaligned teams create drift in product, spend, GTM, and executive reporting.</p></div>
+    </div>
+  </section>
+
+  <!-- ========== WHAT OMNIHUB IS NOT ========== -->
+  <section class="not-section">
+    <div class="sec-head">
+      <div>
+        <div class="sec-kicker">Positioning</div>
+        <h2 class="sec-title">OmniHub is not another dashboard. It's the decision layer between dashboards.</h2>
+      </div>
+      <p class="sec-sub">Investors and PMs ask the same question: "how is this different from Pendo, Productboard, Mixpanel, Linear?" Here's the short answer.</p>
+    </div>
+
+    <div class="not-grid">
+      <div class="not-card">
+        <div class="nc-row nc-not"><span class="nc-tag">Not this</span><span class="nc-cat">Analytics tools</span></div>
+        <div class="nc-said">Mixpanel, Amplitude — show what happened.</div>
+        <div class="nc-arrow">↓</div>
+        <div class="nc-row nc-is"><span class="nc-tag is">OmniHub</span></div>
+        <div class="nc-said is">Shows what to do next, with evidence.</div>
+      </div>
+      <div class="not-card">
+        <div class="nc-row nc-not"><span class="nc-tag">Not this</span><span class="nc-cat">Feedback platforms</span></div>
+        <div class="nc-said">Productboard, Canny — collect input.</div>
+        <div class="nc-arrow">↓</div>
+        <div class="nc-row nc-is"><span class="nc-tag is">OmniHub</span></div>
+        <div class="nc-said is">Closes the loop into Jira tickets.</div>
+      </div>
+      <div class="not-card">
+        <div class="nc-row nc-not"><span class="nc-tag">Not this</span><span class="nc-cat">AI copilots</span></div>
+        <div class="nc-said">Generic chat — generate text.</div>
+        <div class="nc-arrow">↓</div>
+        <div class="nc-row nc-is"><span class="nc-tag is">OmniHub</span></div>
+        <div class="nc-said is">Scores decisions with explainable RICE++.</div>
+      </div>
+      <div class="not-card">
+        <div class="nc-row nc-not"><span class="nc-tag">Not this</span><span class="nc-cat">Roadmapping tools</span></div>
+        <div class="nc-said">Aha, Productboard — static plans.</div>
+        <div class="nc-arrow">↓</div>
+        <div class="nc-row nc-is"><span class="nc-tag is">OmniHub</span></div>
+        <div class="nc-said is">Continuously re-prioritizes from live signal.</div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ========== LIVE DASHBOARD ========== -->
+  <section id="dashboard">
+    <div class="sec-head">
+      <div>
+        <div class="sec-kicker">For PMs, product leaders, and operators</div>
+        <h2 class="sec-title">A live decision cockpit.</h2>
+      </div>
+      <p class="sec-sub">Every number on this screen streams from the same brain running the prototype. Switch the view on the left — each one is a different operating mode for the same underlying intelligence.</p>
+    </div>
+
+    <div class="console" id="console">
+      <!-- Left rail -->
+      <aside class="cns-rail">
+        <div class="rail-h">
+          <div class="rail-h-l">
+            <span class="sq" style="background:#635BFF">S</span>
+            <div>
+              <div class="rail-co">stripe.com</div>
+              <div class="rail-sub">Fintech · Live</div>
+            </div>
+          </div>
+          <button class="rail-swap" id="railSwap" title="Switch company">↔</button>
+          <div class="rail-menu" id="railMenu"></div>
+        </div>
+
+        <nav class="rail-nav" id="railNav">
+          <button class="rn" data-view="feed"><span class="ico"><svg viewBox="0 0 16 16"><circle cx="8" cy="8" r="1.8" fill="currentColor"/><circle cx="8" cy="8" r="4" fill="none" stroke="currentColor" stroke-width="1.2" opacity=".35"/><circle cx="8" cy="8" r="6.6" fill="none" stroke="currentColor" stroke-width="1" opacity=".18"/></svg></span>Live Feed<em class="badge">142/s</em></button>
+          <button class="rn active" data-view="dash"><span class="ico"><svg viewBox="0 0 16 16"><rect x="1.5" y="8" width="3" height="6.5" fill="currentColor"/><rect x="6.5" y="4.5" width="3" height="10" fill="currentColor"/><rect x="11.5" y="1.5" width="3" height="13" fill="currentColor"/></svg></span>Dashboard</button>
+          <button class="rn" data-view="queue"><span class="ico"><svg viewBox="0 0 16 16"><rect x="1.5" y="3" width="13" height="2" fill="currentColor"/><rect x="1.5" y="7" width="10" height="2" fill="currentColor"/><rect x="1.5" y="11" width="6" height="2" fill="currentColor"/></svg></span>Priority Queue<em class="badge warn">17</em></button>
+          <button class="rn" data-view="crisis"><span class="ico"><svg viewBox="0 0 16 16"><path d="M8 1.5 L15 13.5 L1 13.5 Z" fill="none" stroke="currentColor" stroke-width="1.4"/><rect x="7.2" y="6" width="1.6" height="4" fill="currentColor"/><rect x="7.2" y="10.6" width="1.6" height="1.6" fill="currentColor"/></svg></span>Crisis Monitor<em class="badge crit">3</em></button>
+          <button class="rn" data-view="epics"><span class="ico"><svg viewBox="0 0 16 16"><rect x="1.5" y="3" width="4" height="10" rx="1" fill="currentColor" opacity=".35"/><rect x="6.5" y="3" width="4" height="6" rx="1" fill="currentColor" opacity=".6"/><rect x="11.5" y="3" width="3" height="10" rx="1" fill="currentColor"/></svg></span>Epics &amp; Sync</button>
+        </nav>
+
+        <div class="rail-srcs">
+          <div class="rs-h">
+            <h5>Connected sources</h5>
+            <button class="rs-add" id="connectBtn" title="Connect a new source">＋</button>
+          </div>
+          <div class="rs-row"><span class="dt ok"></span><span class="nm">Zendesk</span><span class="vt">2.1k/d</span></div>
+          <div class="rs-row"><span class="dt ok"></span><span class="nm">Intercom</span><span class="vt">890/d</span></div>
+          <div class="rs-row"><span class="dt ok"></span><span class="nm">X / Twitter</span><span class="vt">5.4k/d</span></div>
+          <div class="rs-row"><span class="dt ok"></span><span class="nm">Reddit</span><span class="vt">1.2k/d</span></div>
+          <div class="rs-row"><span class="dt ok"></span><span class="nm">App Store</span><span class="vt">340/d</span></div>
+          <div class="rs-row"><span class="dt ok"></span><span class="nm">Jira</span><span class="vt">440 issues</span></div>
+          <div class="rs-row"><span class="dt slow"></span><span class="nm">Slack</span><span class="vt">↺ re-auth</span></div>
+          <div class="rs-foot">
+            <div class="rsf-k">Stream lag</div>
+            <div class="rsf-v">0.4s</div>
+          </div>
+        </div>
+      </aside>
+
+      <!-- Main column -->
+      <div class="cns-main">
+        <!-- Command bar -->
+        <div class="cns-cmd">
+          <div class="cmd-title" id="cmdTitle">
+            <span class="cmd-breadcrumb">Stripe › <b id="cmdView">Dashboard</b></span>
+            <div class="cmd-h" id="cmdH">Decision cockpit</div>
+          </div>
+          <div class="cmd-right">
+            <div class="cmd-search">
+              <svg viewBox="0 0 16 16" width="14" height="14"><circle cx="7" cy="7" r="4.5" fill="none" stroke="currentColor" stroke-width="1.4"/><path d="M10.5 10.5 L14 14" stroke="currentColor" stroke-width="1.4"/></svg>
+              <input placeholder="Search signals, epics, people…" />
+              <kbd>⌘K</kbd>
+            </div>
+            <span class="tip-wrap">
+              <button class="cmd-btn ghost proto-jump" data-co="stripe">Open prototype ↗</button>
+              <span class="tip tip-bot">Watch this exact decision happen end-to-end in 22 seconds.</span>
+            </span>
+            <button class="cmd-btn primary" id="createEpicBtn">Create epic</button>
+          </div>
+        </div>
+
+        <!-- Views -->
+        <div class="cns-views">
+
+          <!-- ========== DASHBOARD ========== -->
+          <div class="cns-view" data-view="dash">
+            <div class="kpi-row">
+              <div class="kpi">
+                <span class="lab">Net Sentiment Score</span>
+                <span class="delta">+8</span>
+                <div class="big" data-count="29" data-prefix="+">+0</div>
+                <div class="cap">Up 8 points from last week. Weighted by source credibility.</div>
+                <svg class="spark" viewBox="0 0 100 28" preserveAspectRatio="none"><polyline fill="none" stroke="#1BA9C9" stroke-width="1.6" points="0,18 10,16 20,19 30,15 40,14 50,10 60,12 70,8 80,9 90,5 100,3"/></svg>
+              </div>
+              <div class="kpi">
+                <span class="lab">Signal Volume</span>
+                <span class="delta">+10%</span>
+                <div class="big" data-count="19500" data-fmt="k">0</div>
+                <div class="cap">Last 24h, de-duped &amp; normalized across 7 channels.</div>
+                <svg class="spark" viewBox="0 0 100 28" preserveAspectRatio="none"><polyline fill="none" stroke="#4ED0B8" stroke-width="1.6" points="0,22 10,20 20,18 30,19 40,15 50,13 60,14 70,10 80,9 90,7 100,5"/></svg>
+              </div>
+              <div class="kpi">
+                <span class="lab">Critical Alerts</span>
+                <span class="delta down">+3</span>
+                <div class="big" data-count="3">0</div>
+                <div class="cap">Open incidents above crisis threshold.</div>
+                <svg class="spark" viewBox="0 0 100 28" preserveAspectRatio="none"><polyline fill="none" stroke="#F47860" stroke-width="1.6" points="0,22 10,20 20,22 30,18 40,19 50,17 60,14 70,12 80,14 90,10 100,6"/></svg>
+              </div>
+              <div class="kpi">
+                <span class="lab">Feature Velocity</span>
+                <span class="delta">+0.7</span>
+                <div class="big" data-count="8.8" data-decimals="1">0</div>
+                <div class="cap">Epics/week shipped against roadmap capacity.</div>
+                <svg class="spark" viewBox="0 0 100 28" preserveAspectRatio="none"><polyline fill="none" stroke="#5B4CF7" stroke-width="1.6" points="0,20 10,18 20,16 30,15 40,14 50,12 60,11 70,9 80,8 90,6 100,4"/></svg>
+              </div>
+            </div>
+
+            <!-- Cross-channel weather map -->
+            <div class="panel weather-panel">
+              <div class="ptag">Cross-channel propagation · last 24h</div>
+              <h4>Watch the Safari 3DS issue ripple across channels</h4>
+              <p class="desc">Each row is a connected source. Each column is one of 48 thirty-minute slices. Color encodes sentiment intensity. The coral spike that starts in Zendesk at <em>−14m</em> propagates through X, Reddit, Intercom, App Store, then Slack — that overlap is where confidence comes from.</p>
+              <div class="weather-map" id="weatherMap"></div>
+              <div class="weather-legend">
+                <span class="wl-time">−24h</span>
+                <span class="wl-key"><i class="wl-pos"></i> Positive</span>
+                <span class="wl-key"><i class="wl-neu"></i> Neutral</span>
+                <span class="wl-key"><i class="wl-neg"></i> Negative</span>
+                <span class="wl-key"><i class="wl-crit"></i> Critical</span>
+                <span class="wl-time r">now</span>
+              </div>
+            </div>
+
+            <div class="dash-row">
+              <div class="panel">
+                <div class="ptag">Signal distribution</div>
+                <h4>Where the noise is coming from</h4>
+                <p class="desc">External sources are dominant this week, with fintech product dynamics heavily weighted toward payment success and onboarding.</p>
+                <div class="bar-row ext"><span class="lab">External</span><span class="tr"><i style="width:59%"></i></span><span class="val">59%</span></div>
+                <div class="bar-row int"><span class="lab">Internal</span><span class="tr"><i style="width:41%"></i></span><span class="val">41%</span></div>
+                <div class="bar-row crit"><span class="lab">Critical</span><span class="tr"><i style="width:19%"></i></span><span class="val">19%</span></div>
+                <div class="bar-row ext"><span class="lab">Positive</span><span class="tr"><i style="width:36%"></i></span><span class="val">36%</span></div>
+                <div class="bar-row crit"><span class="lab">Negative</span><span class="tr"><i style="width:45%"></i></span><span class="val">45%</span></div>
+              </div>
+              <div class="panel">
+                <div class="ptag">Decision center · operator actions</div>
+                <h4>What to do next</h4>
+                <div class="action-list">
+                  <div class="action-item now"><div class="tag">NOW</div><div><div class="t">Resolve payment authorization failure spike</div><div class="s">2,140 signals · 3DS Safari 18 · +12% false-positive on Radar</div></div></div>
+                  <div class="action-item next"><div class="tag">NEXT WEEK</div><div><div class="t">Invest in simpler onboarding on Atlas</div><div class="s">Strong demand · 14-day median time-to-live</div></div></div>
+                  <div class="action-item watch"><div class="tag">WATCHLIST</div><div><div class="t">Mexico issuer decline rate up 4× baseline</div><div class="s">Localized payment rails investigation recommended</div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- ========== LIVE FEED ========== -->
+          <div class="cns-view" data-view="feed" hidden>
+            <div class="feed-wrap">
+              <div class="feed-head">
+                <div class="fh-filters">
+                  <button class="fh-chip active">All signals</button>
+                  <button class="fh-chip">Support</button>
+                  <button class="fh-chip">Social</button>
+                  <button class="fh-chip">Reviews</button>
+                  <button class="fh-chip">Internal</button>
+                </div>
+                <div class="fh-rate"><span class="rdot"></span> <b id="feedRate">142</b>&nbsp;signals / second</div>
+              </div>
+              <ul class="feed-list" id="feedList"></ul>
+            </div>
+            <div class="feed-side">
+              <div class="panel">
+                <div class="ptag">Channel weight</div>
+                <h4>Where this hour's signal is coming from</h4>
+                <div class="channel-bars">
+                  <div class="ch-row"><span class="nm">X / Twitter</span><div class="tr"><i style="width:38%"></i></div><span class="v">38%</span></div>
+                  <div class="ch-row"><span class="nm">Zendesk</span><div class="tr"><i style="width:24%"></i></div><span class="v">24%</span></div>
+                  <div class="ch-row"><span class="nm">Reddit</span><div class="tr"><i style="width:14%"></i></div><span class="v">14%</span></div>
+                  <div class="ch-row"><span class="nm">Intercom</span><div class="tr"><i style="width:11%"></i></div><span class="v">11%</span></div>
+                  <div class="ch-row"><span class="nm">App Store</span><div class="tr"><i style="width:8%"></i></div><span class="v">8%</span></div>
+                  <div class="ch-row"><span class="nm">Slack</span><div class="tr"><i style="width:5%"></i></div><span class="v">5%</span></div>
+                </div>
+              </div>
+              <div class="panel">
+                <div class="ptag">Sentiment pulse · 24h</div>
+                <h4>−36% net over last 6h</h4>
+                <svg viewBox="0 0 260 90" class="pulse">
+                  <defs>
+                    <linearGradient id="pg" x1="0" x2="0" y1="0" y2="1">
+                      <stop offset="0" stop-color="#0B8A7A" stop-opacity=".25"/>
+                      <stop offset="1" stop-color="#0B8A7A" stop-opacity="0"/>
+                    </linearGradient>
+                  </defs>
+                  <path d="M0 40 L20 38 L40 45 L60 42 L80 50 L100 48 L120 60 L140 62 L160 70 L180 68 L200 72 L220 66 L240 70 L260 64 L260 90 L0 90 Z" fill="url(#pg)"/>
+                  <path d="M0 40 L20 38 L40 45 L60 42 L80 50 L100 48 L120 60 L140 62 L160 70 L180 68 L200 72 L220 66 L240 70 L260 64" fill="none" stroke="#0B8A7A" stroke-width="1.6"/>
+                </svg>
+              </div>
+            </div>
+          </div>
+
+          <!-- ========== PRIORITY QUEUE ========== -->
+          <div class="cns-view" data-view="queue" hidden>
+            <div class="queue-head">
+              <div class="qh-title">Ranked by auto-RICE · last 24h window · click any row to see why</div>
+              <div class="qh-tabs">
+                <button class="qh-chip active">All</button>
+                <button class="qh-chip">Bugs</button>
+                <button class="qh-chip">Features</button>
+                <button class="qh-chip">Risk</button>
+              </div>
+            </div>
+            <ol class="queue-list" id="queueList"></ol>
+          </div>
+
+          <!-- ========== CRISIS MONITOR ========== -->
+          <div class="cns-view" data-view="crisis" hidden>
+            <!-- Hero banner with 10-min SLA clock -->
+            <div class="crisis-banner crisis-hero">
+              <div class="ch-clock" id="crisisClock" title="Detection SLA · 10 min">
+                <svg viewBox="0 0 80 80" width="78" height="78">
+                  <circle cx="40" cy="40" r="34" fill="none" stroke="rgba(197,68,23,0.12)" stroke-width="6"/>
+                  <circle id="ccRing" cx="40" cy="40" r="34" fill="none" stroke="#4ED0B8" stroke-width="6"
+                    stroke-dasharray="213.6" stroke-dashoffset="213.6"
+                    stroke-linecap="round" transform="rotate(-90 40 40)"/>
+                </svg>
+                <div class="cc-time" id="ccTime">00:00</div>
+                <div class="cc-cap">elapsed</div>
+              </div>
+              <div class="ch-body">
+                <div class="cb-lead">
+                  <span class="cb-dot"></span>
+                  ACTIVE INCIDENT · DETECTION SLA <b id="ccSla">✓ Met (8m)</b>
+                </div>
+                <div class="cb-title">Payment authorization failures spiking — 3DS on Safari 18</div>
+                <div class="cb-meta">First observed <em id="ccObserved">14 min</em> ago · 47 merchants · 2,140 signals · PagerDuty P2 triggered · auto-paged Payments EM &amp; CPO</div>
+              </div>
+              <button class="cb-act">Create incident room →</button>
+            </div>
+
+            <!-- Above the fold: timeline + radar -->
+            <div class="crisis-grid">
+              <div class="panel">
+                <div class="ptag">Timeline · last 60 min</div>
+                <h4>Event reconstruction</h4>
+                <ol class="ti-list">
+                  <li><b>−14m</b><span>Zendesk · 38 tickets referencing "declined" on Safari 18</span></li>
+                  <li><b>−11m</b><span>Radar false-positive rate crosses +10% threshold</span></li>
+                  <li><b>−09m</b><span>X · viral thread <code>@indiehacker</code> — 2.4k reposts</span></li>
+                  <li><b>−06m</b><span>OmniHub clusters 5 channels into one incident</span></li>
+                  <li class="now"><b>now</b><span>CPO &amp; Payments EM paged · war-room auto-created</span></li>
+                </ol>
+              </div>
+
+              <div class="panel radar-panel">
+                <div class="ptag">Threshold radar</div>
+                <h4>How far past baseline</h4>
+                <div class="radar-rows">
+                  <div class="rr"><span class="nm">Negative sentiment lift</span><div class="tr"><i style="width:86%;background:#E5541B"></i></div><span class="v">+86%</span></div>
+                  <div class="rr"><span class="nm">Volume vs. σ baseline</span><div class="tr"><i style="width:72%;background:#E5541B"></i></div><span class="v">4.2σ</span></div>
+                  <div class="rr"><span class="nm">Cross-channel spread</span><div class="tr"><i style="width:58%;background:#F4C85A"></i></div><span class="v">5/7</span></div>
+                  <div class="rr"><span class="nm">Keyword velocity</span><div class="tr"><i style="width:64%;background:#E5541B"></i></div><span class="v">+430%</span></div>
+                  <div class="rr"><span class="nm">Viral index</span><div class="tr"><i style="width:41%;background:#F4C85A"></i></div><span class="v">0.41</span></div>
+                </div>
+              </div>
+            </div>
+
+            <!-- Below the fold: action plan -->
+            <div class="panel wide action-plan-panel">
+              <div class="ptag">Action plan · drafted by OmniHub</div>
+              <h4>What to do in the next hour</h4>
+              <div class="plan-grid">
+                <div class="plan-col">
+                  <div class="pc-h">Communicate</div>
+                  <ul><li>Post merchant status banner</li><li>Notify top 50 affected accounts</li><li>Prepare 3-line public statement</li></ul>
+                </div>
+                <div class="plan-col">
+                  <div class="pc-h">Investigate</div>
+                  <ul><li>Roll back Radar rule <code>r-8823</code></li><li>Pin Safari 18 user-agent cohort</li><li>Validate 3DS challenge path</li></ul>
+                </div>
+                <div class="plan-col">
+                  <div class="pc-h">Decide</div>
+                  <ul><li>Ship hotfix or global revert</li><li>Escalate to Risk &amp; Compliance</li><li>Schedule post-incident review</li></ul>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- ========== EPICS & SYNC ========== -->
+          <div class="cns-view" data-view="epics" hidden>
+            <!-- Decision feed: how OmniHub learns from outcomes -->
+            <div class="decision-feed">
+              <div class="df-head">
+                <div class="ptag">Decision history · OmniHub learns from outcomes</div>
+                <h4>Every shipped epic, traced from signal to outcome</h4>
+              </div>
+              <div class="df-rail" id="decisionFeed">
+                <div class="df-card">
+                  <div class="df-trigger">@indiehacker tweet, 3DS auth failure</div>
+                  <div class="df-cluster">2,140 signals · 5 channels</div>
+                  <div class="df-mid">
+                    <span class="df-rice">RICE 93.2</span>
+                    <span class="df-jira">PAY-2041 · merged 47m</span>
+                  </div>
+                  <div class="df-outcome">✓ +2.1 pts auth recovery</div>
+                </div>
+                <div class="df-card">
+                  <div class="df-trigger">Reddit r/ecommerce · Radar false-positives</div>
+                  <div class="df-cluster">1,680 signals · 4 channels</div>
+                  <div class="df-mid">
+                    <span class="df-rice">RICE 87.4</span>
+                    <span class="df-jira">PAY-2038 · merged 3.2h</span>
+                  </div>
+                  <div class="df-outcome">✓ +6.8% conversion</div>
+                </div>
+                <div class="df-card">
+                  <div class="df-trigger">Capterra · Atlas onboarding friction</div>
+                  <div class="df-cluster">1,640 signals · 3 channels</div>
+                  <div class="df-mid">
+                    <span class="df-rice">RICE 81.2</span>
+                    <span class="df-jira">ATLAS-207 · merged 1.4d</span>
+                  </div>
+                  <div class="df-outcome">✓ −11% drop-off</div>
+                </div>
+                <div class="df-card">
+                  <div class="df-trigger">Slack #payments-core · MX issuer rate</div>
+                  <div class="df-cluster">820 signals · 4 channels</div>
+                  <div class="df-mid">
+                    <span class="df-rice">RICE 79.1</span>
+                    <span class="df-jira">PAY-2040 · in review</span>
+                  </div>
+                  <div class="df-outcome pending">… A/B running</div>
+                </div>
+                <div class="df-card">
+                  <div class="df-trigger">Intercom · involuntary churn EU cards</div>
+                  <div class="df-cluster">1,220 signals · 3 channels</div>
+                  <div class="df-mid">
+                    <span class="df-rice">RICE 74.6</span>
+                    <span class="df-jira">BIL-881 · shipped 5.1d</span>
+                  </div>
+                  <div class="df-outcome">✓ +2.0% MRR recovered</div>
+                </div>
+              </div>
+            </div>
+
+            <div class="epics-head">
+              <div>
+                <div class="ptag">Epics pipeline</div>
+                <h4>Board-to-Jira sync · this sprint</h4>
+              </div>
+              <div class="epics-sync">
+                <div class="sync-dot"></div>
+                <div class="sync-text">Synced 26s ago · <b>Jira &amp; Confluence</b></div>
+              </div>
+            </div>
+
+            <div class="kanban">
+              <div class="kb-col">
+                <div class="kb-h"><span>Proposed</span><em>4</em></div>
+                <div class="kb-card">
+                  <div class="kc-tag" style="background:#E9F5F2;color:#0B8A7A">Onboarding</div>
+                  <div class="kc-t">Collapse KYC &amp; LLC in Atlas</div>
+                  <div class="kc-m">1,640 signals · RICE 87.4</div>
+                  <div class="kc-foot"><span class="kc-av">NP</span><span class="kc-av av2">SK</span><span class="kc-j">ATLAS-214</span></div>
+                </div>
+                <div class="kb-card">
+                  <div class="kc-tag" style="background:#FDECE2;color:#C54417">Risk</div>
+                  <div class="kc-t">Mexico issuer decline investigation</div>
+                  <div class="kc-m">820 signals · RICE 79.1</div>
+                  <div class="kc-foot"><span class="kc-av">RM</span><span class="kc-j">PAY-2040</span></div>
+                </div>
+                <div class="kb-card">
+                  <div class="kc-tag" style="background:#EDF0FA;color:#3D3AE5">Docs</div>
+                  <div class="kc-t">Webhook idempotency docs</div>
+                  <div class="kc-m">410 signals · RICE 61.0</div>
+                  <div class="kc-foot"><span class="kc-av">DV</span><span class="kc-j">DEV-118</span></div>
+                </div>
+              </div>
+
+              <div class="kb-col">
+                <div class="kb-h"><span>In Jira</span><em>3</em></div>
+                <div class="kb-card on-jira">
+                  <div class="kc-tag" style="background:#FDECE2;color:#C54417">Incident</div>
+                  <div class="kc-t">Auth failure — Safari 18</div>
+                  <div class="kc-m">2,140 signals · RICE 93.2</div>
+                  <div class="kc-foot"><span class="kc-av">MG</span><span class="kc-av av2">LP</span><span class="kc-j on">PAY-2041 ✓</span></div>
+                </div>
+                <div class="kb-card on-jira">
+                  <div class="kc-tag" style="background:#E9F5F2;color:#0B8A7A">Billing</div>
+                  <div class="kc-t">Smart retries for involuntary churn</div>
+                  <div class="kc-m">1,220 signals · RICE 74.6</div>
+                  <div class="kc-foot"><span class="kc-av">YA</span><span class="kc-j on">BIL-881 ✓</span></div>
+                </div>
+              </div>
+
+              <div class="kb-col">
+                <div class="kb-h"><span>In PRD</span><em>2</em></div>
+                <div class="kb-card">
+                  <div class="kc-tag" style="background:#F1EEF9;color:#5B4CF7">Research</div>
+                  <div class="kc-t">Merchant risk tolerance survey</div>
+                  <div class="kc-m">Confluence · linked to PAY-2041</div>
+                  <div class="kc-foot"><span class="kc-av">JN</span><span class="kc-j con">PRD · C-118</span></div>
+                </div>
+                <div class="kb-card">
+                  <div class="kc-tag" style="background:#F1EEF9;color:#5B4CF7">Platform</div>
+                  <div class="kc-t">3DS rule DSL refactor</div>
+                  <div class="kc-m">Draft · 2 reviewers</div>
+                  <div class="kc-foot"><span class="kc-av">OL</span><span class="kc-j con">PRD · C-121</span></div>
+                </div>
+              </div>
+
+              <div class="kb-col">
+                <div class="kb-h done"><span>Shipped</span><em>3</em></div>
+                <div class="kb-card shipped">
+                  <div class="kc-tag" style="background:#EAF4E8;color:#3A7A2E">Shipped</div>
+                  <div class="kc-t">Radar rule rollback · Safari 18</div>
+                  <div class="kc-m">hotfix · merged in 47m</div>
+                  <div class="kc-foot"><span class="kc-av">MG</span><span class="kc-j on">PAY-2041.1 ✓</span></div>
+                </div>
+                <div class="kb-card shipped">
+                  <div class="kc-tag" style="background:#EAF4E8;color:#3A7A2E">Shipped</div>
+                  <div class="kc-t">Atlas — KYC copy overhaul</div>
+                  <div class="kc-m">reduced drop-off −11%</div>
+                  <div class="kc-foot"><span class="kc-av">SK</span><span class="kc-j on">ATLAS-207 ✓</span></div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ========== PROTOTYPE / COMPANIES ========== -->
+  <section id="prototype">
+    <div class="sec-head">
+      <div>
+        <div class="sec-kicker">Animated prototype</div>
+        <h2 class="sec-title">Click a company. Watch the brain spin up.</h2>
+      </div>
+      <p class="sec-sub">Each company opens a dedicated page that animates OmniHub block-by-block: ingest → cluster → score → recommend → sync to Jira &amp; Confluence. Every run is wired to real pipeline logic — just backed by demo data.</p>
+    </div>
+    <div class="co-grid" id="coGrid"></div>
+  </section>
+
+  <!-- ========== CHANNEL GRID ========== -->
+  <section class="channels-section" id="channels">
+    <div class="sec-head">
+      <div>
+        <div class="sec-kicker">Built on signals you already produce</div>
+        <h2 class="sec-title">Plug into the tools your team already uses. OmniHub does the synthesis.</h2>
+      </div>
+      <p class="sec-sub">Real-time connectors across support, social, reviews, dev workflow, and revenue tools. One normalized stream. Every score is traceable back to its source.</p>
+    </div>
+
+    <div class="channel-grid">
+      <div class="ch-tile" data-color="#03363D"><div class="ch-mark" style="background:#03363D">Z</div><div class="ch-nm">Zendesk</div><div class="ch-cat">Support</div></div>
+      <div class="ch-tile" data-color="#0057FF"><div class="ch-mark" style="background:#0057FF">I</div><div class="ch-nm">Intercom</div><div class="ch-cat">Support</div></div>
+      <div class="ch-tile" data-color="#000"><div class="ch-mark" style="background:#000">𝕏</div><div class="ch-nm">X / Twitter</div><div class="ch-cat">Social</div></div>
+      <div class="ch-tile" data-color="#FF4500"><div class="ch-mark" style="background:#FF4500">R</div><div class="ch-nm">Reddit</div><div class="ch-cat">Social</div></div>
+      <div class="ch-tile" data-color="#0D96F6"><div class="ch-mark" style="background:#0D96F6">⌘</div><div class="ch-nm">App Store</div><div class="ch-cat">Reviews</div></div>
+      <div class="ch-tile" data-color="#3DDC84"><div class="ch-mark" style="background:#3DDC84">▶</div><div class="ch-nm">Play Store</div><div class="ch-cat">Reviews</div></div>
+      <div class="ch-tile" data-color="#4A154B"><div class="ch-mark" style="background:#4A154B">#</div><div class="ch-nm">Slack</div><div class="ch-cat">Internal</div></div>
+      <div class="ch-tile" data-color="#5059C9"><div class="ch-mark" style="background:#5059C9">T</div><div class="ch-nm">Teams</div><div class="ch-cat">Internal</div></div>
+      <div class="ch-tile" data-color="#0052CC"><div class="ch-mark" style="background:#0052CC">J</div><div class="ch-nm">Jira</div><div class="ch-cat">Delivery</div></div>
+      <div class="ch-tile" data-color="#5E6AD2"><div class="ch-mark" style="background:#5E6AD2">L</div><div class="ch-nm">Linear</div><div class="ch-cat">Delivery</div></div>
+      <div class="ch-tile" data-color="#0D1117"><div class="ch-mark" style="background:#0D1117">G</div><div class="ch-nm">GitHub</div><div class="ch-cat">Delivery</div></div>
+      <div class="ch-tile" data-color="#00A1E0"><div class="ch-mark" style="background:#00A1E0">SF</div><div class="ch-nm">Salesforce</div><div class="ch-cat">Revenue</div></div>
+      <div class="ch-tile" data-color="#FF7A59"><div class="ch-mark" style="background:#FF7A59">H</div><div class="ch-nm">HubSpot</div><div class="ch-cat">Revenue</div></div>
+      <div class="ch-tile" data-color="#7856FF"><div class="ch-mark" style="background:#7856FF">M</div><div class="ch-nm">Mixpanel</div><div class="ch-cat">Analytics</div></div>
+      <div class="ch-tile" data-color="#52BD95"><div class="ch-mark" style="background:#52BD95">S</div><div class="ch-nm">Segment</div><div class="ch-cat">Analytics</div></div>
+      <div class="ch-tile" data-color="#06AC38"><div class="ch-mark" style="background:#06AC38">PD</div><div class="ch-nm">PagerDuty</div><div class="ch-cat">Incidents</div></div>
+      <div class="ch-tile" data-color="#5865F2"><div class="ch-mark" style="background:#5865F2">D</div><div class="ch-nm">Discord</div><div class="ch-cat">Community</div></div>
+      <div class="ch-tile" data-color="#00B67A"><div class="ch-mark" style="background:#00B67A">★</div><div class="ch-nm">Trustpilot</div><div class="ch-cat">Reviews</div></div>
+    </div>
+  </section>
+
+  <!-- ========== ARCHITECTURE ========== -->
+  <section id="architecture">
+    <div class="sec-head">
+      <div>
+        <div class="sec-kicker">Product architecture</div>
+        <h2 class="sec-title">Four connected pillars create the moat.</h2>
+      </div>
+      <p class="sec-sub">The product is defensible because the value is in the closed loop: ingest, understand, prioritize, and operationalize. Each pillar gets stronger as more organizations run their workflow through the system.</p>
+    </div>
+
+    <div class="pillar-grid">
+      <div class="pillar-card">
+        <div class="idx">01</div>
+        <div class="tag">Omnichannel ingestion</div>
+        <h3>Omnichannel ingestion</h3>
+        <p>Real-time connectors unify social, support, app store, internal collaboration, and dev workflow events into one evidence stream.</p>
+        <ul>
+          <li>Sub-second ingestion for critical sources</li>
+          <li>Historical backfill up to 12 months</li>
+          <li>Standardized schema across every channel</li>
+        </ul>
+      </div>
+      <div class="pillar-card">
+        <div class="idx">02</div>
+        <div class="tag">AI thematic clustering</div>
+        <h3>AI thematic clustering</h3>
+        <p>Semantic grouping compresses thousands of raw mentions into a handful of actionable themes without losing source traceability.</p>
+        <ul>
+          <li>Semantic similarity over keyword matching</li>
+          <li>Dynamic cluster granularity as volume shifts</li>
+          <li>Outlier detection for novel issues</li>
+        </ul>
+      </div>
+      <div class="pillar-card">
+        <div class="idx">03</div>
+        <div class="tag">Auto-RICE prioritization</div>
+        <h3>Auto-RICE prioritization</h3>
+        <p>Reach, impact, confidence, and effort are assembled automatically from customer volume, sentiment intensity, revenue proxies, and engineering velocity.</p>
+        <ul>
+          <li>Transparent scoring instead of black-box ranking</li>
+          <li>Internal effort signals pulled from delivery systems</li>
+          <li>Built for product, finance, and executive reviews</li>
+        </ul>
+      </div>
+      <div class="pillar-card">
+        <div class="idx">04</div>
+        <div class="tag">Workflow sync</div>
+        <h3>Workflow sync</h3>
+        <p>The system closes the loop by pushing approved clusters into Jira epics and Confluence-ready decision docs.</p>
+        <ul>
+          <li>One-click Jira epic generation</li>
+          <li>Evidence-rich PRD and summary export</li>
+          <li>Shared view for PM, leadership, and ops</li>
+        </ul>
+      </div>
+    </div>
+  </section>
+
+  <!-- ========== ROADMAP ========== -->
+  <section id="roadmap">
+    <div class="sec-head">
+      <div>
+        <div class="sec-kicker">Execution roadmap</div>
+        <h2 class="sec-title">A credible path from MVP to workflow system of record.</h2>
+      </div>
+      <p class="sec-sub">The rollout starts with signal ingestion and analytics, then layers clustering, prioritization, Atlassian sync, and workflow automation.</p>
+    </div>
+
+    <div class="roadmap-grid">
+      <div class="phase-card">
+        <div class="i">01</div>
+        <div class="tag">Phase 1</div>
+        <h3>Foundation</h3>
+        <p>Ship the ingestion backbone, normalized signal store, baseline analytics, and a simplified timeline view.</p>
+        <ul>
+          <li>Primary channels: social, support, app stores</li>
+          <li>Basic sentiment analysis and storage</li>
+          <li>Authentication and RBAC</li>
+        </ul>
+        <div class="foot"><span><b>Months 1–3</b></span><span class="r">MVP with signal ingestion and core analytics</span></div>
+      </div>
+      <div class="phase-card">
+        <div class="i">02</div>
+        <div class="tag">Phase 2</div>
+        <h3>Intelligence</h3>
+        <p>Add the intelligence layer that makes OmniHub sticky: clustering, scoring, epic generation, and explainable recommendations.</p>
+        <ul>
+          <li>LLM-backed clustering</li>
+          <li>Auto-RICE scoring engine</li>
+          <li>Event streaming and confidence traces</li>
+        </ul>
+        <div class="foot"><span><b>Months 4–6</b></span><span class="r">AI-powered prioritization and clustering</span></div>
+      </div>
+      <div class="phase-card">
+        <div class="i">03</div>
+        <div class="tag">Phase 3</div>
+        <h3>Integration</h3>
+        <p>Close the loop into Atlassian, Linear, and executive review tooling. Make the workflow production-grade.</p>
+        <ul>
+          <li>Jira &amp; Confluence sync (bi-directional)</li>
+          <li>Slack &amp; Teams crisis alerts</li>
+          <li>Audit log &amp; override tracking</li>
+        </ul>
+        <div class="foot"><span><b>Months 7–9</b></span><span class="r">Workflow system of record</span></div>
+      </div>
+      <div class="phase-card">
+        <div class="i">04</div>
+        <div class="tag">Phase 4</div>
+        <h3>Optimization</h3>
+        <p>Ship enterprise features, multi-tenant scale, and the recommendation feedback loop that makes every org's model better.</p>
+        <ul>
+          <li>Enterprise SSO and data residency</li>
+          <li>Cross-org benchmarking (opt-in)</li>
+          <li>Model fine-tuning per workspace</li>
+        </ul>
+        <div class="foot"><span><b>Months 10–12</b></span><span class="r">Enterprise-scale intelligence platform</span></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ========== CTA ========== -->
+  <div class="cta-band">
+    <div>
+      <h2>See OmniHub turn one customer complaint into a shipped fix in 23 minutes.</h2>
+      <p>Pick a company, watch the brain spin up — from one X post to a signed-off Jira epic with a linked Confluence PRD.</p>
+    </div>
+    <div class="cta-ctas">
+      <a class="btn-white proto-jump" data-co="stripe" href="prototype.html?co=stripe">Open live prototype →</a>
+      <a class="btn-ghost" href="#dashboard">View dashboard</a>
+    </div>
+  </div>
+
+  <!-- ========== FROM SIGNAL TO SHIP ========== -->
+  <section class="signal-ship-section">
+    <div class="ss-head">
+      <div class="sec-kicker">A real-feeling story</div>
+      <h2 class="ss-title">23 minutes from first complaint to shipped fix.</h2>
+      <p class="ss-sub">This is what one OmniHub-driven incident looks like, end-to-end. Each line is a real moment in the pipeline. There are no manual hand-offs between them.</p>
+    </div>
+    <ol class="ss-strip" id="signalShip">
+      <li><span class="ss-t">−14 min</span><span class="ss-d"></span><span class="ss-c"><b>Zendesk</b> ticket #8812: <em>"card declined on safari"</em></span><span class="ss-tag">support</span></li>
+      <li><span class="ss-t">−11 min</span><span class="ss-d"></span><span class="ss-c"><b>Radar</b> false-positive rate crosses threshold</span><span class="ss-tag">internal</span></li>
+      <li><span class="ss-t">−9 min</span><span class="ss-d"></span><span class="ss-c">Viral <b>X</b> thread, 2.4k reposts</span><span class="ss-tag">social</span></li>
+      <li><span class="ss-t">−6 min</span><span class="ss-d"></span><span class="ss-c"><b>OmniHub</b> clusters 5 channels → one incident</span><span class="ss-tag tag-omni">cluster</span></li>
+      <li><span class="ss-t">−3 min</span><span class="ss-d"></span><span class="ss-c"><b>Auto-RICE</b>: 93.2 · pushed to <b>Jira</b> <em>PAY-2041</em></span><span class="ss-tag tag-omni">decide</span></li>
+      <li class="ss-now"><span class="ss-t">now</span><span class="ss-d"></span><span class="ss-c"><b>Hotfix shipped</b> · auth recovery <em>+2.1 pts</em> ✓</span><span class="ss-tag tag-done">shipped</span></li>
+    </ol>
+  </section>
+
+  <footer>
+    <div>
+      <div class="brand">
+        <div class="brand-mark"></div>
+        <div class="brand-text"><div class="n">OMNIHUB</div><div class="s">Real-time product intelligence</div></div>
+      </div>
+      <p style="margin-top:14px;max-width:36ch;line-height:1.5">The intelligence layer between customer voice and product decisions. Built for product teams that want to move faster with more conviction.</p>
+      <div class="lotus-foot">
+        <img src="assets/lotusx.png" alt="Lotus X Ventures" />
+        <div class="lab">A Lotus X Ventures company</div>
+      </div>
+    </div>
+    <div>
+      <h4>Product</h4>
+      <ul>
+        <li><a href="#platform">Platform</a></li>
+        <li><a href="prototype.html?co=stripe">Prototype</a></li>
+        <li><a href="#channels">Integrations</a></li>
+        <li><a href="#architecture">Architecture</a></li>
+        <li><a href="#roadmap">Roadmap</a></li>
+      </ul>
+    </div>
+    <div>
+      <h4>Company</h4>
+      <ul>
+        <li><a href="#platform">About</a></li>
+        <li><a href="#" data-pre="investors">Investors</a></li>
+        <li><a href="#" data-pre="careers">Careers</a></li>
+        <li><a href="#" data-pre="contact">Contact</a></li>
+      </ul>
+    </div>
+    <div>
+      <h4>Legal</h4>
+      <ul>
+        <li><a href="#roadmap" data-pre="privacy">Privacy</a></li>
+        <li><a href="#" data-pre="terms">Terms</a></li>
+        <li><a href="#architecture" data-pre="security">Security</a></li>
+      </ul>
+    </div>
+  </footer>
+
+</div>
+</div><!-- /.desktop-only -->
+
+<script>
+// Companies
+const COMPANIES = [
+  { slug: 'stripe',  name: 'Stripe',   kind: 'Fintech',       note: 'payments infrastructure', bg: '#635BFF', ch: 'S',
+    epic: 'Payment auth failure spike', score: 93.2, sources: '5 + 6',
+    rice: { R: 92, I: 88, C: 96, E: 18 }, jira: 'PAY-2041' },
+  { slug: 'shopify', name: 'Shopify',  kind: 'Commerce',      note: 'merchant platform', bg: '#5A8F29', ch: 'S',
+    epic: 'Checkout p95 regression', score: 91.8, sources: '5 + 6',
+    rice: { R: 96, I: 92, C: 91, E: 24 }, jira: 'CHECK-2210' },
+  { slug: 'notion',  name: 'Notion',   kind: 'Productivity',  note: 'workspace & docs', bg: '#111', ch: 'N',
+    epic: 'Sync conflicts on nested pages', score: 94.1, sources: '4 + 7',
+    rice: { R: 88, I: 96, C: 94, E: 32 }, jira: 'SYNC-4501' },
+  { slug: 'airbnb',  name: 'Airbnb',   kind: 'Marketplace',   note: 'travel & hosting', bg: '#FF5A5F', ch: 'A',
+    epic: 'Price-transparency failures', score: 95.4, sources: '6 + 5',
+    rice: { R: 98, I: 94, C: 92, E: 16 }, jira: 'TRUST-3301' },
+  { slug: 'github',  name: 'GitHub',   kind: 'Developer',     note: 'code collaboration', bg: '#0D1117', ch: 'G',
+    epic: 'Actions queue-time SLO', score: 92.6, sources: '5 + 7',
+    rice: { R: 94, I: 90, C: 93, E: 22 }, jira: 'ACT-1820' },
+];
+const COMP_BY_SLUG = Object.fromEntries(COMPANIES.map(c => [c.slug, c]));
+let activeCompany = COMP_BY_SLUG.stripe;
+
+// Hero logo chips
+const heroLogos = document.getElementById('heroLogos');
+const heroInput = document.getElementById('heroUrl');
+heroLogos.innerHTML = COMPANIES.map(c => `
+  <button type="button" class="logo-chip" data-slug="${c.slug}">
+    <span class="sq" style="background:${c.bg}">${c.ch}</span>
+    ${c.slug}.com
+  </button>
+`).join('');
+heroLogos.querySelectorAll('.logo-chip').forEach(b => {
+  b.addEventListener('mouseenter', () => { heroInput.value = b.dataset.slug + '.com'; });
+  b.addEventListener('click', () => { setActiveCompany(b.dataset.slug); jumpToProto(b.dataset.slug); });
+});
+
+function setActiveCompany(slug) {
+  if (!COMP_BY_SLUG[slug]) return;
+  activeCompany = COMP_BY_SLUG[slug];
+  heroInput.value = slug + '.com';
+  // restart mini decision card
+  startMiniDecision();
+  // update proto-jump targets
+  document.querySelectorAll('.proto-jump').forEach(b => b.dataset.co = slug);
+}
+
+// Company grid
+document.getElementById('coGrid').innerHTML = COMPANIES.map(c => `
+  <a class="co-tile" href="prototype.html?co=${c.slug}">
+    <div class="logo" style="background:${c.bg}">${c.ch}</div>
+    <div>
+      <div class="co-name">${c.name}</div>
+      <div class="co-note">${c.kind} · ${c.note}</div>
+    </div>
+    <div class="co-mini">
+      <div>Top epic<br/><b>${c.epic}</b></div>
+      <div>RICE<br/><b>${c.score}</b></div>
+    </div>
+    <span class="go">→</span>
+  </a>
+`).join('');
+
+// KPI count-up
+function animateCount(el) {
+  const target = parseFloat(el.dataset.count);
+  const decimals = parseInt(el.dataset.decimals || '0', 10);
+  const prefix = el.dataset.prefix || '';
+  const fmt = el.dataset.fmt;
+  const t0 = performance.now();
+  const dur = 1600;
+  function step() {
+    const t = Math.min(1, (performance.now() - t0) / dur);
+    const e = 1 - Math.pow(1 - t, 3);
+    const v = target * e;
+    let out;
+    if (fmt === 'k') out = (v/1000).toFixed(1) + 'K';
+    else out = decimals ? v.toFixed(decimals) : Math.floor(v).toLocaleString();
+    el.textContent = prefix + out;
+    if (t < 1) requestAnimationFrame(step);
+  }
+  requestAnimationFrame(step);
+}
+const io = new IntersectionObserver((entries) => {
+  entries.forEach(e => {
+    if (e.isIntersecting) {
+      animateCount(e.target);
+      io.unobserve(e.target);
+    }
+  });
+}, { threshold: 0.4 });
+document.querySelectorAll('.kpi .big').forEach(el => io.observe(el));
+
+// Make count-up idempotent + force-run any KPI already in view (fixes first-paint stuck zeros)
+function runVisibleKpis() {
+  document.querySelectorAll('.kpi .big').forEach(el => {
+    const r = el.getBoundingClientRect();
+    if (r.top < window.innerHeight && r.bottom > 0) animateCount(el);
+  });
+}
+window.addEventListener('load', () => {
+  runVisibleKpis();
+  setTimeout(runVisibleKpis, 400);
+});
+
+// Live-ish ticking signal volume
+setInterval(() => {
+  const bigs = document.querySelectorAll('.kpi .big');
+  // nudge signal volume
+  if (bigs[1]) {
+    const cur = parseFloat(bigs[1].textContent) || 19.5;
+    const next = (cur + Math.random() * 0.05).toFixed(1);
+    bigs[1].textContent = next + 'K';
+  }
+}, 2800);
+
+// ==================== CONSOLE: view switching ====================
+const VIEW_META = {
+  dash:   { label: 'Dashboard',      h: 'Decision cockpit' },
+  feed:   { label: 'Live Feed',      h: 'Every signal, as it arrives' },
+  queue:  { label: 'Priority Queue', h: 'Ranked by auto-RICE · 24h' },
+  crisis: { label: 'Crisis Monitor', h: '3 active thresholds breached' },
+  epics:  { label: 'Epics & Sync',   h: 'Board ↔ Jira ↔ Confluence' },
+};
+
+const railButtons = document.querySelectorAll('.rn');
+const viewPanes   = document.querySelectorAll('.cns-view');
+const cmdView     = document.getElementById('cmdView');
+const cmdH        = document.getElementById('cmdH');
+const feedListEl  = document.getElementById('feedList');
+
+function setView(view) {
+  railButtons.forEach(b => b.classList.toggle('active', b.dataset.view === view));
+  viewPanes.forEach(p => { p.hidden = p.dataset.view !== view; });
+  const m = VIEW_META[view];
+  if (m) { cmdView.textContent = m.label; cmdH.textContent = m.h; }
+  if (view === 'feed') startFeed(); else stopFeed();
+  if (view === 'dash') reAnimateKpis();
+  document.getElementById('console').setAttribute('data-view', view);
+}
+railButtons.forEach(b => b.addEventListener('click', () => setView(b.dataset.view)));
+
+// Re-run counters when dashboard re-opens
+function reAnimateKpis() {
+  document.querySelectorAll('#console .kpi .big').forEach(el => animateCount(el));
+}
+
+// ==================== LIVE FEED simulation ====================
+const FEED_SAMPLES = [
+  { k: 'support',  src: 'Zendesk',  sev: 'crit', t: "Card declined on Safari 18 — 3DS popup never loads. 3rd merchant today.", meta: 'ticket #48210 · Shopify Plus' },
+  { k: 'social',   src: 'X',        sev: 'neg',  t: "stripe is silently failing 3ds on ios safari for half my customers @stripe", meta: '@indiehacker · 2.4k reposts' },
+  { k: 'review',   src: 'Capterra', sev: 'neg',  t: "Onboarding still takes 10+ days. Atlas KYC is confusing — needs one screen.", meta: '★★★☆☆ · verified merchant' },
+  { k: 'internal', src: 'Jira',     sev: 'info', t: "PAY-2041 created · assigned payments-core · blocker label added", meta: 'auto-created by OmniHub' },
+  { k: 'support',  src: 'Intercom', sev: 'neg',  t: "Billing retry isn't catching our EU cards. Losing ~€8k/mo.", meta: 'CS conversation #11902' },
+  { k: 'social',   src: 'Reddit',   sev: 'neg',  t: "r/fintech — 'Stripe auth failure on Safari, anyone else seeing this today?'", meta: '312 upvotes · 48 comments' },
+  { k: 'review',   src: 'App Store',sev: 'pos',  t: "New dashboard feels way faster than 3 months ago. Finally.", meta: '★★★★★ · iOS 17.5' },
+  { k: 'internal', src: 'Slack',    sev: 'info', t: "#payments-core — 'rolling back radar rule r-8823 to stop the bleed'", meta: 'marta.g · 6 replies' },
+  { k: 'support',  src: 'Zendesk',  sev: 'neg',  t: "Mexican customers — issuer declines 4× vs last month. Losing trust.", meta: 'ticket #48301 · enterprise' },
+  { k: 'social',   src: 'LinkedIn', sev: 'pos',  t: "Stripe Tax has been the single biggest quality-of-life improvement this year.", meta: 'operator · 812 reactions' },
+  { k: 'internal', src: 'GitHub',   sev: 'info', t: "PR #2044 — 'revert radar rule r-8823 and add regression test'", meta: 'payments-core · CI green' },
+  { k: 'support',  src: 'Freshdesk',sev: 'neg',  t: "Webhook idempotency docs contradict the API reference — confusing devs.", meta: 'ticket #48340 · dev' },
+];
+let feedTimer = null;
+function pushFeedItem() {
+  const s = FEED_SAMPLES[Math.floor(Math.random() * FEED_SAMPLES.length)];
+  const li = document.createElement('li');
+  li.className = 'feed-item fade-in sev-' + s.sev;
+  li.innerHTML = `
+    <span class="fi-time">${new Date().toLocaleTimeString([], {hour:'2-digit',minute:'2-digit',second:'2-digit'})}</span>
+    <span class="fi-src"><i class="src-dot"></i>${s.src}</span>
+    <span class="fi-kind ${s.k}">${s.k}</span>
+    <div class="fi-body">
+      <div class="fi-t">${s.t}</div>
+      <div class="fi-m">${s.meta}</div>
+    </div>
+    <span class="fi-sev sev-${s.sev}">${s.sev}</span>`;
+  feedListEl.prepend(li);
+  while (feedListEl.children.length > 18) feedListEl.lastChild.remove();
+}
+function startFeed() {
+  if (feedTimer || !feedListEl) return;
+  if (!feedListEl.children.length) { for (let i=0;i<6;i++) pushFeedItem(); }
+  feedTimer = setInterval(pushFeedItem, 1400);
+}
+function stopFeed() { if (feedTimer) { clearInterval(feedTimer); feedTimer = null; } }
+
+// ==================== COMPANY SWITCHER in rail ====================
+const railSwap = document.getElementById('railSwap');
+const railMenu = document.getElementById('railMenu');
+railMenu.innerHTML = COMPANIES.map(c => `
+  <a href="prototype.html?co=${c.slug}">
+    <span class="sq" style="background:${c.bg}">${c.ch}</span>
+    <span class="nm">${c.slug}.com</span>
+    <span class="kd">${c.kind}</span>
+  </a>
+`).join('');
+railSwap.addEventListener('click', (e) => {
+  e.stopPropagation();
+  railMenu.classList.toggle('open');
+});
+document.addEventListener('click', () => railMenu.classList.remove('open'));
+
+// ==================== MODAL: Connect source ====================
+const connectBtn = document.getElementById('connectBtn');
+connectBtn.addEventListener('click', () => openModal('connect'));
+
+// ==================== MODAL: Create epic ====================
+const createEpicBtn = document.getElementById('createEpicBtn');
+createEpicBtn.addEventListener('click', () => openModal('epic'));
+
+function openModal(kind) {
+  const prev = document.getElementById('omModal');
+  if (prev) prev.remove();
+  const m = document.createElement('div');
+  m.id = 'omModal'; m.className = 'om-modal';
+  m.innerHTML = kind === 'connect' ? CONNECT_HTML : EPIC_HTML;
+  document.body.appendChild(m);
+  requestAnimationFrame(() => m.classList.add('open'));
+  m.addEventListener('click', (e) => { if (e.target === m || e.target.closest('[data-close]')) closeModal(); });
+  // simple form behavior
+  if (kind === 'connect') {
+    m.querySelectorAll('.src-pick').forEach(b => b.addEventListener('click', () => {
+      m.querySelectorAll('.src-pick').forEach(x => x.classList.remove('on'));
+      b.classList.add('on');
+      m.querySelector('.om-primary').removeAttribute('disabled');
+    }));
+    m.querySelector('.om-primary').addEventListener('click', () => finishConnect(m));
+  } else {
+    m.querySelector('.om-primary').addEventListener('click', () => finishEpic(m));
+  }
+}
+function closeModal() {
+  const m = document.getElementById('omModal');
+  if (!m) return;
+  m.classList.remove('open');
+  setTimeout(() => m.remove(), 200);
+}
+function finishConnect(m) {
+  const pick = m.querySelector('.src-pick.on');
+  const nm = pick ? pick.dataset.nm : 'New source';
+  const rail = document.querySelector('.rail-srcs');
+  const row = document.createElement('div');
+  row.className = 'rs-row rs-new';
+  row.innerHTML = `<span class="dt ok"></span><span class="nm">${nm}</span><span class="vt">syncing…</span>`;
+  rail.querySelector('.rs-foot').before(row);
+  m.querySelector('.om-body').innerHTML = `
+    <div class="om-success">
+      <svg viewBox="0 0 40 40" width="48" height="48"><circle cx="20" cy="20" r="18" fill="none" stroke="#0B8A7A" stroke-width="2"/><path d="M12 20 L18 26 L29 14" fill="none" stroke="#0B8A7A" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/></svg>
+      <h3>${nm} connected</h3>
+      <p>Backfilling last 90 days. You'll start seeing signals stream in within a few minutes.</p>
+      <button class="om-primary" data-close>Done</button>
+    </div>`;
+  m.querySelector('[data-close]').addEventListener('click', closeModal);
+}
+function finishEpic(m) {
+  const t = m.querySelector('#epicT').value || 'Untitled epic';
+  m.querySelector('.om-body').innerHTML = `
+    <div class="om-success">
+      <svg viewBox="0 0 40 40" width="48" height="48"><circle cx="20" cy="20" r="18" fill="none" stroke="#0B8A7A" stroke-width="2"/><path d="M12 20 L18 26 L29 14" fill="none" stroke="#0B8A7A" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/></svg>
+      <h3>Pushed to Jira</h3>
+      <p><b>${t}</b> is now <code>PAY-2041</code> in Jira. A linked Confluence PRD has been drafted in space <code>PAY</code>. 3 reviewers auto-assigned · #payments-core notified.</p>
+      <button class="om-primary" data-close>Back to dashboard</button>
+    </div>`;
+  m.querySelector('[data-close]').addEventListener('click', closeModal);
+}
+
+// Animate RICE bars inside the Create-epic modal as it opens
+function animateModalRice(modal) {
+  const VAL = { R: 92, I: 88, C: 96, E: 18 };
+  const COMPOSITE = 93.2;
+  const omScore = modal.querySelector('#omScore');
+  if (!omScore) return;
+  ['R','I','C','E'].forEach((k, i) => {
+    setTimeout(() => {
+      const fill = modal.querySelector(`[data-k="${k}"]`);
+      const val = modal.querySelector(`[data-v="${k}"]`);
+      if (fill) fill.style.width = VAL[k] + '%';
+      if (val) {
+        const t0 = performance.now(), dur = 700, target = VAL[k];
+        const tick = () => {
+          const t = Math.min(1, (performance.now() - t0)/dur);
+          val.textContent = Math.round(target * (1 - Math.pow(1 - t, 3)));
+          if (t < 1) requestAnimationFrame(tick);
+        };
+        requestAnimationFrame(tick);
+      }
+    }, 280 + i * 280);
+  });
+  setTimeout(() => {
+    const t0 = performance.now(), dur = 1000;
+    const tick = () => {
+      const t = Math.min(1, (performance.now() - t0)/dur);
+      omScore.textContent = (COMPOSITE * (1 - Math.pow(1 - t, 3))).toFixed(1);
+      if (t < 1) requestAnimationFrame(tick);
+    };
+    requestAnimationFrame(tick);
+  }, 1500);
+}
+// Hook into existing openModal — when it's an epic modal, kick off the RICE animation
+document.addEventListener('click', (e) => {
+  const b = e.target.closest('#createEpicBtn');
+  if (b) setTimeout(() => {
+    const m = document.getElementById('omModal');
+    if (m) animateModalRice(m);
+  }, 100);
+});
+
+const CONNECT_HTML = `
+  <div class="om-card">
+    <div class="om-head">
+      <div class="om-eyebrow">Integrations</div>
+      <h2>Connect a new source</h2>
+      <button class="om-x" data-close>✕</button>
+    </div>
+    <div class="om-body">
+      <p class="om-sub">OmniHub ingests, normalizes, and clusters every channel below into one decision stream. Pick one to begin OAuth.</p>
+      <div class="src-grid">
+        <button class="src-pick" data-nm="Linear"><b>Linear</b><span>Delivery signals</span></button>
+        <button class="src-pick" data-nm="HubSpot"><b>HubSpot</b><span>CRM &amp; revenue</span></button>
+        <button class="src-pick" data-nm="Discord"><b>Discord</b><span>Community</span></button>
+        <button class="src-pick" data-nm="Trustpilot"><b>Trustpilot</b><span>Reviews</span></button>
+        <button class="src-pick" data-nm="Mixpanel"><b>Mixpanel</b><span>Product analytics</span></button>
+        <button class="src-pick" data-nm="Segment"><b>Segment</b><span>Event bus</span></button>
+        <button class="src-pick" data-nm="Google Play"><b>Google Play</b><span>App reviews</span></button>
+        <button class="src-pick" data-nm="PagerDuty"><b>PagerDuty</b><span>Incidents</span></button>
+      </div>
+      <div class="om-webhook">
+        <span class="lb">or paste a webhook</span>
+        <input placeholder="https://hooks.yourcompany.com/omnihub" />
+      </div>
+      <div class="om-actions">
+        <button class="om-ghost" data-close>Cancel</button>
+        <button class="om-primary" disabled>Connect &amp; start ingesting →</button>
+      </div>
+    </div>
+  </div>`;
+
+const EPIC_HTML = `
+  <div class="om-card">
+    <div class="om-head">
+      <div class="om-eyebrow">Auto-drafted from top cluster · evidence-backed</div>
+      <h2>Create an epic from this signal</h2>
+      <button class="om-x" data-close>✕</button>
+    </div>
+    <div class="om-body">
+      <p class="om-sub">Pre-filled from the top-ranked cluster in the Priority Queue. RICE breakdown, evidence quotes, and target squad are all derived from live signal — review and push.</p>
+      <label class="om-l">Epic title</label>
+      <input id="epicT" class="om-input" value="Payment authorization failures on 3DS Safari 18" />
+      <label class="om-l">Problem statement</label>
+      <textarea class="om-input" rows="3">47 merchants report Radar false-positives on Safari 18 starting ~14 min ago. Cross-channel signal spike: Zendesk, X, Reddit, Slack.</textarea>
+
+      <label class="om-l">Auto-RICE breakdown</label>
+      <div class="om-rice" id="omRice">
+        <div class="omr-bar"><span class="omr-l">Reach</span><span class="omr-tr"><i data-k="R"></i></span><span class="omr-v" data-v="R">0</span></div>
+        <div class="omr-bar"><span class="omr-l">Impact</span><span class="omr-tr"><i data-k="I"></i></span><span class="omr-v" data-v="I">0</span></div>
+        <div class="omr-bar"><span class="omr-l">Confidence</span><span class="omr-tr"><i data-k="C"></i></span><span class="omr-v" data-v="C">0</span></div>
+        <div class="omr-bar omr-effort"><span class="omr-l">Effort ↓</span><span class="omr-tr"><i data-k="E"></i></span><span class="omr-v" data-v="E">0</span></div>
+        <div class="omr-foot"><span class="omr-eq">composite</span><span class="omr-score" id="omScore">0.0</span><span class="omr-of">/ 100</span></div>
+      </div>
+
+      <label class="om-l">Evidence pre-attached</label>
+      <div class="om-evidence">
+        <div class="ome-q"><span class="ome-c">My auth rate just dropped 2 points overnight. Only Safari users.</span><span class="ome-s">X · merchant</span></div>
+        <div class="ome-q"><span class="ome-c">#8812 — customer can complete 3DS but intent never confirms.</span><span class="ome-s">Zendesk · P1</span></div>
+        <div class="ome-q"><span class="ome-c">Radar flagged 12% of valid orders after the v3 rollout.</span><span class="ome-s">r/ecommerce</span></div>
+      </div>
+
+      <div class="om-kvs">
+        <div><div class="k">Target squad</div><div class="v">Payments-Core</div></div>
+        <div><div class="k">Reporter</div><div class="v">OmniHub</div></div>
+        <div><div class="k">Evidence</div><div class="v">2,140 sig</div></div>
+        <div><div class="k">Priority</div><div class="v">P1</div></div>
+      </div>
+      <label class="om-check"><input type="checkbox" checked /> Also draft a linked PRD in Confluence</label>
+      <label class="om-check"><input type="checkbox" checked /> Notify #payments-core on Slack &amp; auto-assign 3 reviewers</label>
+      <div class="om-actions">
+        <button class="om-ghost" data-close>Cancel</button>
+        <button class="om-primary">Push to Jira → PAY-2041</button>
+      </div>
+    </div>
+  </div>`;
+
+// ==================== ⌘K CLOSE MODAL ====================
+document.addEventListener('keydown', (e) => { if (e.key === 'Escape') { closeModal(); closeLegal(); } });
+
+// ==================== PROTOTYPE JUMP w/ crossfade ====================
+(function(){
+  const overlay = document.createElement('div');
+  overlay.id = 'protoFade';
+  overlay.innerHTML = '<div class="pf-inner"><div class="brand-mark"></div><div class="pf-l">Spinning up the brain…</div><div class="pf-bar"><i></i></div></div>';
+  document.body.appendChild(overlay);
+  function jump(slug, label) {
+    const url = 'prototype.html?co=' + encodeURIComponent(slug) + (label && label !== slug ? '&label=' + encodeURIComponent(label) : '');
+    overlay.classList.add('on');
+    setTimeout(() => location.href = url, 480);
+  }
+  window.jumpToProto = jump;
+  document.body.addEventListener('click', (e) => {
+    const b = e.target.closest('.proto-jump');
+    if (!b) return;
+    e.preventDefault();
+    const slug = b.dataset.co || 'stripe';
+    jump(slug);
+  });
+})();
+
+// ==================== HERO: Generate-demo input wiring ====================
+(function(){
+  const gen = document.getElementById('heroGen');
+  if (!gen) return;
+  function go() {
+    const raw = (heroInput.value || '').trim().toLowerCase().replace(/^https?:\/\//, '').replace(/^www\./, '');
+    const slug = raw.split(/[\.\/]/)[0] || 'stripe';
+    if (COMP_BY_SLUG[slug]) {
+      jumpToProto(slug);
+    } else {
+      // pass label so prototype renders the user's chosen company name on stripe data
+      const url = 'prototype.html?co=stripe&label=' + encodeURIComponent(slug);
+      const fade = document.getElementById('protoFade');
+      fade && fade.classList.add('on');
+      setTimeout(() => location.href = url, 480);
+    }
+  }
+  gen.addEventListener('click', go);
+  heroInput.addEventListener('keydown', (e) => { if (e.key === 'Enter') { e.preventDefault(); go(); } });
+})();
+
+// ==================== HERO: Signal Compression Animation ====================
+(function(){
+  const wrap = document.getElementById('compressionViz');
+  if (!wrap) return;
+  const svg = wrap.querySelector('svg');
+  const dotsG = svg.querySelector('#cvDots');
+  const ringsG = svg.querySelector('#cvRings');
+  const cvFrom = document.getElementById('cvFrom');
+  const cvTo = document.getElementById('cvTo');
+  const SOURCES = [
+    { color: '#1BA9C9' }, // Zendesk teal
+    { color: '#5B4CF7' }, // X violet
+    { color: '#F47860' }, // Reddit coral
+    { color: '#4ED0B8' }, // Intercom mint
+    { color: '#F4C85A' }, // App Store amber
+    { color: '#0B7082' }, // Slack deep teal
+  ];
+  // Cluster centers on the right (fixed)
+  const RING_X = [340, 380, 430, 470, 410, 460, 360];
+  const RING_Y = [22, 50, 30, 64, 110, 100, 130];
+  const RING_R = [10, 14, 12, 16, 11, 13, 10];
+  const RING_COL = ['#1BA9C9','#5B4CF7','#F47860','#4ED0B8','#F4C85A','#0B7082','#3EBE6F'];
+  // Pre-render rings (faded initially)
+  RING_X.forEach((x, i) => {
+    const r = document.createElementNS('http://www.w3.org/2000/svg', 'circle');
+    r.setAttribute('cx', x); r.setAttribute('cy', RING_Y[i]);
+    r.setAttribute('r', RING_R[i]); r.setAttribute('fill', 'none');
+    r.setAttribute('stroke', RING_COL[i]); r.setAttribute('stroke-width', 2);
+    r.setAttribute('opacity', 0);
+    r.classList.add('cv-ring');
+    ringsG.appendChild(r);
+  });
+
+  function rainCycle() {
+    // clear last cycle
+    while (dotsG.firstChild) dotsG.removeChild(dotsG.firstChild);
+    ringsG.querySelectorAll('.cv-ring').forEach(r => { r.setAttribute('opacity', 0); r.setAttribute('r', 0); });
+    let nFrom = 0;
+    cvFrom.textContent = '0'; cvTo.textContent = '0';
+    const TOTAL = 142;
+    for (let i = 0; i < TOTAL; i++) {
+      const sIdx = i % SOURCES.length;
+      const dot = document.createElementNS('http://www.w3.org/2000/svg', 'circle');
+      const startX = 12 + Math.random() * 220;
+      const startY = -8 + Math.random() * -40;
+      dot.setAttribute('cx', startX);
+      dot.setAttribute('cy', startY);
+      dot.setAttribute('r', 1.7);
+      dot.setAttribute('fill', SOURCES[sIdx].color);
+      dot.setAttribute('opacity', 0.85);
+      dotsG.appendChild(dot);
+      // animation timing
+      const delay = (i / TOTAL) * 4200;
+      const dur = 1400 + Math.random() * 900;
+      // first phase: rain to brain (x=260), y to band 30..130
+      const brainY = 30 + Math.random() * 100;
+      const ringIdx = Math.floor(Math.random() * 7);
+      const targetX = RING_X[ringIdx] + (Math.random() - .5) * RING_R[ringIdx];
+      const targetY = RING_Y[ringIdx] + (Math.random() - .5) * RING_R[ringIdx];
+      animateDot(dot, startX, startY, 260, brainY, delay, dur, () => {
+        nFrom++;
+        cvFrom.textContent = nFrom.toString();
+      }, () => {
+        // second phase: emerge as part of cluster
+        animateDot(dot, 260, brainY, targetX, targetY, 0, 700 + Math.random() * 400, null, () => {
+          // grow ring once enough dots arrive
+          const ring = ringsG.querySelectorAll('.cv-ring')[ringIdx];
+          const cur = parseFloat(ring.getAttribute('r'));
+          ring.setAttribute('r', Math.min(RING_R[ringIdx], cur + 1.2));
+          ring.setAttribute('opacity', Math.min(1, parseFloat(ring.getAttribute('opacity')) + 0.18));
+          // fade dot into ring
+          dot.setAttribute('opacity', 0.0);
+        });
+      });
+    }
+    // grow target counter to 7 over the cycle
+    let to = 0;
+    const ti = setInterval(() => {
+      to = Math.min(7, to + 1);
+      cvTo.textContent = to.toString();
+      if (to >= 7) clearInterval(ti);
+    }, 700);
+  }
+  function animateDot(el, x0, y0, x1, y1, delay, dur, onStart, onEnd) {
+    setTimeout(() => {
+      const t0 = performance.now();
+      onStart && onStart();
+      function step() {
+        const t = Math.min(1, (performance.now() - t0) / dur);
+        const e = t < .5 ? 2*t*t : 1 - Math.pow(-2*t+2, 2)/2;
+        el.setAttribute('cx', x0 + (x1 - x0) * e);
+        el.setAttribute('cy', y0 + (y1 - y0) * e);
+        if (t < 1) requestAnimationFrame(step);
+        else onEnd && onEnd();
+      }
+      requestAnimationFrame(step);
+    }, delay);
+  }
+  rainCycle();
+  setInterval(rainCycle, 8200);
+})();
+
+// ==================== HERO: Mini decision card looping demo ====================
+let _miniTO = [];
+function startMiniDecision() {
+  _miniTO.forEach(clearTimeout); _miniTO = [];
+  const c = activeCompany;
+  const titleEl = document.getElementById('mdTitle');
+  const scoreEl = document.getElementById('mdScore');
+  const jiraEl = document.getElementById('mdJira');
+  const evRow = document.getElementById('mdEvRow');
+  const titles = {
+    stripe:  'Resolve 3DS auth failures on Safari 18',
+    shopify: 'Cut checkout p95 latency before BFCM',
+    notion:  'End silent sync conflicts on nested pages',
+    airbnb:  'End total-price transparency failures',
+    github:  'Restore Actions runner queue-time SLO',
+  };
+  const evs = {
+    stripe:  ['Zendesk','X','Reddit','Slack','Radar'],
+    shopify: ['Intercom','r/shopify','Jira','App Store','Slack'],
+    notion:  ['r/Notion','Intercom','Linear','Reddit','Slack'],
+    airbnb:  ['App Store','r/travel','LinkedIn','Zendesk','X'],
+    github:  ['HN','Forum','r/devops','Slack','Issues'],
+  };
+  titleEl.textContent = titles[c.slug] || titles.stripe;
+  jiraEl.textContent = c.jira;
+  evRow.innerHTML = (evs[c.slug] || evs.stripe).map(s => `<span class="md-ev-pill">${s}</span>`).join('');
+
+  // reset bars
+  ['R','I','C','E'].forEach(k => {
+    document.querySelector(`[data-k="${k}"]`).style.width = '0%';
+    document.querySelector(`[data-v="${k}"]`).textContent = '0';
+  });
+  scoreEl.textContent = '0.0';
+
+  // animate
+  ['R','I','C','E'].forEach((k, i) => {
+    _miniTO.push(setTimeout(() => {
+      const v = c.rice[k];
+      document.querySelector(`[data-k="${k}"]`).style.width = v + '%';
+      _animMiniVal(document.querySelector(`[data-v="${k}"]`), 0, v, 700);
+    }, 400 + i * 320));
+  });
+  _miniTO.push(setTimeout(() => _animMiniVal(scoreEl, 0, c.score, 900, 1), 1900));
+
+  // restart loop
+  _miniTO.push(setTimeout(startMiniDecision, 12500));
+}
+function _animMiniVal(el, from, to, dur, decimals = 0) {
+  const t0 = performance.now();
+  function step() {
+    const t = Math.min(1, (performance.now() - t0) / dur);
+    const e = 1 - Math.pow(1 - t, 3);
+    const v = from + (to - from) * e;
+    el.textContent = decimals ? v.toFixed(decimals) : Math.floor(v);
+    if (t < 1) requestAnimationFrame(step);
+  }
+  requestAnimationFrame(step);
+}
+startMiniDecision();
+
+// ==================== KPI: sparkline draw-in + last-point pulse ====================
+(function(){
+  document.querySelectorAll('.kpi .spark polyline').forEach(p => {
+    const len = 240; // approx; works for our viewBox
+    p.style.strokeDasharray = len;
+    p.style.strokeDashoffset = len;
+    p.style.transition = 'stroke-dashoffset 1.3s cubic-bezier(.4,.1,.2,1)';
+    // place a last-point dot
+    const pts = p.getAttribute('points').trim().split(/\s+/);
+    const last = pts[pts.length - 1].split(',');
+    const dot = document.createElementNS('http://www.w3.org/2000/svg', 'circle');
+    dot.setAttribute('cx', last[0]); dot.setAttribute('cy', last[1]);
+    dot.setAttribute('r', 1.6); dot.setAttribute('fill', p.getAttribute('stroke'));
+    dot.setAttribute('class', 'spark-dot');
+    p.parentNode.appendChild(dot);
+  });
+  function drawSparks() {
+    document.querySelectorAll('.kpi .spark polyline').forEach(p => {
+      p.style.strokeDashoffset = '0';
+    });
+  }
+  setTimeout(drawSparks, 600);
+})();
+
+// ==================== CONSOLE: Cross-channel weather map ====================
+(function(){
+  const wrap = document.getElementById('weatherMap');
+  if (!wrap) return;
+  const ROWS = ['X / Twitter','Zendesk','Reddit','Intercom','App Store','Slack'];
+  const COLS = 48; // 30-min slices over 24h
+  // Build a believable matrix where the Safari issue ripples in this order:
+  // Zendesk first (slot 38), X (39), Reddit (40), Intercom (41), App Store (42), Slack (43)
+  // Earlier slots are noisy positive/neutral.
+  function genRow(name, spikeStart) {
+    const row = [];
+    for (let i = 0; i < COLS; i++) {
+      let sentiment = 'neu', intensity = Math.random() * 0.4;
+      if (Math.random() < 0.18) sentiment = 'pos', intensity = 0.3 + Math.random() * 0.3;
+      if (Math.random() < 0.12) sentiment = 'neg', intensity = 0.25 + Math.random() * 0.35;
+      // spike
+      if (spikeStart != null && i >= spikeStart && i <= spikeStart + 4) {
+        sentiment = 'crit';
+        intensity = 0.7 + (1 - Math.abs(i - spikeStart - 2) / 4) * 0.3;
+      } else if (spikeStart != null && i > spikeStart + 4 && i < spikeStart + 8) {
+        sentiment = 'neg';
+        intensity = 0.5 + Math.random() * 0.2;
+      }
+      row.push({ s: sentiment, v: intensity });
+    }
+    return row;
+  }
+  const SPIKES = [39, 38, 40, 41, 42, 43]; // X, Zendesk first, Reddit, Intercom, App Store, Slack
+  // Reorder rows: keep ROWS order but shift spike start to match propagation
+  const rowSpikes = { 'X / Twitter': 39, 'Zendesk': 38, 'Reddit': 40, 'Intercom': 41, 'App Store': 42, 'Slack': 43 };
+
+  let html = '';
+  ROWS.forEach((name, ri) => {
+    const data = genRow(name, rowSpikes[name]);
+    html += `<div class="wm-row"><div class="wm-rl">${name}</div><div class="wm-cells">`;
+    data.forEach((d, i) => {
+      const cls = 'wm-c wm-' + d.s;
+      const op = (d.v).toFixed(2);
+      const isSpike = i === rowSpikes[name];
+      html += `<i class="${cls}${isSpike ? ' wm-anchor' : ''}" style="--o:${op}"></i>`;
+    });
+    html += `</div></div>`;
+  });
+  wrap.innerHTML = html;
+  // Mark "Safari 3DS issue began 14 min ago" hover anchor
+  setTimeout(() => {
+    wrap.querySelectorAll('.wm-anchor').forEach((c, i) => {
+      setTimeout(() => c.classList.add('wm-pulse'), i * 220);
+    });
+  }, 600);
+})();
+
+// ==================== CRISIS: 10-minute SLA clock ====================
+(function(){
+  const ring = document.getElementById('ccRing');
+  const time = document.getElementById('ccTime');
+  const obs  = document.getElementById('ccObserved');
+  const sla  = document.getElementById('ccSla');
+  if (!ring) return;
+  // Start "incident" at 14 min ago
+  const startedAt = Date.now() - 14 * 60 * 1000;
+  // Detection happened at +8m of incident; we display SLA met
+  const detectedAt = startedAt + 8 * 60 * 1000;
+  const C = 213.6; // 2πr where r=34
+  function tick() {
+    const elapsed = Math.floor((Date.now() - startedAt) / 1000);
+    const mm = String(Math.floor(elapsed / 60)).padStart(2, '0');
+    const ss = String(elapsed % 60).padStart(2, '0');
+    time.textContent = `${mm}:${ss}`;
+    // detection elapsed is what fills the ring (cap at 10 min for the SLA window)
+    const detSec = Math.max(0, Math.min(600, (detectedAt - startedAt) / 1000));
+    const frac = detSec / 600;
+    ring.setAttribute('stroke-dashoffset', (C * (1 - frac)).toFixed(1));
+    // color transitions
+    let col = '#4ED0B8';
+    if (detSec >= 300) col = '#F4C85A';
+    if (detSec >= 540) col = '#F47860';
+    if (detSec > 600) col = '#C54417';
+    ring.setAttribute('stroke', col);
+    if (obs) obs.textContent = Math.floor(elapsed / 60) + ' min';
+    if (sla) sla.textContent = detSec <= 600 ? `✓ Met (${Math.round(detSec/60)}m)` : `✗ Missed (${Math.round(detSec/60)}m)`;
+  }
+  tick();
+  setInterval(tick, 1000);
+})();
+
+// ==================== CONSOLE: Live Feed filter chips + triangulation ====================
+(function(){
+  const filtersEl = document.querySelector('.fh-filters');
+  if (!filtersEl) return;
+  // map labels to kinds; All = null
+  const kindsByLabel = { 'All signals': null, 'Support': 'support', 'Social': 'social', 'Reviews': 'review', 'Internal': 'internal' };
+  // Add data-k attrs and badge containers
+  filtersEl.querySelectorAll('.fh-chip').forEach(b => {
+    const k = kindsByLabel[b.textContent.trim()];
+    b.dataset.k = k || 'all';
+    b.innerHTML = `${b.textContent}<span class="fh-count" data-k="${b.dataset.k}">0</span>`;
+  });
+  let activeKind = 'all';
+  filtersEl.addEventListener('click', (e) => {
+    const b = e.target.closest('.fh-chip');
+    if (!b) return;
+    filtersEl.querySelectorAll('.fh-chip').forEach(x => x.classList.toggle('active', x === b));
+    activeKind = b.dataset.k;
+    applyFilter();
+  });
+  function applyFilter() {
+    if (!feedListEl) return;
+    let matches = 0;
+    feedListEl.querySelectorAll('li').forEach(li => {
+      const k = li.dataset.k;
+      const show = activeKind === 'all' || k === activeKind;
+      li.style.display = show ? '' : 'none';
+      if (show) matches++;
+    });
+    // empty state
+    let empty = feedListEl.querySelector('.fh-empty');
+    if (matches === 0) {
+      if (!empty) {
+        empty = document.createElement('li');
+        empty.className = 'fh-empty';
+        feedListEl.appendChild(empty);
+      }
+      const labels = { support: 'support tickets', social: 'social mentions', review: 'reviews', internal: 'internal signals', all: 'signals' };
+      empty.textContent = `Listening for ${labels[activeKind] || 'signals'}… first matches expected within 30 seconds.`;
+    } else if (empty) empty.remove();
+    // update counts
+    document.querySelectorAll('.fh-count').forEach(c => {
+      const k = c.dataset.k;
+      const n = k === 'all'
+        ? feedListEl.querySelectorAll('li:not(.fh-empty)').length
+        : feedListEl.querySelectorAll(`li[data-k="${k}"]`).length;
+      c.textContent = n;
+    });
+  }
+  window._applyFeedFilter = applyFilter;
+
+  // override pushFeedItem to add data-k + theme + triangulation
+  const _origPush = window.pushFeedItem;
+  window.pushFeedItem = function() {
+    const s = FEED_SAMPLES[Math.floor(Math.random() * FEED_SAMPLES.length)];
+    const li = document.createElement('li');
+    li.className = 'feed-item fade-in sev-' + s.sev;
+    li.dataset.k = s.k;
+    if (s.theme) li.dataset.theme = s.theme;
+    li.innerHTML = `
+      <span class="fi-time">${new Date().toLocaleTimeString([], {hour:'2-digit',minute:'2-digit',second:'2-digit'})}</span>
+      <span class="fi-src"><i class="src-dot"></i>${s.src}</span>
+      <span class="fi-kind ${s.k}">${s.k}</span>
+      <div class="fi-body">
+        <div class="fi-t">${s.t}</div>
+        <div class="fi-m">${s.meta}</div>
+      </div>
+      <span class="fi-sev sev-${s.sev}">${s.sev}</span>`;
+    feedListEl.prepend(li);
+    while (feedListEl.children.length > 18) feedListEl.lastChild.remove();
+    applyFilter();
+    if (s.theme) tryTriangulate(s.theme);
+  };
+
+  function tryTriangulate(theme) {
+    const recents = Array.from(feedListEl.querySelectorAll(`li[data-theme="${theme}"]`)).slice(0, 3);
+    if (recents.length < 3) return;
+    recents.forEach(r => r.classList.add('tri'));
+    const chip = document.createElement('span');
+    chip.className = 'tri-chip';
+    chip.textContent = '+1 evidence · same theme';
+    recents[0].appendChild(chip);
+    setTimeout(() => {
+      recents.forEach(r => r.classList.remove('tri'));
+      chip.classList.add('fade');
+      setTimeout(() => chip.remove(), 600);
+    }, 3200);
+  }
+})();
+
+// Augment FEED_SAMPLES with themes for triangulation
+FEED_SAMPLES.forEach(s => {
+  if (/Safari|3DS|3ds/i.test(s.t)) s.theme = 'safari-3ds';
+  else if (/EU|Mexican|issuer/i.test(s.t)) s.theme = 'issuer-decline';
+  else if (/Atlas|onboarding|KYC/i.test(s.t)) s.theme = 'onboarding';
+});
+
+// ==================== PRIORITY QUEUE: render w/ explainable drawer ====================
+(function(){
+  const QUEUE = [
+    {
+      tag: 'Incident · Bug', now: true, title: 'Payment authorization failures on 3DS Safari 18',
+      meta: '2,140 signals · 47 merchants affected · Radar false-positive rate +12%',
+      rice: { R: 94, I: 88, C: 92, E: 42 }, score: 93.2,
+      explain: {
+        R: 'Affects ~47 merchants representing $2.1M in monthly volume.',
+        I: 'Auth-rate dip would drop conversion 1.8 points; sentiment intensity high.',
+        C: '5 of 7 channels reporting; cross-validated against Radar metrics.',
+        E: 'Historical Safari fixes average 1.6 sprints; current backlog moderate.',
+      },
+      jira: 'PAY-2041', sources: ['Zendesk','X','Reddit','Slack','Radar'],
+    },
+    {
+      tag: 'Feature', title: 'Atlas onboarding: collapse KYC & LLC steps',
+      meta: '1,640 signals · median time-to-live 14 days · churn correlation r=0.61',
+      rice: { R: 78, I: 71, C: 84, E: 58 }, score: 87.4,
+      explain: {
+        R: 'Touches ~31% of new merchant signups in the last 90 days.',
+        I: 'Reducing onboarding drop-off by 11% would lift activation by 4.6 pts.',
+        C: 'Capterra, Reddit, and CS interviews all converge on KYC step.',
+        E: 'Two-sprint redesign; needs Compliance review for KYC field changes.',
+      },
+      jira: 'ATLAS-214', sources: ['Capterra','Reddit','Intercom'],
+    },
+    {
+      tag: 'Risk', title: 'Mexico issuer decline rate 4× baseline',
+      meta: '820 signals · localized rails investigation required · finance liaison paged',
+      rice: { R: 52, I: 83, C: 74, E: 66 }, score: 79.1,
+      explain: {
+        R: 'Concentrated in 8 issuers but represents $480K monthly authorized volume.',
+        I: 'Brand and revenue: every weekend without progress compounds churn risk.',
+        C: 'Internal Slack + Zendesk converge; analyst commentary in line with data.',
+        E: 'Localized rails investigation — needs Risk + Compliance coordination.',
+      },
+      jira: 'PAY-2040', sources: ['Zendesk','Slack','Jira'],
+    },
+    {
+      tag: 'Feature', title: 'Billing: smart retries for involuntary churn',
+      meta: '1,220 signals · recover ~2.1% MRR · customer-success demand',
+      rice: { R: 69, I: 78, C: 72, E: 48 }, score: 74.6,
+      explain: {
+        R: 'Affects EU subscription cohort — ~14% of all Stripe billing customers.',
+        I: 'Smart retries projected to recover ~2.1% MRR based on historical models.',
+        C: 'Customer success has filed 11 explicit asks; Intercom data backs them.',
+        E: 'Rules engine extension; ~1 sprint, no migration risk.',
+      },
+      jira: 'BIL-881', sources: ['Intercom','CS','Reddit'],
+    },
+    {
+      tag: 'Docs', title: 'Webhook idempotency docs — developer confusion',
+      meta: '410 signals · GitHub discussions clustering · Stack Overflow traffic up',
+      rice: { R: 48, I: 44, C: 86, E: 22 }, score: 61.0,
+      explain: {
+        R: 'Affects integrators on the webhook surface — ~22% of API traffic.',
+        I: 'Reduces support load and accelerates time-to-first-200 for new devs.',
+        C: 'GitHub + Stack Overflow + forum all reference the same contradiction.',
+        E: 'Docs-only fix; ~3 days with one engineer-author pair.',
+      },
+      jira: 'DEV-118', sources: ['GitHub','SO','Forum'],
+    },
+  ];
+  const ol = document.getElementById('queueList');
+  if (!ol) return;
+  ol.innerHTML = QUEUE.map((q, i) => `
+    <li class="q-item ${q.now ? 'now' : ''}" data-i="${i}">
+      <div class="q-rank">${String(i+1).padStart(2,'0')}</div>
+      <div class="q-body">
+        <div class="q-tag">${q.tag}</div>
+        <div class="q-title">${q.title}</div>
+        <div class="q-meta">${q.meta}</div>
+        <div class="q-bars">
+          ${['R','I','C','E'].map(k => `<span class="qb"><em>${({R:'Reach',I:'Impact',C:'Confidence',E:'Effort'})[k]}</em><i style="width:${q.rice[k]}%"></i></span>`).join('')}
+        </div>
+      </div>
+      <div class="q-score"><div class="v">${q.score.toFixed(1)}</div><div class="k">RICE</div><div class="q-caret">▾</div></div>
+      <div class="q-explain">
+        <div class="qe-grid">
+          ${['R','I','C','E'].map(k => `
+            <div class="qe-row">
+              <div class="qe-l"><span class="qe-k">${({R:'Reach',I:'Impact',C:'Confidence',E:'Effort'})[k]}</span><span class="qe-v">${q.rice[k]}%</span></div>
+              <div class="qe-d">${q.explain[k]}</div>
+              <div class="qe-bar"><i style="width:${q.rice[k]}%"></i></div>
+            </div>
+          `).join('')}
+        </div>
+        <div class="qe-foot">
+          <span class="qe-formula">→ Composite RICE <b>${q.score.toFixed(1)}</b> · normalized × strategy × risk</span>
+          <span class="qe-sources">Evidence from ${q.sources.map(s => `<em>${s}</em>`).join(' · ')}</span>
+          <span class="qe-jira">→ Pre-drafted as <b>${q.jira}</b></span>
+        </div>
+      </div>
+    </li>
+  `).join('');
+  ol.addEventListener('click', (e) => {
+    const item = e.target.closest('.q-item');
+    if (!item) return;
+    item.classList.toggle('open');
+  });
+})();
+
+// ==================== EPICS: decision feed horizontal scroll cue ====================
+(function(){
+  const rail = document.getElementById('decisionFeed');
+  if (!rail) return;
+  // wheel-to-horizontal-scroll for ergonomics
+  rail.addEventListener('wheel', (e) => {
+    if (Math.abs(e.deltaX) > Math.abs(e.deltaY)) return;
+    rail.scrollLeft += e.deltaY;
+    e.preventDefault();
+  }, { passive: false });
+})();
+
+// ==================== CONNECT MODAL: ingestion animation ====================
+function finishConnectFancy(m, nm) {
+  // play a 2s "backfilling" animation, then success
+  m.querySelector('.om-body').innerHTML = `
+    <div class="om-ingest">
+      <div class="oi-head">Connecting <b>${nm}</b>…</div>
+      <div class="oi-stages">
+        <div class="oi-stage" data-i="0"><span class="oi-dot"></span><span class="oi-l">OAuth handshake</span><span class="oi-r">success</span></div>
+        <div class="oi-stage" data-i="1"><span class="oi-dot"></span><span class="oi-l">Backfilling 12 months</span><span class="oi-r oi-tick">0%</span></div>
+        <div class="oi-stage" data-i="2"><span class="oi-dot"></span><span class="oi-l">Indexing historical signals</span><span class="oi-r oi-tick">0</span></div>
+        <div class="oi-stage" data-i="3"><span class="oi-dot"></span><span class="oi-l">Detecting themes</span><span class="oi-r oi-tick">0</span></div>
+      </div>
+      <div class="oi-bar"><i></i></div>
+      <div class="oi-cap"><span id="oiCap">Securing tokens…</span></div>
+    </div>
+  `;
+  const stages = m.querySelectorAll('.oi-stage');
+  const bar = m.querySelector('.oi-bar i');
+  const cap = m.querySelector('#oiCap');
+  let total = 47302;
+  let themes = 8;
+  // Stage 0: instant
+  stages[0].classList.add('done');
+  setTimeout(() => { stages[1].classList.add('active'); cap.textContent = 'Backfilling 12 months of history…'; bar.style.width = '20%'; }, 200);
+  // Stage 1 progress (0 → 100%)
+  let p = 0;
+  const step = setInterval(() => {
+    p = Math.min(100, p + 6);
+    stages[1].querySelector('.oi-r').textContent = p + '%';
+    bar.style.width = (20 + p * 0.5) + '%';
+    if (p >= 100) {
+      clearInterval(step);
+      stages[1].classList.add('done');
+      stages[2].classList.add('active');
+      cap.textContent = 'Indexing 47,302 historical signals…';
+      // stage 2: count signals
+      let c = 0;
+      const stepC = setInterval(() => {
+        c = Math.min(total, c + 3200);
+        stages[2].querySelector('.oi-r').textContent = c.toLocaleString();
+        if (c >= total) {
+          clearInterval(stepC);
+          stages[2].classList.add('done');
+          stages[3].classList.add('active');
+          bar.style.width = '90%';
+          cap.textContent = 'Detecting themes via cross-channel clustering…';
+          let th = 0;
+          const stepT = setInterval(() => {
+            th = Math.min(themes, th + 1);
+            stages[3].querySelector('.oi-r').textContent = th;
+            if (th >= themes) {
+              clearInterval(stepT);
+              stages[3].classList.add('done');
+              bar.style.width = '100%';
+              cap.textContent = `${total.toLocaleString()} signals indexed · ${themes} themes detected`;
+              setTimeout(() => completeConnect(m, nm), 700);
+            }
+          }, 110);
+        }
+      }, 80);
+    }
+  }, 70);
+}
+function completeConnect(m, nm) {
+  const rail = document.querySelector('.rail-srcs');
+  const row = document.createElement('div');
+  row.className = 'rs-row rs-new';
+  row.innerHTML = `<span class="dt ok"></span><span class="nm">${nm}</span><span class="vt">live</span>`;
+  rail.querySelector('.rs-foot').before(row);
+  m.querySelector('.om-body').innerHTML = `
+    <div class="om-success">
+      <svg viewBox="0 0 40 40" width="48" height="48"><circle cx="20" cy="20" r="18" fill="none" stroke="#0B8A7A" stroke-width="2"/><path d="M12 20 L18 26 L29 14" fill="none" stroke="#0B8A7A" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/></svg>
+      <h3>${nm} connected</h3>
+      <p>Streaming live · 47,302 historical signals indexed · 8 themes detected. Cross-channel triangulation active in your existing decision stream.</p>
+      <button class="om-primary" data-close>Done</button>
+    </div>`;
+  m.querySelector('[data-close]').addEventListener('click', closeModal);
+}
+// Override the previous finishConnect
+finishConnect = function(m) {
+  const pick = m.querySelector('.src-pick.on');
+  const nm = pick ? pick.dataset.nm : 'New source';
+  finishConnectFancy(m, nm);
+};
+
+// (CONNECT_HTML caption already updated in source; finishConnect override uses ingestion animation.)
+
+// ==================== FOOTER LEGAL MODAL ====================
+(function(){
+  document.querySelectorAll('footer a[data-pre]').forEach(a => {
+    a.addEventListener('click', (e) => {
+      // allow links that already have an in-page anchor to work, plus open the small note
+      const target = a.getAttribute('href');
+      if (target && target.startsWith('#') && target !== '#') return;
+      e.preventDefault();
+      openLegal(a.dataset.pre, a.textContent.trim());
+    });
+  });
+})();
+function openLegal(pre, label) {
+  closeLegal();
+  const m = document.createElement('div');
+  m.id = 'legalModal'; m.className = 'om-modal legal';
+  const body = {
+    privacy:  'OmniHub processes only the signals customers route to us. Full Privacy Policy ships with v1 install. Auth tokens are scoped, encrypted at rest, and revocable.',
+    terms:    'Pre-launch — full Terms of Service ship with v1 install. Demo mode runs on synthetic data; nothing here is bound to your real systems.',
+    security: 'Pre-launch — see the Architecture section for the four-pillar security posture (RBAC, audit log, encrypted ingestion, override tracking). SOC 2 Type II in flight.',
+    investors:'Pre-launch — investor materials are shared on request. Reach the Lotus X partner team via the Built With chip in the top nav.',
+    careers:  'Pre-launch — we hire founding engineers, ML applied scientists, and product designers. No public listings yet.',
+    contact:  'Pre-launch — investor and design-partner conversations welcome. Reach the team via the Lotus X Ventures page linked in the Built With chip.',
+  }[pre] || 'We\'re pre-launch — full docs ship at install time.';
+  m.innerHTML = `
+    <div class="om-card legal-card">
+      <div class="om-head">
+        <div class="om-eyebrow">${label}</div>
+        <h2>Pre-launch · install-time docs</h2>
+        <button class="om-x" data-close>✕</button>
+      </div>
+      <div class="om-body">
+        <p class="om-sub">${body}</p>
+        <div class="om-actions">
+          <button class="om-ghost" data-close>Got it</button>
+          <a class="om-primary" href="#platform" data-close>Back to top</a>
+        </div>
+      </div>
+    </div>`;
+  document.body.appendChild(m);
+  requestAnimationFrame(() => m.classList.add('open'));
+  m.addEventListener('click', (e) => { if (e.target === m || e.target.closest('[data-close]')) closeLegal(); });
+}
+function closeLegal() {
+  const m = document.getElementById('legalModal');
+  if (!m) return;
+  m.classList.remove('open');
+  setTimeout(() => m.remove(), 200);
+}
+
+// ==================== CONNECT modal also called by legacy onclick ====================
+// (Already handled above by direct .onclick assignments.)
+</script>
+
+</body>
+</html>

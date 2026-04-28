@@ -1,0 +1,98 @@
+{
+  "company": {
+    "slug": "coinbase",
+    "name": "Coinbase",
+    "domain": "coinbase.com",
+    "industry": "Fintech",
+    "tagline": "cryptocurrency exchange platform",
+    "mark": { "bg": "#0052FF", "char": "C" },
+    "tier": "catalog"
+  },
+  "ingest": {
+    "signal_count": 42180,
+    "runtime_seconds": 39,
+    "sentiment_pct": { "positive": 15, "neutral": 32, "negative": 53 },
+    "sources": [
+      { "name": "X / Twitter",       "category": "external", "count": 16420 },
+      { "name": "Reddit",            "category": "external", "count":  5840 },
+      { "name": "Zendesk",           "category": "internal", "count":  8920 },
+      { "name": "Intercom",          "category": "internal", "count":  3210 },
+      { "name": "App Store reviews", "category": "external", "count":  1980 },
+      { "name": "Slack (internal)",  "category": "internal", "count":  3580 },
+      { "name": "Compliance Ops",    "category": "internal", "count":  1140 },
+      { "name": "Jira (dev logs)",   "category": "internal", "count":  1090 }
+    ],
+    "stream_samples": [
+      { "source": "X",          "sentiment": "negative", "text": "coinbase KYC stuck on \"verifying your ID\" for 6 days. Submitted a passport and selfie three times. Cannot trade, cannot withdraw.", "is_simulated": false },
+      { "source": "Reddit",     "sentiment": "negative", "text": "Tried to withdraw USDC after the ETF rally Wednesday — got \"processing\" for 38 hours. Coinbase blamed \"network congestion\" but on-chain was clear.", "is_simulated": false },
+      { "source": "Zendesk",    "sentiment": "negative", "text": "[#KYC-22041 P1] new account sign-up rejected after liveness check, no reason returned to the user. Repro'd on iOS 17.5 and Android 14.", "is_simulated": false },
+      { "source": "X",          "sentiment": "negative", "text": "swapped on Base, gas was quoted at $0.20 in the wallet preview, paid $4.80. L2 fee estimator is broken since the last app update.", "is_simulated": false },
+      { "source": "Compliance", "sentiment": "negative", "text": "KYC vendor v2 model is rejecting valid US driver licenses with holographic overlays. Manual review queue has 11.2k pending, oldest is 9 days.", "is_simulated": false },
+      { "source": "Reddit",     "sentiment": "negative", "text": "Staked ETH rewards stopped distributing for 4 epochs. Support says \"under investigation\" — meanwhile my rewards balance is frozen.", "is_simulated": false },
+      { "source": "Slack",      "sentiment": "negative", "text": "KYC throughput dropped 28% week-over-week after vendor v2 rollout. Manual queue is the bottleneck — every new-account funnel metric is regressing.", "is_simulated": false },
+      { "source": "Intercom",   "sentiment": "negative", "text": "Coinbase One renewed at $29.99 even though I downgraded to free tier on April 2. Receipt says \"premium plan\" but the app shows free. Confused.", "is_simulated": false },
+      { "source": "X",          "sentiment": "negative", "text": "2FA recovery loop: reset link goes to login, login asks for the 2FA I'm trying to recover. Trapped. Submitted a ticket 11 days ago.", "is_simulated": false },
+      { "source": "Zendesk",    "sentiment": "negative", "text": "[#TRADE-8814] NFT listing failed with \"contract not whitelisted\" — collection has been live for 6 months. Repro on web only, mobile works.", "is_simulated": false },
+      { "source": "App Store",  "sentiment": "positive", "text": "the new portfolio P&L breakdown by asset is clean. Finally don't need a third-party tracker for my Coinbase positions.", "is_simulated": false },
+      { "source": "Reddit",     "sentiment": "neutral",  "text": "is anyone else's KYC just sitting in 'review' for over a week? happened twice in a month, different accounts", "is_simulated": false },
+      { "source": "Jira",       "sentiment": "negative", "text": "[kyc-orchestrator] vendor v2 hard-rejects holographic licenses; fallback to manual queue is unbounded — needs a hard SLA + auto-route to vendor v1.", "is_simulated": false },
+      { "source": "Zendesk",    "sentiment": "negative", "text": "User submitted Brazilian RG, vendor returned \"document not supported\" but our policy doc says it is. Translation pipeline regressed.", "is_simulated": false }
+    ]
+  },
+  "clusters": [
+    { "title": "KYC throughput collapse on vendor v2 rollout",       "signal_count": 2410, "rice_score": 90.6, "is_top": true },
+    { "title": "Withdrawal SLA breaches after high-volume periods",  "signal_count": 1820, "rice_score": 83.1, "is_top": false },
+    { "title": "L2 gas fee estimator under-quotes Base/Optimism",    "signal_count": 1180, "rice_score": 74.5, "is_top": false },
+    { "title": "Staking reward distribution gaps",                   "signal_count":  820, "rice_score": 67.8, "is_top": false },
+    { "title": "2FA recovery loop traps locked-out users",           "signal_count":  640, "rice_score": 61.4, "is_top": false },
+    { "title": "Coinbase One downgrade then renewal billing bug",    "signal_count":  490, "rice_score": 54.2, "is_top": false },
+    { "title": "NFT listing fails on whitelisted collections (web)", "signal_count":  310, "rice_score": 47.9, "is_top": false }
+  ],
+  "top_epic": {
+    "title": "Restore KYC throughput post vendor-v2 rollout",
+    "rationale": "2,410 signals — concentrated in new-account sign-ups — converge on a single root cause: the v2 KYC vendor hard-rejects valid documents (holographic US licenses, Brazilian RG, EU ID) and the manual-review fallback is unbounded. Compliance Ops reports an 11.2k queue with a 9-day oldest item, KYC throughput is down 28% week-over-week, and every downstream funnel metric (first-trade, first-deposit, activation) is regressing.",
+    "verdict": "Activation-critical — the entire new-user funnel is gated on this.",
+    "recommendation": "Auto-route hard-reject document classes to vendor v1, cap manual-queue SLA at 24 hours, and add a CI shadow-eval against a labeled doc-corpus before any vendor model promotion.",
+    "rice": {
+      "reach":      88,
+      "impact":     90,
+      "confidence": 91,
+      "effort":     22,
+      "urgency":    92,
+      "strategy":   86,
+      "risk_inv":   78,
+      "composite":  90.6
+    },
+    "acceptance_criteria": [
+      "kyc-orchestrator auto-routes hard-reject classes (holographic US DL, BR RG, EU ID) to vendor v1 within 30s of rejection",
+      "Manual-review queue SLA enforced at 24h p95; pages on-call when queue depth > 5k",
+      "KYC pass-rate returns to within 3pp of pre-v2 baseline across top 10 doc types",
+      "Shadow-eval gate against 50k-doc labeled corpus required before any vendor model promotion"
+    ],
+    "evidence": [
+      { "quote": "KYC throughput dropped 28% week-over-week after vendor v2 rollout. Manual queue is the bottleneck.",  "source": "Slack · #compliance-ops" },
+      { "quote": "Manual review queue has 11.2k pending, oldest is 9 days.",                                            "source": "Compliance Ops · daily report" },
+      { "quote": "vendor v2 hard-rejects holographic licenses; fallback to manual queue is unbounded.",                 "source": "Jira · kyc-orchestrator" }
+    ]
+  },
+  "sync": {
+    "jira": {
+      "id": "KYC-3142",
+      "project": "KYC",
+      "type": "Epic",
+      "story_points": 28,
+      "status": "Created"
+    },
+    "confluence": {
+      "space": "KYC",
+      "title": "PRD · KYC vendor-v2 fallback routing + queue SLA",
+      "linked_jira": "KYC-3142",
+      "status": "Draft published"
+    }
+  },
+  "meta": {
+    "generated_at": "2026-04-26T12:34:56Z",
+    "generator": "catalog",
+    "seed": "coinbase.com"
+  }
+}

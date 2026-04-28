@@ -1,0 +1,97 @@
+{
+  "company": {
+    "slug": "robinhood",
+    "name": "Robinhood",
+    "domain": "robinhood.com",
+    "industry": "Fintech",
+    "tagline": "commission-free brokerage",
+    "mark": { "bg": "#00C805", "char": "R" },
+    "tier": "catalog"
+  },
+  "ingest": {
+    "signal_count": 33840,
+    "runtime_seconds": 35,
+    "sentiment_pct": { "positive": 17, "neutral": 30, "negative": 53 },
+    "sources": [
+      { "name": "X / Twitter",        "category": "external", "count": 12480 },
+      { "name": "Reddit",             "category": "external", "count":  4920 },
+      { "name": "App Store reviews",  "category": "external", "count":  2640 },
+      { "name": "Zendesk",            "category": "internal", "count":  7180 },
+      { "name": "Intercom",           "category": "internal", "count":  2410 },
+      { "name": "Slack (internal)",   "category": "internal", "count":  2980 },
+      { "name": "Jira (dev logs)",    "category": "internal", "count":   840 },
+      { "name": "Play Store reviews", "category": "external", "count":   390 }
+    ],
+    "stream_samples": [
+      { "source": "X",          "sentiment": "negative", "text": "robinhood market order at 9:30:02 EST executed at 9:30:41. NBBO moved 1.4% in those 39 seconds. routing to which venue exactly?", "is_simulated": false },
+      { "source": "Reddit",     "sentiment": "negative", "text": "Sold a covered call that expired ITM Friday. Cash settlement didn't post until Tuesday mid-day. Couldn't redeploy the buying power for 2 sessions.", "is_simulated": false },
+      { "source": "Zendesk",    "sentiment": "negative", "text": "[#RH-19920 P1] 1099-B for 2025 still not generated 9 weeks after year-end. User cannot file taxes. Third escalation.", "is_simulated": false },
+      { "source": "App Store",  "sentiment": "negative", "text": "tried to whitelist a BTC withdrawal address, app crashed on the QR scan step. iOS 18.3, iPhone 14 Pro. Repeatable.", "is_simulated": false },
+      { "source": "Slack",      "sentiment": "negative", "text": "Market-open execution quality regressed — fill-vs-NBBO slippage p95 up 38bps in the first 60s of the open. Routing weights to MEMX vs Citadel changed Friday?", "is_simulated": false },
+      { "source": "X",          "sentiment": "negative", "text": "robinhood gold downgrade to free \"in progress\" for 6 days. Still being charged the $5 fee. customer service told me to wait \"another billing cycle\".", "is_simulated": false },
+      { "source": "Reddit",     "sentiment": "negative", "text": "Maxed out my Roth IRA and got NO warning at the $7000 cap. Now I have an excess contribution to fix. The app should literally just block this.", "is_simulated": false },
+      { "source": "Zendesk",    "sentiment": "negative", "text": "[#ORDER-5512] options assignment notice arrived 14 hours after market close on expiration Friday. User missed the window to react premarket Monday.", "is_simulated": false },
+      { "source": "Intercom",   "sentiment": "neutral",  "text": "When does the 1099-DIV typically get released? Last year it was Feb 10, this year I still don't have it April 26.", "is_simulated": false },
+      { "source": "X",          "sentiment": "positive",  "text": "the new instant deposit limits for gold members are great, $50k same-day actually clears in seconds now", "is_simulated": false },
+      { "source": "Slack",      "sentiment": "negative", "text": "Tax-doc gen pipeline failed for ~14k accounts with multi-broker transfers — corp action reconciliation step throws on partial-share splits. Backfill ETA TBD.", "is_simulated": false },
+      { "source": "Reddit",     "sentiment": "negative", "text": "Crypto withdrawal whitelist 24h timer reset every time I edited the label. Effectively can never withdraw to a new address. Insane UX.", "is_simulated": false },
+      { "source": "Jira",       "sentiment": "negative", "text": "[order-router] open-auction routing weights drifted after Friday's config push — MEMX share dropped 22pp, slippage on MOO orders up materially.", "is_simulated": false },
+      { "source": "Zendesk",    "sentiment": "negative", "text": "User couldn't downgrade Gold via app — toggle reverts after restart. Web works. iOS-only regression since v2024.16.", "is_simulated": false }
+    ]
+  },
+  "clusters": [
+    { "title": "Market-open execution quality regression",          "signal_count": 1980, "rice_score": 89.8, "is_top": true },
+    { "title": "1099 tax-doc generation lag for multi-broker accts","signal_count": 1640, "rice_score": 82.4, "is_top": false },
+    { "title": "Options expiration cash-settlement delays",         "signal_count": 1080, "rice_score": 74.6, "is_top": false },
+    { "title": "Crypto withdrawal whitelist 24h timer reset bug",   "signal_count":  720, "rice_score": 66.2, "is_top": false },
+    { "title": "Gold subscription downgrade silently reverts",      "signal_count":  540, "rice_score": 58.9, "is_top": false },
+    { "title": "IRA contribution limit warnings missing in-app",    "signal_count":  410, "rice_score": 52.3, "is_top": false }
+  ],
+  "top_epic": {
+    "title": "Restore market-open execution quality on order routing",
+    "rationale": "1,980 signals — including direct fills traders can timestamp and screenshot — point at a Friday config push that drifted open-auction routing weights. Internal telemetry confirms: fill-vs-NBBO slippage p95 up 38bps in the first 60s of the open, MEMX share dropped 22pp, and MOO slippage moved materially. Execution quality is the brokerage's load-bearing trust signal — every basis point of slippage at the open is visible to the most sophisticated cohort and ends up on r/options within an hour.",
+    "verdict": "Trust-critical — execution quality is the table-stakes contract.",
+    "recommendation": "Roll back the Friday router config, gate future router changes behind a TCA-replay shadow eval, and surface daily NBBO-slippage SLOs to the on-call rotation.",
+    "rice": {
+      "reach":      85,
+      "impact":     92,
+      "confidence": 90,
+      "effort":     24,
+      "urgency":    94,
+      "strategy":   84,
+      "risk_inv":   76,
+      "composite":  89.8
+    },
+    "acceptance_criteria": [
+      "Open-auction routing weights restored to pre-Friday baseline; MEMX share within 5pp of historical mean",
+      "Fill-vs-NBBO slippage p95 in first 60s of open returns to under 8bps across the top 200 tickers",
+      "TCA-replay shadow eval gates every order-router config change in CI; regressions > 3bps block merge",
+      "Daily NBBO-slippage SLO dashboard wired into on-call paging with a 15bps p95 threshold"
+    ],
+    "evidence": [
+      { "quote": "Market-open execution quality regressed — fill-vs-NBBO slippage p95 up 38bps in the first 60s of the open.", "source": "Slack · #execution-quality" },
+      { "quote": "open-auction routing weights drifted after Friday's config push — MEMX share dropped 22pp.",                  "source": "Jira · order-router" },
+      { "quote": "Market order at 9:30:02 executed at 9:30:41. NBBO moved 1.4% in those 39 seconds.",                            "source": "X · active trader" }
+    ]
+  },
+  "sync": {
+    "jira": {
+      "id": "TRADE-9214",
+      "project": "Trade",
+      "type": "Epic",
+      "story_points": 24,
+      "status": "Created"
+    },
+    "confluence": {
+      "space": "TRADE",
+      "title": "PRD · Open-auction routing rollback + TCA-replay gate",
+      "linked_jira": "TRADE-9214",
+      "status": "Draft published"
+    }
+  },
+  "meta": {
+    "generated_at": "2026-04-26T12:34:56Z",
+    "generator": "catalog",
+    "seed": "robinhood.com"
+  }
+}

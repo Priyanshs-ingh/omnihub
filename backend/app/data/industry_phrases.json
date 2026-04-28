@@ -1,0 +1,676 @@
+{
+  "fintech": {
+    "tagline_options": [
+      "consumer fintech",
+      "payments infrastructure",
+      "embedded finance platform",
+      "trading and brokerage",
+      "challenger banking app"
+    ],
+    "mark_palette": ["#635BFF", "#0052FF", "#00C805", "#1FB876", "#5C2D91", "#0B0B45"],
+    "jira_keys": ["PAY", "FIN", "WALLET", "RAILS", "BANK", "TRADE"],
+    "industry_label": "Fintech",
+    "sources": [
+      { "name": "X / Twitter",      "category": "external", "weight": 0.32 },
+      { "name": "Reddit",           "category": "external", "weight": 0.10 },
+      { "name": "App Store reviews","category": "external", "weight": 0.08 },
+      { "name": "Zendesk",          "category": "internal", "weight": 0.18 },
+      { "name": "Intercom",         "category": "internal", "weight": 0.07 },
+      { "name": "Slack (internal)", "category": "internal", "weight": 0.10 },
+      { "name": "Risk & Fraud",     "category": "internal", "weight": 0.08 },
+      { "name": "Jira (dev logs)",  "category": "internal", "weight": 0.07 }
+    ],
+    "signal_templates": [
+      { "sentiment": "negative", "text": "{company} just declined my card with no SMS step-up. third time today.", "source_pool": ["X / Twitter","App Store reviews"] },
+      { "sentiment": "negative", "text": "ACH transfer to {company} stuck in pending for 4 days, support says \"normal\"", "source_pool": ["Reddit","Zendesk"] },
+      { "sentiment": "negative", "text": "[#P1] customer authorized 3DS but the intent never confirms on iOS 18", "source_pool": ["Zendesk"] },
+      { "sentiment": "negative", "text": "KYC rejecting valid passports from LATAM since the v2 ML model rolled out", "source_pool": ["Zendesk","Intercom"] },
+      { "sentiment": "negative", "text": "Auth-rate slipped 1.8pp this week, isolated to Safari users", "source_pool": ["Slack (internal)"] },
+      { "sentiment": "negative", "text": "Risk model is flagging legitimate orders at 3x the baseline since the v3 ramp", "source_pool": ["Risk & Fraud","Slack (internal)"] },
+      { "sentiment": "negative", "text": "{company} 2FA loops on Chrome 130 mobile, can't get past the SMS step", "source_pool": ["X / Twitter","Reddit"] },
+      { "sentiment": "negative", "text": "Webhook idempotency edge cases caused duplicate ACH credits in our staging env", "source_pool": ["Zendesk","Jira (dev logs)"] },
+      { "sentiment": "negative", "text": "Statement export PDF for last month is missing 6 transactions, off by ~$340", "source_pool": ["Zendesk"] },
+      { "sentiment": "neutral",  "text": "anyone else seeing {company} dashboard show 'requires_action' but customer says paid?", "source_pool": ["Reddit"] },
+      { "sentiment": "positive", "text": "{company}'s new instant payouts saved me from a payroll miss this morning. clutch.", "source_pool": ["X / Twitter"] },
+      { "sentiment": "negative", "text": "Refund ETA email says 5-10 days, actual settlement is 3. confused customers.", "source_pool": ["Zendesk"] },
+      { "sentiment": "negative", "text": "[risk-engine] false-positive rate on Apple Pay tokenized cards spiking +28% wow", "source_pool": ["Jira (dev logs)","Risk & Fraud"] }
+    ],
+    "cluster_templates": [
+      "Payment auth failures on Safari",
+      "Risk model false-positive surge after v3 ramp",
+      "ACH settlement delays for new customers",
+      "KYC rejecting valid LATAM documents",
+      "2FA loop on Chrome mobile",
+      "Statement export missing transactions",
+      "Webhook duplicate-credit edge cases"
+    ],
+    "top_epic_templates": [
+      {
+        "title_template": "Stabilize {company} payment auth on Safari",
+        "rationale_template": "{company}'s clearest live pattern is a spike in payment auth failures on Safari, surfaced across 2,100+ signals from X, Zendesk and merchant communities. Auth-rate has dipped ~2pp in the last 7 days and concentrates on iOS 18.",
+        "verdict": "Revenue-blocking — every hour of drift is unrecovered GMV.",
+        "recommendation": "Roll back the autocomplete experiment behind a flag, then re-roll with iOS Safari isolated. Add a per-merchant kill switch.",
+        "rice": { "reach": 88, "impact": 90, "confidence": 92, "effort": 22, "urgency": 88, "strategy": 82, "risk_inv": 78 },
+        "acceptance_criteria": [
+          "Detect autocomplete failure on Safari and fall back to manual entry",
+          "Per-region kill switch for the autocomplete experiment",
+          "Surface auth-rate dip in the merchant dashboard within 15 min",
+          "Backfill payment session if autocomplete crashes mid-flow"
+        ],
+        "evidence_templates": [
+          { "quote": "Auth rate just dropped 2 points overnight. Only Safari users.", "source_template": "X · merchant" },
+          { "quote": "Customer authorized 3DS but the intent never confirms on iOS 18.", "source_template": "Zendesk · P1" },
+          { "quote": "Auth-rate slipped 1.8pp this week, isolated to Safari users.", "source_template": "Slack · #payments-health" }
+        ]
+      },
+      {
+        "title_template": "Re-tune {company} risk model to recover false-positive headroom",
+        "rationale_template": "Across 1,800+ signals, the v3 risk-model ramp is flagging legitimate orders at 3x baseline. Merchants are seeing chargeback rates flat while approval rate falls — meaning we're losing good revenue to overcaution.",
+        "verdict": "Margin-critical — false positives erode merchant trust faster than fraud losses.",
+        "recommendation": "Pause the v3 ramp at 50% traffic, re-baseline thresholds against last quarter's chargeback truth, then resume ramp.",
+        "rice": { "reach": 84, "impact": 86, "confidence": 90, "effort": 28, "urgency": 80, "strategy": 84, "risk_inv": 72 },
+        "acceptance_criteria": [
+          "v3 model traffic share capped at 50% pending re-baseline",
+          "False-positive rate dashboard surfaced to merchants",
+          "Per-merchant override on aggressive signals during re-baseline",
+          "Weekly risk-quality report auto-generated"
+        ],
+        "evidence_templates": [
+          { "quote": "Risk model flagged 12% of valid orders after the v3 rollout.", "source_template": "r/ecommerce" },
+          { "quote": "False-positive rate on tokenized cards spiking +28% WoW.", "source_template": "Jira · risk-engine" },
+          { "quote": "Our chargeback rate didn't even move, but approval rate did.", "source_template": "X · merchant" }
+        ]
+      }
+    ]
+  },
+  "commerce": {
+    "tagline_options": ["commerce platform for merchants", "headless storefronts", "DTC-first marketplace", "creator commerce"],
+    "mark_palette": ["#5A8F29", "#FF7A00", "#0EA5E9", "#7C3AED", "#16A34A"],
+    "jira_keys": ["STORE", "RETAIL", "CART", "CHECKOUT", "MERCH"],
+    "industry_label": "Commerce",
+    "sources": [
+      { "name": "X / Twitter",      "category": "external", "weight": 0.30 },
+      { "name": "Reddit",           "category": "external", "weight": 0.12 },
+      { "name": "App Store reviews","category": "external", "weight": 0.10 },
+      { "name": "Zendesk",          "category": "internal", "weight": 0.20 },
+      { "name": "Intercom",         "category": "internal", "weight": 0.08 },
+      { "name": "Slack (internal)", "category": "internal", "weight": 0.10 },
+      { "name": "GitHub Issues",    "category": "external", "weight": 0.05 },
+      { "name": "Jira (dev logs)",  "category": "internal", "weight": 0.05 }
+    ],
+    "signal_templates": [
+      { "sentiment": "negative", "text": "{company} checkout button just disappeared on our store for 4 hours. status page silent.", "source_pool": ["X / Twitter"] },
+      { "sentiment": "negative", "text": "Theme editor crashes when editing the product page on the latest update", "source_pool": ["Reddit","App Store reviews"] },
+      { "sentiment": "negative", "text": "[#P1] checkout abandoning at the shipping step, only on iOS Safari", "source_pool": ["Zendesk"] },
+      { "sentiment": "negative", "text": "Bulk discount applies to gift cards even when the exclusion is enabled — refunds piling up", "source_pool": ["Zendesk"] },
+      { "sentiment": "negative", "text": "{company} app keeps logging me out every time I open it", "source_pool": ["App Store reviews"] },
+      { "sentiment": "negative", "text": "GraphQL Admin API rate-limit cost calculations changed without notice, our app got throttled at 2x previous", "source_pool": ["Intercom","GitHub Issues"] },
+      { "sentiment": "negative", "text": "Multi-currency rounding shows different totals on cart vs checkout for AUD", "source_pool": ["Zendesk"] },
+      { "sentiment": "negative", "text": "lost $14k in sales today because {company} stopped letting customers complete checkout", "source_pool": ["X / Twitter"] },
+      { "sentiment": "negative", "text": "Embedded checkout takes 4-5s to first paint on slow 3G, lost cart instrumented", "source_pool": ["Slack (internal)"] },
+      { "sentiment": "neutral",  "text": "anyone else's POS loyalty integration not pulling the right cart? regional rollout maybe", "source_pool": ["Reddit"] },
+      { "sentiment": "positive", "text": "{company} magic suggested product descriptions saved me an afternoon. real win.", "source_pool": ["X / Twitter"] },
+      { "sentiment": "negative", "text": "[checkout-extension] custom field validation runs after submit instead of before", "source_pool": ["Jira (dev logs)"] }
+    ],
+    "cluster_templates": [
+      "Checkout abandonment spike on iOS Safari",
+      "Theme editor crash on latest update",
+      "Admin API rate-limit cost regressions",
+      "Multi-currency penny rounding discrepancies",
+      "Mobile app forced re-auth loop",
+      "Embedded checkout slow first paint",
+      "Bulk discount exclusion bug on gift cards"
+    ],
+    "top_epic_templates": [
+      {
+        "title_template": "Stabilize {company} checkout on iOS Safari",
+        "rationale_template": "Across 2,400+ signals from merchants, support tickets and the {company} app store, the dominant pattern is checkout silently failing on iOS Safari. Mobile abandonment is up 4pp WoW and concentrated in this cohort.",
+        "verdict": "Revenue-blocking — every hour of drift costs Plus merchants real GMV.",
+        "recommendation": "Roll back the autocomplete change behind a flag, then re-roll with iOS Safari isolated.",
+        "rice": { "reach": 88, "impact": 90, "confidence": 92, "effort": 24, "urgency": 86, "strategy": 82, "risk_inv": 78 },
+        "acceptance_criteria": [
+          "Detect autocomplete failure on iOS Safari and fall back to manual entry",
+          "Per-region kill switch for the autocomplete experiment",
+          "Surface checkout abandonment delta to the merchant dashboard within 15 min",
+          "Backfill checkout session if autocomplete crashes mid-flow"
+        ],
+        "evidence_templates": [
+          { "quote": "Lost $14k today because {company} stopped letting customers complete checkout.", "source_template": "X · Plus merchant" },
+          { "quote": "Checkout abandoning at the shipping step, only on iOS Safari.", "source_template": "Zendesk · P1" },
+          { "quote": "Mobile abandonment up 4.3pp WoW, isolated to iOS Shop Pay flow.", "source_template": "Slack · #checkout-health" }
+        ]
+      }
+    ]
+  },
+  "developer": {
+    "tagline_options": ["developer platform", "ci/cd and runners", "frontend hosting", "observability platform", "edge compute"],
+    "mark_palette": ["#0D1117", "#5E6AD2", "#000000", "#F38020", "#7B61FF", "#0052CC"],
+    "jira_keys": ["PLATFORM", "INFRA", "DEPLOY", "DEV", "BUILD", "CORE"],
+    "industry_label": "Developer",
+    "sources": [
+      { "name": "X / Twitter",        "category": "external", "weight": 0.22 },
+      { "name": "Reddit",             "category": "external", "weight": 0.10 },
+      { "name": "Hacker News",        "category": "external", "weight": 0.08 },
+      { "name": "GitHub Issues",      "category": "external", "weight": 0.18 },
+      { "name": "Zendesk",            "category": "internal", "weight": 0.14 },
+      { "name": "Slack (internal)",   "category": "internal", "weight": 0.10 },
+      { "name": "Datadog (alerts)",   "category": "internal", "weight": 0.08 },
+      { "name": "Jira (dev logs)",    "category": "internal", "weight": 0.10 }
+    ],
+    "signal_templates": [
+      { "sentiment": "negative", "text": "{company} CI runner cold-start back to 90s+. our CI budget is screaming.", "source_pool": ["X / Twitter","Hacker News"] },
+      { "sentiment": "negative", "text": "Build queue depth past 8k for the hosted-large pool, p99 wait crossed 4min", "source_pool": ["Slack (internal)","Datadog (alerts)"] },
+      { "sentiment": "negative", "text": "[#P1] Enterprise SAML token refresh failing intermittently for Okta-federated orgs", "source_pool": ["Zendesk"] },
+      { "sentiment": "negative", "text": "{company} REST API: list-pull-requests with state=closed silently re-includes open PRs", "source_pool": ["GitHub Issues","Reddit"] },
+      { "sentiment": "negative", "text": "Code search returning 6-month-old results for actively-edited files. indexing lag must be huge.", "source_pool": ["Hacker News","Reddit"] },
+      { "sentiment": "negative", "text": "[alert] runner_cold_start_p95 SLO breach 3rd day running, > 75s threshold", "source_pool": ["Datadog (alerts)"] },
+      { "sentiment": "negative", "text": "{company} workspace ports invalidating mid-session, especially on long-lived devcontainers", "source_pool": ["Zendesk"] },
+      { "sentiment": "negative", "text": "actions/cache@v4 silently fails when ZSTD compression level is auto on Windows runners", "source_pool": ["GitHub Issues"] },
+      { "sentiment": "negative", "text": "Audit log streaming to SIEM has gaps for ~12min during peak hours daily", "source_pool": ["Reddit","Slack (internal)"] },
+      { "sentiment": "positive", "text": "{company} workspace plan-mode is actually good for refactor PRs. impressed.", "source_pool": ["X / Twitter"] },
+      { "sentiment": "neutral",  "text": "anyone else find the new {company} sidebar layout buries the Insights tab?", "source_pool": ["Hacker News"] },
+      { "sentiment": "negative", "text": "[ci-runners] cold-start regression traced to the v25.4 image bake — cache layer not reused", "source_pool": ["Jira (dev logs)"] }
+    ],
+    "cluster_templates": [
+      "CI runner cold-start regression",
+      "Enterprise SAML token refresh flakiness",
+      "Code search index lag on hot files",
+      "Audit log streaming gaps to enterprise SIEMs",
+      "Devcontainer port invalidation mid-session",
+      "GraphQL API silent pagination drift",
+      "Action cache compression edge cases"
+    ],
+    "top_epic_templates": [
+      {
+        "title_template": "Restore {company} CI runner cold-start to sub-30s on hosted-large",
+        "rationale_template": "Nearly 2,000 signals across X, HN, GitHub Issues and Datadog point at the v25.4 runner image regressing layer-cache reuse. Cold-start p95 is sitting above 75s for 3 days running, breaching SLO. Customers are watching CI budgets balloon.",
+        "verdict": "Platform-critical — every minute of cold-start is billed against customer CI budgets.",
+        "recommendation": "Roll back the v25.4 image, fix the cache layer, ship with regression tests for layer-reuse before re-rolling.",
+        "rice": { "reach": 88, "impact": 88, "confidence": 92, "effort": 22, "urgency": 86, "strategy": 86, "risk_inv": 78 },
+        "acceptance_criteria": [
+          "Cold-start p95 on hosted-large back to < 30s for 7 consecutive days",
+          "Cache layer reuse rate > 95% in CI metrics",
+          "Image-bake CI gate fails on layer-reuse regression",
+          "Provisioning queue depth alarm threshold lowered to 2k"
+        ],
+        "evidence_templates": [
+          { "quote": "{company} runner cold-start back to 90s+. CI budget is screaming.", "source_template": "X · platform eng" },
+          { "quote": "runner_cold_start_p95 SLO breach 3rd day running.", "source_template": "Datadog · alert" },
+          { "quote": "Cold-start regression traced to v25.4 image bake.", "source_template": "Jira · ci-runners" }
+        ]
+      }
+    ]
+  },
+  "design": {
+    "tagline_options": ["collaborative design platform", "creator design tool", "in-browser design canvas", "design systems platform"],
+    "mark_palette": ["#F24E1E", "#00C4CC", "#7C3AED", "#FF66C4", "#0EA5E9"],
+    "jira_keys": ["DESIGN", "CANVAS", "EDIT", "STUDIO"],
+    "industry_label": "Design",
+    "sources": [
+      { "name": "X / Twitter",        "category": "external", "weight": 0.28 },
+      { "name": "Reddit",             "category": "external", "weight": 0.10 },
+      { "name": "App Store reviews",  "category": "external", "weight": 0.06 },
+      { "name": "Zendesk",            "category": "internal", "weight": 0.18 },
+      { "name": "Intercom",           "category": "internal", "weight": 0.10 },
+      { "name": "Slack (internal)",   "category": "internal", "weight": 0.10 },
+      { "name": "GitHub Issues",      "category": "external", "weight": 0.06 },
+      { "name": "Jira (dev logs)",    "category": "internal", "weight": 0.12 }
+    ],
+    "signal_templates": [
+      { "sentiment": "negative", "text": "{company} canvas freezes on files past 2k layers. M3 Max, 64GB RAM. unusable.", "source_pool": ["X / Twitter"] },
+      { "sentiment": "negative", "text": "Multiplayer cursors stutter during live whiteboarding when 8+ collaborators join", "source_pool": ["Zendesk","Reddit"] },
+      { "sentiment": "negative", "text": "Auto-layout breaks when nesting variants 3 levels deep — child padding ignored", "source_pool": ["Zendesk"] },
+      { "sentiment": "negative", "text": "{company} dev-mode 'inspect' shows wrong CSS for components using local variables", "source_pool": ["Reddit"] },
+      { "sentiment": "negative", "text": "Plugin SDK v2 broke our handoff flow — postMessage no longer reaches parent frame", "source_pool": ["GitHub Issues"] },
+      { "sentiment": "negative", "text": "Library publish fails silently for files >400MB, no error in the dialog", "source_pool": ["Zendesk","Intercom"] },
+      { "sentiment": "negative", "text": "Smart-animate prototype lag on long flows just got worse since the latest", "source_pool": ["X / Twitter"] },
+      { "sentiment": "negative", "text": "Comments thread collapses unread state when switching pages, lose track", "source_pool": ["Reddit"] },
+      { "sentiment": "positive", "text": "{company} AI-suggested layouts are surprisingly good for hero sections", "source_pool": ["X / Twitter"] },
+      { "sentiment": "negative", "text": "[canvas-engine] frame culling regression in v51 build, jank on long files", "source_pool": ["Jira (dev logs)"] },
+      { "sentiment": "neutral",  "text": "anyone seeing the new comment threading on long feedback rounds? still figuring it out", "source_pool": ["Reddit"] },
+      { "sentiment": "negative", "text": "Variants in dev-mode show stale CSS until I hard refresh — repro every time", "source_pool": ["Slack (internal)"] }
+    ],
+    "cluster_templates": [
+      "Canvas performance regression on large files",
+      "Multiplayer cursor stutter at 8+ collaborators",
+      "Auto-layout variant nesting breaks padding",
+      "Dev-mode CSS stale for local variables",
+      "Plugin SDK v2 postMessage regression",
+      "Library publish silent fails on large files",
+      "Smart-animate prototype lag"
+    ],
+    "top_epic_templates": [
+      {
+        "title_template": "Recover {company} canvas perf on large multi-page files",
+        "rationale_template": "1,900+ signals across X, Reddit and Zendesk converge on canvas freezes and frame-culling jank in v51. Pro and Org users on the largest files are most affected — exactly the cohort that drives expansion revenue.",
+        "verdict": "Retention-critical — large-file users are the expansion cohort.",
+        "recommendation": "Roll back the v51 frame-culling change, ship a regression suite covering multi-page large files, then re-roll with telemetry.",
+        "rice": { "reach": 86, "impact": 88, "confidence": 90, "effort": 24, "urgency": 84, "strategy": 84, "risk_inv": 76 },
+        "acceptance_criteria": [
+          "Canvas FPS p95 ≥ 50 on 2k-layer test files",
+          "Multiplayer cursor jitter < 80ms at 12 simultaneous editors",
+          "Regression suite of 8 large-file fixtures runs on every canvas-engine PR",
+          "Telemetry exposes canvas frame budget overruns to internal dashboard"
+        ],
+        "evidence_templates": [
+          { "quote": "{company} canvas freezes on files past 2k layers. M3 Max, 64GB RAM.", "source_template": "X · designer" },
+          { "quote": "Frame culling regression in v51 build, jank on long files.", "source_template": "Jira · canvas-engine" },
+          { "quote": "Multiplayer cursors stutter during live whiteboarding at 8+ collaborators.", "source_template": "Zendesk" }
+        ]
+      }
+    ]
+  },
+  "ai": {
+    "tagline_options": ["frontier AI lab", "developer-facing AI platform", "consumer AI assistant", "AI infrastructure"],
+    "mark_palette": ["#10A37F", "#D97757", "#FFD60A", "#FF6B6B", "#A855F7"],
+    "jira_keys": ["MODEL", "INFER", "PLATFORM", "AGENT", "API"],
+    "industry_label": "AI",
+    "sources": [
+      { "name": "X / Twitter",        "category": "external", "weight": 0.30 },
+      { "name": "Reddit",             "category": "external", "weight": 0.10 },
+      { "name": "Hacker News",        "category": "external", "weight": 0.08 },
+      { "name": "Zendesk",            "category": "internal", "weight": 0.14 },
+      { "name": "Intercom",           "category": "internal", "weight": 0.08 },
+      { "name": "Slack (internal)",   "category": "internal", "weight": 0.10 },
+      { "name": "GitHub Issues",      "category": "external", "weight": 0.10 },
+      { "name": "Datadog (alerts)",   "category": "internal", "weight": 0.10 }
+    ],
+    "signal_templates": [
+      { "sentiment": "negative", "text": "{company} just hallucinated an entire meeting that never happened, with names and times", "source_pool": ["X / Twitter"] },
+      { "sentiment": "negative", "text": "API latency p95 doubled overnight for the long-context endpoint, no status page note", "source_pool": ["Hacker News","Slack (internal)"] },
+      { "sentiment": "negative", "text": "[#P1] tool-use loop: model invokes the same function 12 times before quitting", "source_pool": ["Zendesk"] },
+      { "sentiment": "negative", "text": "{company} cuts off responses mid-token on long generations on the latest model", "source_pool": ["Reddit","X / Twitter"] },
+      { "sentiment": "negative", "text": "Streaming SSE drops connection at ~8k tokens reliably for our prod traffic", "source_pool": ["GitHub Issues"] },
+      { "sentiment": "negative", "text": "[alert] inference_p95_latency breached SLO 4 days running on long-context", "source_pool": ["Datadog (alerts)"] },
+      { "sentiment": "negative", "text": "Citations toggle shows fabricated URLs about half the time on technical queries", "source_pool": ["Reddit"] },
+      { "sentiment": "negative", "text": "Cache invalidation on system prompts isn't picking up the latest version reliably", "source_pool": ["Slack (internal)"] },
+      { "sentiment": "positive", "text": "{company}'s plan-mode for code refactor is genuinely useful, miles ahead of last quarter", "source_pool": ["X / Twitter","Hacker News"] },
+      { "sentiment": "neutral",  "text": "is anyone else's tool-use cost drift higher than expected this month? wonder if billing changed", "source_pool": ["Reddit"] },
+      { "sentiment": "negative", "text": "[inference] tail latency on the speculative-decoder path 4x baseline since v3.2", "source_pool": ["Jira (dev logs)"] },
+      { "sentiment": "negative", "text": "Image attachments fail silently if >5MB even though the docs say 20MB limit", "source_pool": ["Intercom"] }
+    ],
+    "cluster_templates": [
+      "Tool-use infinite-call loop",
+      "Long-context inference latency regression",
+      "Citation hallucination on technical queries",
+      "Streaming SSE drops at ~8k tokens",
+      "System-prompt cache stale on rollouts",
+      "Image attachment silent size-limit drop",
+      "Tail latency on speculative-decoder path"
+    ],
+    "top_epic_templates": [
+      {
+        "title_template": "Cut {company} long-context tail latency back to baseline",
+        "rationale_template": "Across 1,800+ signals from X, Hacker News and our own Datadog alerts, long-context inference tail latency has been 4x baseline since v3.2 — concentrated in the speculative-decoder path. Enterprise customers are seeing SLA breaches and our streaming endpoint drops at ~8k tokens.",
+        "verdict": "Trust-critical — enterprise contracts assume sub-baseline tail latency.",
+        "recommendation": "Pin the previous decoder path for long-context routes while the regression is root-caused, then ship a fix gated on a perf-regression CI gate.",
+        "rice": { "reach": 86, "impact": 90, "confidence": 90, "effort": 26, "urgency": 88, "strategy": 84, "risk_inv": 74 },
+        "acceptance_criteria": [
+          "Long-context p95 latency back within 1.2x baseline for 7 consecutive days",
+          "Streaming SSE survives 16k-token completions in prod",
+          "Speculative-decoder path gated by a perf-regression CI test",
+          "Customer-facing status page surfaces a long-context latency SLI"
+        ],
+        "evidence_templates": [
+          { "quote": "API latency p95 doubled overnight for the long-context endpoint.", "source_template": "Hacker News" },
+          { "quote": "inference_p95_latency breached SLO 4 days running on long-context.", "source_template": "Datadog · alert" },
+          { "quote": "Tail latency on the speculative-decoder path 4x baseline since v3.2.", "source_template": "Jira · inference" }
+        ]
+      }
+    ]
+  },
+  "productivity": {
+    "tagline_options": ["all-in-one workspace", "team chat platform", "video meetings", "knowledge base", "task management"],
+    "mark_palette": ["#4A154B", "#2D8CFF", "#0061FF", "#111111", "#F47B26"],
+    "jira_keys": ["WORK", "TEAM", "MEET", "DOC", "SPACE"],
+    "industry_label": "Productivity",
+    "sources": [
+      { "name": "X / Twitter",        "category": "external", "weight": 0.26 },
+      { "name": "Reddit",             "category": "external", "weight": 0.10 },
+      { "name": "App Store reviews",  "category": "external", "weight": 0.10 },
+      { "name": "Zendesk",            "category": "internal", "weight": 0.18 },
+      { "name": "Intercom",           "category": "internal", "weight": 0.10 },
+      { "name": "Slack (internal)",   "category": "internal", "weight": 0.10 },
+      { "name": "GitHub Issues",      "category": "external", "weight": 0.06 },
+      { "name": "Jira (dev logs)",    "category": "internal", "weight": 0.10 }
+    ],
+    "signal_templates": [
+      { "sentiment": "negative", "text": "{company} mobile editor lags 2-3s per keystroke on long pages. unusable for real work.", "source_pool": ["App Store reviews","X / Twitter"] },
+      { "sentiment": "negative", "text": "Two teammates edited the same row, one set silently won. no conflict warning, no history.", "source_pool": ["Zendesk","Reddit"] },
+      { "sentiment": "negative", "text": "[#P1] permission inheritance broken — child page restricted, parent grants admin, child still inherits", "source_pool": ["Zendesk"] },
+      { "sentiment": "negative", "text": "Sync conflicts on shared spaces are biting us hard since the realtime backend rolled out", "source_pool": ["Reddit"] },
+      { "sentiment": "negative", "text": "{company} desktop app freezes for 8-10s when opening pages with >50 inline embeds", "source_pool": ["Zendesk"] },
+      { "sentiment": "negative", "text": "Notification preferences keep resetting after every release. third time this quarter.", "source_pool": ["X / Twitter"] },
+      { "sentiment": "negative", "text": "[realtime] CRDT op-log lag past 30s for spaces over 50MB, lost edits", "source_pool": ["Jira (dev logs)"] },
+      { "sentiment": "negative", "text": "Calendar duplicate events for cross-timezone meetings since yesterday's rollout", "source_pool": ["Reddit","Intercom"] },
+      { "sentiment": "negative", "text": "Need an audit log for AI usage on enterprise spaces — legal is asking", "source_pool": ["Intercom"] },
+      { "sentiment": "positive", "text": "{company}'s new search ranking finally surfaces the doc I want first try", "source_pool": ["X / Twitter"] },
+      { "sentiment": "neutral",  "text": "anyone else's mobile dark mode flicker on first load? quick fix maybe", "source_pool": ["Reddit"] },
+      { "sentiment": "negative", "text": "Webhook signature verification flakey on edge runtimes (Vercel, CF Workers)", "source_pool": ["GitHub Issues"] }
+    ],
+    "cluster_templates": [
+      "Realtime sync conflicts losing edits",
+      "Mobile editor lag on long pages",
+      "Permission inheritance regressions",
+      "Notification preferences resetting on releases",
+      "Calendar duplicate events on TZ-cross meetings",
+      "Webhook signature flake on edge runtimes",
+      "Desktop app freeze on heavy pages"
+    ],
+    "top_epic_templates": [
+      {
+        "title_template": "Tighten {company} realtime sync to recover lost edits",
+        "rationale_template": "Across 1,700+ signals on Reddit and Zendesk, the dominant pattern is silent edit loss when teammates collide on shared spaces. CRDT op-log lag is past 30s for spaces over 50MB, and permission inheritance regressions are compounding the trust problem.",
+        "verdict": "Trust-critical — silent edit loss is the fastest churn driver in this category.",
+        "recommendation": "Tighten the CRDT op-log SLA, add a conflict warning surface in the editor, and audit permission inheritance with a regression suite.",
+        "rice": { "reach": 84, "impact": 88, "confidence": 90, "effort": 24, "urgency": 82, "strategy": 80, "risk_inv": 76 },
+        "acceptance_criteria": [
+          "CRDT op-log p95 lag < 5s for spaces up to 200MB",
+          "Conflict warning UI surfaces when concurrent edits collide",
+          "Permission inheritance regression suite covers 12 inheritance fixtures",
+          "Per-space sync health badge in the admin console"
+        ],
+        "evidence_templates": [
+          { "quote": "Two teammates edited the same row, one set silently won.", "source_template": "Zendesk" },
+          { "quote": "CRDT op-log lag past 30s for spaces over 50MB, lost edits.", "source_template": "Jira · realtime" },
+          { "quote": "Sync conflicts on shared spaces biting us hard since realtime rolled out.", "source_template": "r/{company}" }
+        ]
+      }
+    ]
+  },
+  "marketplace": {
+    "tagline_options": ["two-sided marketplace", "ride-sharing platform", "food delivery network", "gig marketplace"],
+    "mark_palette": ["#FF5A5F", "#FF3008", "#000000", "#1FB876", "#FF7A00"],
+    "jira_keys": ["MARKET", "STAY", "RIDE", "DELIV", "GIG"],
+    "industry_label": "Marketplace",
+    "sources": [
+      { "name": "X / Twitter",        "category": "external", "weight": 0.30 },
+      { "name": "Reddit",             "category": "external", "weight": 0.12 },
+      { "name": "App Store reviews",  "category": "external", "weight": 0.12 },
+      { "name": "Zendesk",            "category": "internal", "weight": 0.18 },
+      { "name": "Intercom",           "category": "internal", "weight": 0.06 },
+      { "name": "Slack (internal)",   "category": "internal", "weight": 0.08 },
+      { "name": "Trust & Safety",    "category": "internal", "weight": 0.08 },
+      { "name": "Jira (dev logs)",    "category": "internal", "weight": 0.06 }
+    ],
+    "signal_templates": [
+      { "sentiment": "negative", "text": "{company} double-booked my listing, calendar sync didn't import the iCal block. guest at the door.", "source_pool": ["X / Twitter"] },
+      { "sentiment": "negative", "text": "Search keeps showing me listings without instant book even with the filter on", "source_pool": ["App Store reviews"] },
+      { "sentiment": "negative", "text": "[#P1] payout in MXN held for 14 days, FX conversion happened twice", "source_pool": ["Zendesk"] },
+      { "sentiment": "negative", "text": "{company} dispatch routed me through the toll bridge again despite the avoid setting", "source_pool": ["Reddit"] },
+      { "sentiment": "negative", "text": "Trust scores dropped my 4.96-star listing below new sellers after the fairness rebalance", "source_pool": ["Reddit"] },
+      { "sentiment": "negative", "text": "Surge of fake-listing reports in Lisbon and Mexico City — 312 in 48h", "source_pool": ["Trust & Safety"] },
+      { "sentiment": "negative", "text": "Co-host permissions: gave message-only access, they're seeing payout history", "source_pool": ["Zendesk"] },
+      { "sentiment": "negative", "text": "App freezes when scrolling Wishlists with 100+ saves on iPhone 15", "source_pool": ["App Store reviews"] },
+      { "sentiment": "negative", "text": "Refund timing on cancelled bookings differs by 4 days between iOS app and web", "source_pool": ["Zendesk"] },
+      { "sentiment": "positive", "text": "{company}'s new home tab actually surfaces what I want now. less scrolling.", "source_pool": ["X / Twitter"] },
+      { "sentiment": "neutral",  "text": "when does {company}'s host protection apply if the guest never officially checks in?", "source_pool": ["Intercom"] },
+      { "sentiment": "negative", "text": "[calendar-sync] iCal parser silently drops events whose DTSTAMP is missing", "source_pool": ["Jira (dev logs)"] }
+    ],
+    "cluster_templates": [
+      "Calendar sync drops external iCal blocks",
+      "Search-rank fairness rebalance hurting top sellers",
+      "Payout currency double-conversion edge cases",
+      "Co-host permission scope leak",
+      "Fake-listing surge in EU/LATAM hot cities",
+      "Wishlists app freeze on large lists",
+      "Refund timing inconsistency across platforms"
+    ],
+    "top_epic_templates": [
+      {
+        "title_template": "Eliminate {company} calendar-sync double bookings",
+        "rationale_template": "2,200+ signals — concentrated in multi-listing hosts — point to one root cause: the iCal parser silently drops events whose DTSTAMP is missing or malformed, common in competitor exports. Each double-booking generates two churn-prone customers.",
+        "verdict": "Trust-critical — every double-booking burns two customers.",
+        "recommendation": "Harden the iCal parser, auto-block on parse failure, and notify the host within 60 seconds of any sync delta.",
+        "rice": { "reach": 86, "impact": 88, "confidence": 90, "effort": 22, "urgency": 86, "strategy": 82, "risk_inv": 80 },
+        "acceptance_criteria": [
+          "iCal parser tolerates missing DTSTAMP, infers from DTSTART, logs a warning",
+          "On parse failure, automatically block affected dates pending host review",
+          "Push notification + email to host within 60s of any sync delta",
+          "Run a weekly iCal-health report per host with parse error counts"
+        ],
+        "evidence_templates": [
+          { "quote": "{company} double-booked my listing — calendar sync didn't import the iCal block.", "source_template": "X · superhost" },
+          { "quote": "iCal parser silently drops events whose DTSTAMP is missing.", "source_template": "Jira · calendar-sync" },
+          { "quote": "Calendar sync regressions concentrated in iCal imports from competitors.", "source_template": "Slack · #host-ops" }
+        ]
+      }
+    ]
+  },
+  "consumer": {
+    "tagline_options": ["streaming platform", "social network", "consumer app", "creator platform", "video platform"],
+    "mark_palette": ["#E50914", "#1DB954", "#5865F2", "#FF0050", "#FF4500"],
+    "jira_keys": ["APP", "FEED", "PLAYER", "SOCIAL", "MOB"],
+    "industry_label": "Consumer",
+    "sources": [
+      { "name": "X / Twitter",        "category": "external", "weight": 0.34 },
+      { "name": "Reddit",             "category": "external", "weight": 0.14 },
+      { "name": "App Store reviews",  "category": "external", "weight": 0.16 },
+      { "name": "Google Play reviews","category": "external", "weight": 0.08 },
+      { "name": "Zendesk",            "category": "internal", "weight": 0.10 },
+      { "name": "Slack (internal)",   "category": "internal", "weight": 0.06 },
+      { "name": "Trust & Safety",    "category": "internal", "weight": 0.06 },
+      { "name": "Jira (dev logs)",    "category": "internal", "weight": 0.06 }
+    ],
+    "signal_templates": [
+      { "sentiment": "negative", "text": "{company} app crashes every time I try to switch profiles on the Apple TV", "source_pool": ["App Store reviews","X / Twitter"] },
+      { "sentiment": "negative", "text": "Why is the Continue Watching row showing me episodes I finished 3 months ago?", "source_pool": ["Reddit"] },
+      { "sentiment": "negative", "text": "Audio desyncs by ~400ms after rejoining a stream from background. happens daily.", "source_pool": ["Reddit","X / Twitter"] },
+      { "sentiment": "negative", "text": "[#P1] live captions garbled for non-English content since the v8 update", "source_pool": ["Zendesk"] },
+      { "sentiment": "negative", "text": "Recommendations got way worse after the latest model rollout. just shows the same 12 things.", "source_pool": ["Reddit"] },
+      { "sentiment": "negative", "text": "Comment moderation is flagging benign replies as harassment, ban appeals piling up", "source_pool": ["Trust & Safety"] },
+      { "sentiment": "negative", "text": "{company} download fails for 4K content on slower wifi, no progress, no error", "source_pool": ["Google Play reviews"] },
+      { "sentiment": "negative", "text": "Notifications come in 6-8 hours late on Android since the latest, completely broken", "source_pool": ["Reddit"] },
+      { "sentiment": "positive", "text": "{company}'s new collaborative playlist UX is genuinely fun. friends and I made one in 5 min.", "source_pool": ["X / Twitter"] },
+      { "sentiment": "negative", "text": "[player-engine] HDR metadata mis-tagged on Dolby Vision sources, color shift on Vizio", "source_pool": ["Jira (dev logs)"] },
+      { "sentiment": "neutral",  "text": "is the new home-tab algo a regional rollout? mine looks completely different from my partner's", "source_pool": ["Reddit"] },
+      { "sentiment": "negative", "text": "Picture-in-picture exits to home screen when a notification arrives on iOS 18", "source_pool": ["App Store reviews"] }
+    ],
+    "cluster_templates": [
+      "Apple TV profile switch crash",
+      "Continue Watching stale recommendations",
+      "Audio desync after background rejoin",
+      "Live captions garbled for non-English content",
+      "Recommendations regression post model rollout",
+      "Trust & Safety over-flagging benign replies",
+      "Android notifications delayed 6+ hours"
+    ],
+    "top_epic_templates": [
+      {
+        "title_template": "Stabilize {company} playback on Apple TV after profile switch",
+        "rationale_template": "Over 2,100 signals across App Store reviews, Reddit and Zendesk concentrate on a single failure pattern: profile switch on tvOS crashes the player and HDR metadata is mis-tagged on Dolby Vision sources. Engagement metrics on Apple TV cohorts are flat to down.",
+        "verdict": "Engagement-critical — Apple TV is a high-LTV cohort.",
+        "recommendation": "Roll back the profile-switch refactor behind a flag, fix the HDR metadata pipeline, and add a tvOS smoke suite to release gating.",
+        "rice": { "reach": 86, "impact": 86, "confidence": 90, "effort": 22, "urgency": 84, "strategy": 80, "risk_inv": 78 },
+        "acceptance_criteria": [
+          "Profile-switch crash rate on tvOS < 0.05% sessions",
+          "Dolby Vision HDR metadata correctly tagged on 100% of sources",
+          "tvOS smoke suite gates every player-engine release",
+          "Continue Watching freshness ≥ 95% (no items watched > 30d)"
+        ],
+        "evidence_templates": [
+          { "quote": "{company} app crashes every time I try to switch profiles on Apple TV.", "source_template": "App Store · 1★" },
+          { "quote": "HDR metadata mis-tagged on Dolby Vision sources, color shift on Vizio.", "source_template": "Jira · player-engine" },
+          { "quote": "Audio desyncs by 400ms after rejoining a stream from background.", "source_template": "r/{company}" }
+        ]
+      }
+    ]
+  },
+  "healthtech": {
+    "tagline_options": ["digital-first care platform", "telehealth network", "mental health app", "consumer wellness"],
+    "mark_palette": ["#00A86B", "#1FA8E1", "#7C3AED", "#FF6B6B", "#0EA5E9"],
+    "jira_keys": ["CARE", "RX", "VISIT", "HEALTH", "PROV"],
+    "industry_label": "HealthTech",
+    "sources": [
+      { "name": "X / Twitter",        "category": "external", "weight": 0.20 },
+      { "name": "Reddit",             "category": "external", "weight": 0.10 },
+      { "name": "App Store reviews",  "category": "external", "weight": 0.16 },
+      { "name": "Zendesk",            "category": "internal", "weight": 0.22 },
+      { "name": "Intercom",           "category": "internal", "weight": 0.08 },
+      { "name": "Slack (internal)",   "category": "internal", "weight": 0.08 },
+      { "name": "Compliance & Privacy","category": "internal", "weight": 0.10 },
+      { "name": "Jira (dev logs)",    "category": "internal", "weight": 0.06 }
+    ],
+    "signal_templates": [
+      { "sentiment": "negative", "text": "{company} appointment booking shows slots that are already taken when I tap them", "source_pool": ["App Store reviews"] },
+      { "sentiment": "negative", "text": "Pharmacy refill went through twice for one Rx, charged twice. support unreachable for 3 days.", "source_pool": ["Reddit","Zendesk"] },
+      { "sentiment": "negative", "text": "[#P1] video visit waiting room times out at 2 minutes, patient bounced", "source_pool": ["Zendesk"] },
+      { "sentiment": "negative", "text": "Insurance card upload OCR rejects valid Aetna cards with the new layout", "source_pool": ["Zendesk"] },
+      { "sentiment": "negative", "text": "Care plan messages stuck in 'sending' for 6+ hours, providers can't see them", "source_pool": ["Slack (internal)"] },
+      { "sentiment": "negative", "text": "PHI export request stuck in pending for 14 days. compliance escalating.", "source_pool": ["Compliance & Privacy"] },
+      { "sentiment": "positive", "text": "{company}'s new same-day visit slots actually had openings near me. impressed.", "source_pool": ["X / Twitter"] },
+      { "sentiment": "negative", "text": "Symptom checker recommends ER for clearly mild symptoms — over-triage rate up", "source_pool": ["Reddit"] },
+      { "sentiment": "negative", "text": "[video] WebRTC reconnect failing on iOS 18 after backgrounding > 30s", "source_pool": ["Jira (dev logs)"] },
+      { "sentiment": "negative", "text": "Provider directory shows wrong office hours since the migration to the new schema", "source_pool": ["Intercom"] },
+      { "sentiment": "neutral",  "text": "anyone successfully gotten {company} to sync with Apple Health in the last week?", "source_pool": ["Reddit"] },
+      { "sentiment": "negative", "text": "App keeps logging out mid-session if I switch to read a notification, lose context", "source_pool": ["App Store reviews"] }
+    ],
+    "cluster_templates": [
+      "Appointment booking double-take regression",
+      "Rx refill duplicate charge bug",
+      "Video visit reconnect failures on iOS 18",
+      "Insurance card OCR mis-rejecting new layouts",
+      "Symptom checker over-triage rate up",
+      "Provider directory office-hours staleness",
+      "Care messages stuck in sending"
+    ],
+    "top_epic_templates": [
+      {
+        "title_template": "Restore reliable video-visit reconnect on iOS 18",
+        "rationale_template": "Across ~1,600 signals from Zendesk, App Store reviews and our own dev logs, the dominant pattern is WebRTC reconnect failing on iOS 18 after the app backgrounds for >30s. Patients drop the visit, providers get billed for unattended sessions, and the metric most-correlated with churn (visit-completion rate) has slipped 1.4pp.",
+        "verdict": "Care-critical — every dropped visit is both a clinical and a billing problem.",
+        "recommendation": "Move to the new WebRTC negotiation flow on iOS 18, ship a reconnect SLA badge in the patient UI, and gate releases on a tvOS+iOS smoke suite.",
+        "rice": { "reach": 82, "impact": 90, "confidence": 88, "effort": 24, "urgency": 88, "strategy": 78, "risk_inv": 78 },
+        "acceptance_criteria": [
+          "WebRTC reconnect success rate ≥ 98% on iOS 18 after 60s background",
+          "Patient UI surfaces reconnect attempts with retry status",
+          "Visit-completion-rate dashboard live to ops within 15 min",
+          "Release gate runs an iOS 18 reconnect smoke suite"
+        ],
+        "evidence_templates": [
+          { "quote": "Video visit waiting room times out at 2 minutes, patient bounced.", "source_template": "Zendesk · P1" },
+          { "quote": "WebRTC reconnect failing on iOS 18 after backgrounding > 30s.", "source_template": "Jira · video" },
+          { "quote": "App keeps logging out mid-session if I switch to read a notification.", "source_template": "App Store · 1★" }
+        ]
+      }
+    ]
+  },
+  "edtech": {
+    "tagline_options": ["language learning", "online university", "K-12 platform", "skill marketplace"],
+    "mark_palette": ["#58CC02", "#FFD60A", "#7C3AED", "#0EA5E9", "#F47B26"],
+    "jira_keys": ["LEARN", "EDU", "CLASS", "STUDY", "COURSE"],
+    "industry_label": "EdTech",
+    "sources": [
+      { "name": "X / Twitter",        "category": "external", "weight": 0.24 },
+      { "name": "Reddit",             "category": "external", "weight": 0.12 },
+      { "name": "App Store reviews",  "category": "external", "weight": 0.18 },
+      { "name": "Google Play reviews","category": "external", "weight": 0.10 },
+      { "name": "Zendesk",            "category": "internal", "weight": 0.16 },
+      { "name": "Intercom",           "category": "internal", "weight": 0.06 },
+      { "name": "Slack (internal)",   "category": "internal", "weight": 0.08 },
+      { "name": "Jira (dev logs)",    "category": "internal", "weight": 0.06 }
+    ],
+    "signal_templates": [
+      { "sentiment": "negative", "text": "{company} streak just reset because the app didn't sync overnight. 1,400 days gone.", "source_pool": ["X / Twitter"] },
+      { "sentiment": "negative", "text": "Mid-lesson crashes on Android since the latest update, lose progress every time", "source_pool": ["Google Play reviews"] },
+      { "sentiment": "negative", "text": "[#P1] purchase restore on iOS doesn't recognize family-sharing subscriptions", "source_pool": ["Zendesk"] },
+      { "sentiment": "negative", "text": "AI tutor's hint quality dropped after the v4 ramp. just rephrases the question now.", "source_pool": ["Reddit"] },
+      { "sentiment": "negative", "text": "Speaking exercises rate me wrong on words I clearly say — Speech recognition v3 regression", "source_pool": ["App Store reviews"] },
+      { "sentiment": "negative", "text": "Test prep adaptive engine is recommending way-too-easy questions after a wrong answer", "source_pool": ["Reddit"] },
+      { "sentiment": "negative", "text": "Course progress stuck at 92% even after I finished the final unit twice", "source_pool": ["Zendesk"] },
+      { "sentiment": "positive", "text": "{company}'s new gamified streak rewards actually got me back into daily practice", "source_pool": ["X / Twitter"] },
+      { "sentiment": "negative", "text": "[speech-recog] new pronunciation model rejects valid utterances at +18% baseline", "source_pool": ["Jira (dev logs)"] },
+      { "sentiment": "negative", "text": "Notifications spam me at 4am even with quiet hours set. happens every weekend.", "source_pool": ["App Store reviews"] },
+      { "sentiment": "neutral",  "text": "did the leaderboard tier names change overnight or did I just get reset?", "source_pool": ["Reddit"] },
+      { "sentiment": "negative", "text": "Family plan invite link dead-ends to login screen, can't add my kid's account", "source_pool": ["Zendesk"] }
+    ],
+    "cluster_templates": [
+      "Streak resets from missed sync",
+      "Speech recognition v3 false-rejects",
+      "Mid-lesson Android crashes",
+      "Adaptive engine recommending too-easy questions",
+      "Family-sharing purchase restore broken",
+      "Quiet hours notification spam",
+      "AI tutor hint quality regression"
+    ],
+    "top_epic_templates": [
+      {
+        "title_template": "Recover {company} speech recognition accuracy after v3 ramp",
+        "rationale_template": "Over 1,500 signals — most from speaking-heavy learners on App Store and Reddit — point to the new pronunciation model rejecting valid utterances at 18% above baseline. Streak loss compounds the frustration: users speak, get marked wrong, lose momentum, miss the streak. DAU on speaking tracks has slipped 2.3pp WoW.",
+        "verdict": "Engagement-critical — speaking is the highest-retention exercise type.",
+        "recommendation": "Roll the v3 ramp back to 25% behind a per-language flag, re-baseline accuracy on the gold-set, and ship with a regression suite per language.",
+        "rice": { "reach": 84, "impact": 86, "confidence": 90, "effort": 22, "urgency": 82, "strategy": 80, "risk_inv": 78 },
+        "acceptance_criteria": [
+          "False-reject rate per language back within 1.05x baseline",
+          "Per-language A/B traffic split capped at 25% during re-baseline",
+          "Gold-set regression suite gates every pronunciation-model release",
+          "User-facing 'I said it correctly' override surfaces in 1 tap"
+        ],
+        "evidence_templates": [
+          { "quote": "Speaking exercises rate me wrong on words I clearly say.", "source_template": "App Store · 1★" },
+          { "quote": "New pronunciation model rejects valid utterances at +18% baseline.", "source_template": "Jira · speech-recog" },
+          { "quote": "AI tutor's hint quality dropped after the v4 ramp.", "source_template": "r/{company}" }
+        ]
+      }
+    ]
+  },
+  "saas": {
+    "tagline_options": ["B2B SaaS platform", "CRM and sales", "workflow automation", "customer success platform", "scheduling automation"],
+    "mark_palette": ["#FF7A59", "#006BFF", "#5B4CF7", "#0EA5E9", "#16A34A"],
+    "jira_keys": ["APP", "CORE", "PLATFORM", "OPS", "CRM"],
+    "industry_label": "SaaS",
+    "sources": [
+      { "name": "X / Twitter",        "category": "external", "weight": 0.22 },
+      { "name": "Reddit",             "category": "external", "weight": 0.10 },
+      { "name": "G2 reviews",         "category": "external", "weight": 0.10 },
+      { "name": "Zendesk",            "category": "internal", "weight": 0.20 },
+      { "name": "Intercom",           "category": "internal", "weight": 0.10 },
+      { "name": "Slack (internal)",   "category": "internal", "weight": 0.10 },
+      { "name": "GitHub Issues",      "category": "external", "weight": 0.08 },
+      { "name": "Jira (dev logs)",    "category": "internal", "weight": 0.10 }
+    ],
+    "signal_templates": [
+      { "sentiment": "negative", "text": "{company} integrations dashboard 500s every time I open the Salesforce config tab", "source_pool": ["X / Twitter","Zendesk"] },
+      { "sentiment": "negative", "text": "Webhook retries fire 4-5x for the same event when our endpoint is briefly slow", "source_pool": ["GitHub Issues"] },
+      { "sentiment": "negative", "text": "[#P1] SSO breaks after rotating SAML certs, no graceful overlap window", "source_pool": ["Zendesk"] },
+      { "sentiment": "negative", "text": "Custom field exports drop trailing zeros in CSV, breaks our finance pipeline", "source_pool": ["Reddit"] },
+      { "sentiment": "negative", "text": "Workflow automations silently skip steps when a referenced record was just deleted", "source_pool": ["Slack (internal)"] },
+      { "sentiment": "negative", "text": "{company} mobile app push notifications come in 15-20 min late on Android", "source_pool": ["G2 reviews"] },
+      { "sentiment": "negative", "text": "Bulk import keeps timing out at 50k rows, no resumable upload path", "source_pool": ["Zendesk"] },
+      { "sentiment": "negative", "text": "Audit log search misses events older than 30 days even on enterprise tier with 1y retention", "source_pool": ["Intercom"] },
+      { "sentiment": "positive", "text": "{company}'s new bulk-edit UX saves me an hour a week. why was this hidden behind a beta flag?", "source_pool": ["X / Twitter"] },
+      { "sentiment": "neutral",  "text": "anyone else's reports loading slower this week or is it just our org?", "source_pool": ["Reddit"] },
+      { "sentiment": "negative", "text": "[automations] step skip logic miscounts when conditional branches share a parent record", "source_pool": ["Jira (dev logs)"] },
+      { "sentiment": "negative", "text": "API rate-limit headers don't reset on the documented schedule, breaks our backoff", "source_pool": ["GitHub Issues"] }
+    ],
+    "cluster_templates": [
+      "Salesforce integration dashboard 500s",
+      "Webhook retry storm during slow downstream",
+      "SSO break on SAML cert rotation",
+      "CSV export trailing-zero loss",
+      "Workflow automation silent step-skip",
+      "Audit log retention mismatch",
+      "API rate-limit header schedule drift"
+    ],
+    "top_epic_templates": [
+      {
+        "title_template": "Stabilize {company} SSO across SAML cert rotation",
+        "rationale_template": "1,400+ signals across Zendesk and G2 converge on the same enterprise pain point: rotating SAML certs causes hard SSO breaks with no overlap window. Concurrently, audit log retention mismatches are showing up under compliance review. Both block enterprise expansion.",
+        "verdict": "Expansion-critical — SSO break is the #1 churn signal in enterprise renewals.",
+        "recommendation": "Ship a 24-hour cert overlap window, surface rotation status in the admin console, and reconcile audit log retention with the contracted tier.",
+        "rice": { "reach": 84, "impact": 88, "confidence": 90, "effort": 24, "urgency": 84, "strategy": 84, "risk_inv": 76 },
+        "acceptance_criteria": [
+          "SAML cert rotation supports 24h overlap window with both certs valid",
+          "Admin console surfaces rotation state with expiry countdown",
+          "Audit log retention matches the contracted tier on every workspace",
+          "Enterprise renewal dashboard surfaces SSO health per workspace"
+        ],
+        "evidence_templates": [
+          { "quote": "SSO breaks after rotating SAML certs, no graceful overlap window.", "source_template": "Zendesk · P1 enterprise" },
+          { "quote": "Audit log search misses events older than 30 days on enterprise tier.", "source_template": "Intercom · CSM" },
+          { "quote": "{company} integrations dashboard 500s every time I open Salesforce.", "source_template": "X · admin" }
+        ]
+      }
+    ]
+  }
+}

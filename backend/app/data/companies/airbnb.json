@@ -1,0 +1,97 @@
+{
+  "company": {
+    "slug": "airbnb",
+    "name": "Airbnb",
+    "domain": "airbnb.com",
+    "industry": "Marketplace",
+    "tagline": "stays and experiences marketplace",
+    "mark": { "bg": "#FF5A5F", "char": "A" },
+    "tier": "catalog"
+  },
+  "ingest": {
+    "signal_count": 51280,
+    "runtime_seconds": 44,
+    "sentiment_pct": { "positive": 19, "neutral": 33, "negative": 48 },
+    "sources": [
+      { "name": "X / Twitter",        "category": "external", "count": 18420 },
+      { "name": "Reddit",             "category": "external", "count":  6210 },
+      { "name": "App Store reviews",  "category": "external", "count":  4180 },
+      { "name": "Zendesk",            "category": "internal", "count":  9810 },
+      { "name": "Intercom",           "category": "internal", "count":  3540 },
+      { "name": "Slack (internal)",   "category": "internal", "count":  4870 },
+      { "name": "Trust & Safety",     "category": "internal", "count":  2810 },
+      { "name": "Jira (dev logs)",    "category": "internal", "count":  1440 }
+    ],
+    "stream_samples": [
+      { "source": "X",           "sentiment": "negative", "text": "airbnb double-booked my superhost, calendar sync from VRBO didn't import the iCal block. guest at the door.", "is_simulated": false },
+      { "source": "App Store",   "sentiment": "negative", "text": "Search keeps showing me places with no instant book even though I filtered for it. Why is this filter optional?", "is_simulated": false },
+      { "source": "Zendesk",     "sentiment": "negative", "text": "[#21450 P1] host payout in MXN held for 14 days, FX conversion happened twice, off by ~3.4%", "is_simulated": false },
+      { "source": "Reddit",      "sentiment": "negative", "text": "Got AirCover claim denied for damage hosts admitted to causing themselves. Process is opaque, no human until escalation.", "is_simulated": false },
+      { "source": "X",           "sentiment": "negative", "text": "instant book disabled itself overnight on my listing, support says \"trust score recalculation\" with no detail", "is_simulated": false },
+      { "source": "Zendesk",     "sentiment": "negative", "text": "Co-host permissions: gave message-only access, they're seeing payout history. Confidentiality issue.", "is_simulated": false },
+      { "source": "Trust",       "sentiment": "negative", "text": "Surge of fake-listing reports in Lisbon and Mexico City — 312 in 48h, photo-similarity flag rate is 4x baseline", "is_simulated": false },
+      { "source": "Reddit",      "sentiment": "negative", "text": "Search rank dropped my 4.96-star listing below new hosts after the fairness rebalance. Bookings down 30% MoM.", "is_simulated": false },
+      { "source": "Slack",       "sentiment": "negative", "text": "Calendar sync regressions are concentrated in iCal imports from competitors (VRBO, Booking). 2.1k tickets this week.", "is_simulated": false },
+      { "source": "App Store",   "sentiment": "negative", "text": "App freezes when scrolling Wishlists with 100+ saves on iPhone 15. Force-close every time.", "is_simulated": false },
+      { "source": "X",           "sentiment": "positive", "text": "Airbnb Service icons on the new homepage actually surface what I want now. less scrolling, more booking.", "is_simulated": false },
+      { "source": "Intercom",    "sentiment": "neutral",  "text": "When does Aircover for Hosts apply if the guest never officially checks in? policy unclear in the help center.", "is_simulated": false },
+      { "source": "Zendesk",     "sentiment": "negative", "text": "Refund timing on cancelled reservations differs by 4 days between iOS app and web. Customers are confused.", "is_simulated": false },
+      { "source": "Jira",        "sentiment": "negative", "text": "[calendar-sync] iCal parser silently drops events whose DTSTAMP is missing, causes phantom availability", "is_simulated": false }
+    ]
+  },
+  "clusters": [
+    { "title": "Calendar sync drops external iCal blocks (double bookings)", "signal_count": 2210, "rice_score": 88.8, "is_top": true },
+    { "title": "Search-rank fairness rebalance hurting top hosts",            "signal_count": 1650, "rice_score": 78.4, "is_top": false },
+    { "title": "Payout currency / FX double-conversion edge cases",           "signal_count": 1080, "rice_score": 72.0, "is_top": false },
+    { "title": "Co-host permission scopes leak payout data",                  "signal_count":  815, "rice_score": 67.5, "is_top": false },
+    { "title": "Fake-listing surge in EU/LATAM hot cities",                   "signal_count":  720, "rice_score": 64.9, "is_top": false },
+    { "title": "AirCover claim resolution opacity",                           "signal_count":  640, "rice_score": 58.2, "is_top": false }
+  ],
+  "top_epic": {
+    "title": "Eliminate calendar-sync double bookings from external iCal feeds",
+    "rationale": "2,210 signals — concentrated in superhosts who multi-list — point to one root cause: the iCal parser silently drops events whose DTSTAMP is missing or malformed, common in VRBO and Booking exports. Hosts and guests both lose trust the moment a guest shows up to a booked unit.",
+    "verdict": "Trust-critical — every double-booking generates two churn-prone customers.",
+    "recommendation": "Harden the iCal parser, auto-block on parse failure, and notify the host within 60 seconds of a sync delta.",
+    "rice": {
+      "reach":      86,
+      "impact":     88,
+      "confidence": 90,
+      "effort":     22,
+      "urgency":    88,
+      "strategy":   82,
+      "risk_inv":   80,
+      "composite":  88.8
+    },
+    "acceptance_criteria": [
+      "iCal parser tolerates missing DTSTAMP, infers from DTSTART, logs a warning",
+      "On parse failure, automatically block the affected dates pending host review",
+      "Push notification + email to host within 60s of any sync delta",
+      "Run a weekly iCal-health report per host with parse error counts"
+    ],
+    "evidence": [
+      { "quote": "Airbnb double-booked my superhost — calendar sync from VRBO didn't import the iCal block. Guest at the door.", "source": "X · superhost" },
+      { "quote": "iCal parser silently drops events whose DTSTAMP is missing, causes phantom availability.",                      "source": "Jira · calendar-sync" },
+      { "quote": "Calendar sync regressions are concentrated in iCal imports from competitors. 2.1k tickets this week.",          "source": "Slack · #host-ops" }
+    ]
+  },
+  "sync": {
+    "jira": {
+      "id": "STAY-4421",
+      "project": "Stays",
+      "type": "Epic",
+      "story_points": 24,
+      "status": "Created"
+    },
+    "confluence": {
+      "space": "STAY",
+      "title": "PRD · iCal parser hardening + sync delta alerts",
+      "linked_jira": "STAY-4421",
+      "status": "Draft published"
+    }
+  },
+  "meta": {
+    "generated_at": "2026-04-26T12:34:56Z",
+    "generator": "catalog",
+    "seed": "airbnb.com"
+  }
+}

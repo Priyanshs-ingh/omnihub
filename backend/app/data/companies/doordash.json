@@ -1,0 +1,98 @@
+{
+  "company": {
+    "slug": "doordash",
+    "name": "DoorDash",
+    "domain": "doordash.com",
+    "industry": "Marketplace",
+    "tagline": "on-demand delivery network",
+    "mark": { "bg": "#FF3008", "char": "D" },
+    "tier": "catalog"
+  },
+  "ingest": {
+    "signal_count": 44280,
+    "runtime_seconds": 40,
+    "sentiment_pct": { "positive": 18, "neutral": 32, "negative": 50 },
+    "sources": [
+      { "name": "X / Twitter",        "category": "external", "count": 15640 },
+      { "name": "Reddit",             "category": "external", "count":  5210 },
+      { "name": "App Store reviews",  "category": "external", "count":  3680 },
+      { "name": "Google Play reviews","category": "external", "count":  2920 },
+      { "name": "Zendesk",            "category": "internal", "count":  8920 },
+      { "name": "Intercom",           "category": "internal", "count":  2840 },
+      { "name": "Dasher Support",     "category": "internal", "count":  3210 },
+      { "name": "Jira (dev logs)",    "category": "internal", "count":  1860 }
+    ],
+    "stream_samples": [
+      { "source": "X",          "sentiment": "negative", "text": "doordash routed me through the bay bridge $7 toll for a $4.50 delivery. dispatch ETA was 18min via the toll vs 22min via the free bridge. who picked this", "is_simulated": false },
+      { "source": "Reddit",     "sentiment": "negative", "text": "Order said 25-35 min ETA, took 78. App kept resetting the timer every time the dasher's location updated. The ETA model is broken.", "is_simulated": false },
+      { "source": "Zendesk",    "sentiment": "negative", "text": "[#88714 P1] Contactless drop-off photo upload fails silently on Android 14 — dasher hits submit, app says delivered, photo never reaches the customer", "is_simulated": false },
+      { "source": "App Store",  "sentiment": "negative", "text": "DashPass auto-renewed at $9.99 but my account shows the $4.99 student rate I signed up at. Support says \"contact billing\" and billing says \"contact support\".", "is_simulated": false },
+      { "source": "Dasher",     "sentiment": "negative", "text": "Dispatch sent me 11 miles for a $3 base pay order through two toll bridges. App calculated tolls as $0 in the offer screen.", "is_simulated": false },
+      { "source": "Reddit",     "sentiment": "negative", "text": "Refund denied for a wrong order — dasher delivered to the right address but it was someone else's food. Photo proves it. CS keeps citing \"address verified\".", "is_simulated": false },
+      { "source": "X",          "sentiment": "negative", "text": "@doordash my chipotle order arrived with the wrong protein and your refund bot offered me $3 in credit on a $19 order", "is_simulated": false },
+      { "source": "Slack",      "sentiment": "negative", "text": "Dispatch routing engine cost-of-toll weighting was zeroed out in the 2026.04.12 deploy — fixing it brings ETA accuracy down 4-6% but driver cost up ~$0.18/order", "is_simulated": false },
+      { "source": "Google Play","sentiment": "negative", "text": "Half the restaurants in my area show \"sold out\" on items that the restaurant has in stock. Menu sync is days behind apparently.", "is_simulated": false },
+      { "source": "Jira",       "sentiment": "negative", "text": "[dispatch-router] toll cost feature dropped from routing model post-MLflow rollback, dasher offers no longer reflect true cost-to-serve", "is_simulated": false },
+      { "source": "Zendesk",    "sentiment": "negative", "text": "Contactless drop-off photo failure rate up to 8.4% on Android 14 — uploader thread killed when app backgrounded mid-S3 PUT, no retry queue", "is_simulated": false },
+      { "source": "X",          "sentiment": "positive", "text": "doordash showed me my driver's actual route on a map for the first time and the eta was dead-on. nice update", "is_simulated": false },
+      { "source": "Intercom",   "sentiment": "neutral",  "text": "When the restaurant menu shows an item as available but the kitchen is out, who eats the cancellation fee? Help center is contradictory.", "is_simulated": false },
+      { "source": "Dasher",     "sentiment": "negative", "text": "Dasher app crashed after I marked delivered, lost the tip + photo confirmation. This is the third week in a row.", "is_simulated": false },
+      { "source": "Reddit",     "sentiment": "negative", "text": "DashPass renewal charged me twice on the same day. Support says one will reverse \"in 5-7 business days\". Why did it charge twice in the first place.", "is_simulated": false }
+    ]
+  },
+  "clusters": [
+    { "title": "Dispatch routing zeroes out toll cost (driver underpaid)", "signal_count": 2890, "rice_score": 89.8, "is_top": true },
+    { "title": "ETA accuracy regression (timer resets on dasher pings)",   "signal_count": 1980, "rice_score": 80.6, "is_top": false },
+    { "title": "Contactless drop-off photo upload fails on Android 14",    "signal_count": 1410, "rice_score": 74.2, "is_top": false },
+    { "title": "Refund policy disputes (wrong-order denials)",             "signal_count": 1080, "rice_score": 68.5, "is_top": false },
+    { "title": "DashPass renewal billing — double charges + price drift",  "signal_count":  790, "rice_score": 62.4, "is_top": false },
+    { "title": "Restaurant menu sync delays (\"sold out\" false positives)","signal_count":  640, "rice_score": 56.1, "is_top": false }
+  ],
+  "top_epic": {
+    "title": "Restore toll-cost weighting in Dispatch routing model",
+    "rationale": "2,890 signals — heavily weighted toward dasher complaints in toll-heavy metros (SF Bay, NYC, Chicago) — bisect cleanly to deploy 2026.04.12, when an MLflow rollback dropped the toll-cost feature from the routing model. Offers now show $0 toll cost and dispatch is sending dashers through paid bridges for $3 base pay. The trade-off is an estimated 4-6% ETA-accuracy hit and ~$0.18/order in additional dispatch cost, but pay-transparency law exposure is the real risk.",
+    "verdict": "Ship-critical — dasher-pay transparency is regulator-watched and the model is currently underpaying.",
+    "recommendation": "Reinstate the toll-cost feature with a fresh training pass, gate dispatch behind toll-aware offers in the top 12 metros, and ship a dasher-facing toll-cost preview in the offer card.",
+    "rice": {
+      "reach":      87,
+      "impact":     89,
+      "confidence": 91,
+      "effort":     23,
+      "urgency":    89,
+      "strategy":   83,
+      "risk_inv":   79,
+      "composite":  89.8
+    },
+    "acceptance_criteria": [
+      "Toll-cost feature reinstated in dispatch model with parity to pre-04.12 baseline",
+      "Offer card shows estimated toll cost per route with <=$0.10 P90 error",
+      "Dasher pay-per-mile post-toll meets policy floor in top 12 toll-heavy metros",
+      "Dispatch routing decision logs include toll feature value for every offer"
+    ],
+    "evidence": [
+      { "quote": "Dispatch sent me 11 miles for a $3 base pay order through two toll bridges. App calculated tolls as $0.", "source": "Dasher Support · SF" },
+      { "quote": "Dispatch routing engine cost-of-toll weighting was zeroed out in the 2026.04.12 deploy.",                "source": "Slack · #dispatch-ml" },
+      { "quote": "toll cost feature dropped from routing model post-MLflow rollback.",                                     "source": "Jira · dispatch-router" }
+    ]
+  },
+  "sync": {
+    "jira": {
+      "id": "DASH-7218",
+      "project": "Dash",
+      "type": "Epic",
+      "story_points": 23,
+      "status": "Created"
+    },
+    "confluence": {
+      "space": "DASH",
+      "title": "PRD · Toll-cost reinstatement + dasher offer transparency",
+      "linked_jira": "DASH-7218",
+      "status": "Draft published"
+    }
+  },
+  "meta": {
+    "generated_at": "2026-04-26T12:34:56Z",
+    "generator": "catalog",
+    "seed": "doordash.com"
+  }
+}

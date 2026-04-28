@@ -1,0 +1,98 @@
+{
+  "company": {
+    "slug": "spotify",
+    "name": "Spotify",
+    "domain": "spotify.com",
+    "industry": "Consumer",
+    "tagline": "music and podcast streaming",
+    "mark": { "bg": "#1DB954", "char": "S" },
+    "tier": "catalog"
+  },
+  "ingest": {
+    "signal_count": 52840,
+    "runtime_seconds": 43,
+    "sentiment_pct": { "positive": 22, "neutral": 32, "negative": 46 },
+    "sources": [
+      { "name": "X / Twitter",        "category": "external", "count": 19420 },
+      { "name": "Reddit",             "category": "external", "count":  6840 },
+      { "name": "App Store reviews",  "category": "external", "count":  4210 },
+      { "name": "Google Play reviews","category": "external", "count":  3820 },
+      { "name": "Zendesk",            "category": "internal", "count":  9180 },
+      { "name": "Intercom",           "category": "internal", "count":  3140 },
+      { "name": "Slack (internal)",   "category": "internal", "count":  4810 },
+      { "name": "Jira (dev logs)",    "category": "internal", "count":  1420 }
+    ],
+    "stream_samples": [
+      { "source": "X",          "sentiment": "negative", "text": "spotify connect handed off from my phone to my sonos and dropped 4 seconds of audio mid-song. happens every single time", "is_simulated": false },
+      { "source": "Reddit",     "sentiment": "negative", "text": "Collaborative playlist desync: my partner adds a song, I see it 20 minutes later. We're both on the latest app, same wifi.", "is_simulated": false },
+      { "source": "Google Play","sentiment": "negative", "text": "Downloaded 800 songs for a flight. Got on the plane and 60% are gone with \"track unavailable offline\". Same Premium account.", "is_simulated": false },
+      { "source": "Zendesk",    "sentiment": "negative", "text": "[#56011 P1] Connect handoff to Sonos S2 systems drops 3-5s of audio at the cutover, only on iOS 17.4+, all regions", "is_simulated": false },
+      { "source": "X",          "sentiment": "negative", "text": "AI DJ talked over the chorus of bohemian rhapsody and i am genuinely upset", "is_simulated": false },
+      { "source": "App Store",  "sentiment": "negative", "text": "Podcast download just hangs at 0% on \"The Daily\". Cellular and wifi same result. Subscribed shows are fine.", "is_simulated": false },
+      { "source": "Reddit",     "sentiment": "negative", "text": "My Wrapped 2026 says my top artist is someone I've literally never played. Listening history shows zero plays. Data pipeline must be wrong.", "is_simulated": false },
+      { "source": "Slack",      "sentiment": "negative", "text": "Connect protocol v3: the SCDP handoff state machine drops audio buffer when target device hasn't pre-warmed. Sonos partner integration triggers it ~84% of the time.", "is_simulated": false },
+      { "source": "Intercom",   "sentiment": "negative", "text": "Customer reports 47 of 60 downloaded podcast episodes vanished after Android 14 OS update — local cache TTL appears to be misreading expiry", "is_simulated": false },
+      { "source": "Jira",       "sentiment": "negative", "text": "[connect-rtc] handoff cutover lacks crossfade buffer, audio gap is the playback layer not the network. needs SCDP v3.1 protocol bump.", "is_simulated": false },
+      { "source": "X",          "sentiment": "positive", "text": "the new daylist feature genuinely understands my mood at 6am vs 11pm. how is this so accurate", "is_simulated": false },
+      { "source": "Reddit",     "sentiment": "neutral",  "text": "anyone else's AI DJ keep recommending the same 8 tracks? feels like the embedding cache is stuck", "is_simulated": false },
+      { "source": "Zendesk",    "sentiment": "negative", "text": "Collaborative playlist edit conflicts: when 3+ users edit simultaneously, the last-writer-wins resolution loses ~12% of additions", "is_simulated": false },
+      { "source": "Slack",      "sentiment": "negative", "text": "Connect handoff drop complaints up 4.1x WoW after iOS 17.4 release. Suspect AVAudioSession route-change handler timing.", "is_simulated": false },
+      { "source": "App Store",  "sentiment": "negative", "text": "AI DJ keeps interrupting MID-SONG instead of between tracks. Why is this even possible. Turning it off.", "is_simulated": false }
+    ]
+  },
+  "clusters": [
+    { "title": "Connect handoff drops audio at cutover (Sonos / iOS 17.4+)", "signal_count": 3210, "rice_score": 90.0, "is_top": true },
+    { "title": "Collaborative playlist desync + edit-conflict loss",         "signal_count": 1840, "rice_score": 79.6, "is_top": false },
+    { "title": "Downloaded content disappears on Android 14",                "signal_count": 1620, "rice_score": 76.2, "is_top": false },
+    { "title": "Podcast downloads stall at 0%",                              "signal_count": 1090, "rice_score": 70.8, "is_top": false },
+    { "title": "AI DJ interrupts mid-song instead of between tracks",        "signal_count":  860, "rice_score": 64.3, "is_top": false },
+    { "title": "Wrapped data accuracy disputes (top artist mismatches)",     "signal_count":  610, "rice_score": 57.1, "is_top": false }
+  ],
+  "top_epic": {
+    "title": "Eliminate Connect handoff audio drops on Sonos and iOS 17.4+",
+    "rationale": "3,210 signals — concentrated in Premium users with multi-room speaker setups — point to a SCDP handoff state machine that drops 3-5s of audio when the target device hasn't pre-warmed. Complaint volume jumped 4.1x WoW after iOS 17.4, and the Sonos partner integration triggers the gap ~84% of the time. The audio drop is in the playback layer, not the network, so a protocol bump is required.",
+    "verdict": "Ship-critical — Connect is the strategic moat and the handoff is the moment of truth.",
+    "recommendation": "Bump SCDP to v3.1 with a pre-warm + crossfade buffer, ship a route-change handler fix on iOS, and add handoff success-rate telemetry to the Connect dashboard.",
+    "rice": {
+      "reach":      90,
+      "impact":     86,
+      "confidence": 92,
+      "effort":     24,
+      "urgency":    88,
+      "strategy":   82,
+      "risk_inv":   78,
+      "composite":  90.0
+    },
+    "acceptance_criteria": [
+      "SCDP v3.1 pre-warms the target device 800ms before cutover",
+      "Audible gap at handoff <100ms P95 across Sonos / Google / generic Cast",
+      "iOS AVAudioSession route-change handler emits no buffer flush at cutover",
+      "Connect handoff success-rate dashboard live with per-target-vendor breakdown"
+    ],
+    "evidence": [
+      { "quote": "spotify connect handed off from my phone to my sonos and dropped 4 seconds of audio mid-song.",   "source": "X · Premium user" },
+      { "quote": "SCDP handoff drops audio buffer when target device hasn't pre-warmed. Sonos triggers it ~84%.",   "source": "Slack · #connect-rtc" },
+      { "quote": "handoff cutover lacks crossfade buffer, audio gap is the playback layer not the network.",        "source": "Jira · connect-rtc" }
+    ]
+  },
+  "sync": {
+    "jira": {
+      "id": "PLAYER-6024",
+      "project": "Player",
+      "type": "Epic",
+      "story_points": 26,
+      "status": "Created"
+    },
+    "confluence": {
+      "space": "PLAYER",
+      "title": "PRD · Connect SCDP v3.1 pre-warm + crossfade",
+      "linked_jira": "PLAYER-6024",
+      "status": "Draft published"
+    }
+  },
+  "meta": {
+    "generated_at": "2026-04-26T12:34:56Z",
+    "generator": "catalog",
+    "seed": "spotify.com"
+  }
+}

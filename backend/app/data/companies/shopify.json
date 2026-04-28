@@ -1,0 +1,97 @@
+{
+  "company": {
+    "slug": "shopify",
+    "name": "Shopify",
+    "domain": "shopify.com",
+    "industry": "Commerce",
+    "tagline": "commerce platform for merchants",
+    "mark": { "bg": "#5A8F29", "char": "S" },
+    "tier": "catalog"
+  },
+  "ingest": {
+    "signal_count": 42810,
+    "runtime_seconds": 41,
+    "sentiment_pct": { "positive": 22, "neutral": 31, "negative": 47 },
+    "sources": [
+      { "name": "X / Twitter",      "category": "external", "count": 15240 },
+      { "name": "Reddit",           "category": "external", "count":  4810 },
+      { "name": "App Store reviews","category": "external", "count":  2105 },
+      { "name": "Zendesk",          "category": "internal", "count":  9420 },
+      { "name": "Intercom",         "category": "internal", "count":  3122 },
+      { "name": "Slack (internal)", "category": "internal", "count":  4640 },
+      { "name": "GitHub Issues",    "category": "external", "count":  1985 },
+      { "name": "Jira (dev logs)",  "category": "internal", "count":  1488 }
+    ],
+    "stream_samples": [
+      { "source": "X",          "sentiment": "negative", "text": "shop pay button just disappeared on our checkout for the last 6 hours. nothing in status page.", "is_simulated": false },
+      { "source": "Reddit",     "sentiment": "negative", "text": "Theme editor crashes when editing the product page on the Dawn 14 update — third time this month", "is_simulated": false },
+      { "source": "Zendesk",    "sentiment": "negative", "text": "[#11203 P1] checkout abandoning at the shipping step, only on iOS Safari, since the new address autocomplete", "is_simulated": false },
+      { "source": "App Store",  "sentiment": "negative", "text": "Shop app keeps logging me out every time I open it. Used to remember my orders, now nothing.", "is_simulated": false },
+      { "source": "Reddit",     "sentiment": "negative", "text": "App Bridge v4 broke our admin embed — useAppBridge throws 'session token expired' on every reload", "is_simulated": false },
+      { "source": "X",          "sentiment": "negative", "text": "we lost $14k in sales today because shop pay stopped letting customers complete checkout. nobody at shopify is responding.", "is_simulated": false },
+      { "source": "Intercom",   "sentiment": "negative", "text": "GraphQL Admin API rate-limit cost calculations changed without notice, our app got throttled at 2x previous", "is_simulated": false },
+      { "source": "Zendesk",    "sentiment": "negative", "text": "Bulk discount applies to gift cards even when 'exclude gift cards' is enabled — refunds piling up", "is_simulated": false },
+      { "source": "Slack",      "sentiment": "negative", "text": "Checkout abandonment is up 4.3% week-over-week, isolated to mobile Shop Pay flow on iOS 18", "is_simulated": false },
+      { "source": "GitHub",     "sentiment": "negative", "text": "shopify-api-node 11.x signature verification fails on edge runtimes (Vercel, Cloudflare Workers)", "is_simulated": false },
+      { "source": "X",          "sentiment": "positive", "text": "shopify magic suggested product descriptions saved me an entire afternoon. small but real win.", "is_simulated": false },
+      { "source": "Reddit",     "sentiment": "neutral",  "text": "anyone else seeing the new POS loyalty integration not pull up the right cart? maybe a regional rollout", "is_simulated": false },
+      { "source": "Zendesk",    "sentiment": "negative", "text": "Multi-currency rounding shows different totals on cart vs. checkout for AUD, off by 1 cent", "is_simulated": false },
+      { "source": "Jira",       "sentiment": "negative", "text": "[checkout-extension] custom field validation runs after submit instead of before, breaks UX guarantee", "is_simulated": false }
+    ]
+  },
+  "clusters": [
+    { "title": "Shop Pay outage on iOS Safari checkout",         "signal_count": 2410, "rice_score": 91.7, "is_top": true },
+    { "title": "Theme editor crashes on Dawn 14",                "signal_count": 1620, "rice_score": 79.8, "is_top": false },
+    { "title": "App Bridge v4 session-token regressions",        "signal_count": 1295, "rice_score": 74.5, "is_top": false },
+    { "title": "GraphQL Admin rate-limit cost recalibration",    "signal_count":  980, "rice_score": 68.3, "is_top": false },
+    { "title": "Shop app forced re-auth loop",                   "signal_count":  742, "rice_score": 62.0, "is_top": false },
+    { "title": "Multi-currency penny rounding on AUD",           "signal_count":  410, "rice_score": 51.4, "is_top": false }
+  ],
+  "top_epic": {
+    "title": "Stabilize Shop Pay checkout on iOS Safari",
+    "rationale": "Across 2,410 signals from merchants, support tickets and the Shop app store, the dominant pattern is Shop Pay silently failing on iOS Safari since the address-autocomplete rollout. Mobile checkout abandonment is up 4.3pp week-over-week and concentrates in this cohort.",
+    "verdict": "Revenue-blocking — every hour of drift costs Plus merchants real GMV.",
+    "recommendation": "Roll back the address-autocomplete change behind a flag, then re-roll forward with iOS Safari isolated.",
+    "rice": {
+      "reach":      89,
+      "impact":     91,
+      "confidence": 93,
+      "effort":     24,
+      "urgency":    86,
+      "strategy":   84,
+      "risk_inv":   78,
+      "composite":  91.7
+    },
+    "acceptance_criteria": [
+      "Detect address-autocomplete failure on iOS Safari and fall back to manual entry",
+      "Add a per-region kill switch for the autocomplete experiment",
+      "Surface checkout abandonment delta to the merchant dashboard within 15 min",
+      "Backfill Shop Pay session if autocomplete crashes mid-flow"
+    ],
+    "evidence": [
+      { "quote": "We lost $14k in sales today because Shop Pay stopped letting customers complete checkout.",  "source": "X · Plus merchant" },
+      { "quote": "Checkout abandoning at the shipping step, only on iOS Safari, since the new autocomplete.",  "source": "Zendesk · P1" },
+      { "quote": "Mobile abandonment up 4.3pp WoW, isolated to iOS 18 Shop Pay flow.",                          "source": "Slack · #checkout-health" }
+    ]
+  },
+  "sync": {
+    "jira": {
+      "id": "STORE-3318",
+      "project": "Storefront",
+      "type": "Epic",
+      "story_points": 18,
+      "status": "Created"
+    },
+    "confluence": {
+      "space": "STORE",
+      "title": "PRD · Shop Pay iOS Safari resilience",
+      "linked_jira": "STORE-3318",
+      "status": "Draft published"
+    }
+  },
+  "meta": {
+    "generated_at": "2026-04-26T12:34:56Z",
+    "generator": "catalog",
+    "seed": "shopify.com"
+  }
+}

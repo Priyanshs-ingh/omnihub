@@ -1,0 +1,97 @@
+{
+  "company": {
+    "slug": "openai",
+    "name": "OpenAI",
+    "domain": "openai.com",
+    "industry": "AI",
+    "tagline": "AI research and platform",
+    "mark": { "bg": "#10A37F", "char": "O" },
+    "tier": "catalog"
+  },
+  "ingest": {
+    "signal_count": 47180,
+    "runtime_seconds": 44,
+    "sentiment_pct": { "positive": 19, "neutral": 32, "negative": 49 },
+    "sources": [
+      { "name": "X / Twitter",        "category": "external", "count": 18420 },
+      { "name": "Reddit",             "category": "external", "count":  4810 },
+      { "name": "Hacker News",        "category": "external", "count":  2140 },
+      { "name": "Developer Forum",    "category": "external", "count":  3680 },
+      { "name": "Zendesk",            "category": "internal", "count":  8920 },
+      { "name": "Intercom",           "category": "internal", "count":  3210 },
+      { "name": "Slack (internal)",   "category": "internal", "count":  3984 },
+      { "name": "Datadog (inference)","category": "internal", "count":  2016 }
+    ],
+    "stream_samples": [
+      { "source": "X",          "sentiment": "negative", "text": "gpt-4.1 long-context (>120k) p95 TTFT crept up to 14.2s last week. our agent eval suite is timing out at 30s.", "is_simulated": false },
+      { "source": "Forum",      "sentiment": "negative", "text": "Realtime API cost drift: same 5-min voice session billing 38% higher this week vs last with identical inputs. no changelog mention.", "is_simulated": false },
+      { "source": "Zendesk",    "sentiment": "negative", "text": "[#14820 P1] Tool-use loop: model calls the same retrieval tool 11 times in a row before returning a response, eating tokens", "is_simulated": false },
+      { "source": "Reddit",     "sentiment": "negative", "text": "Web search tool citing URLs that 404 — model is hallucinating the source attribution. seen on gpt-4.1 and o-series.", "is_simulated": false },
+      { "source": "HN",         "sentiment": "negative", "text": "Streaming SSE drops connection at ~8k tokens on the chat completions endpoint. retry-with-resume isn't documented.", "is_simulated": false },
+      { "source": "Forum",      "sentiment": "negative", "text": "Image upload silently drops files >18MB on /v1/responses, returns 200 with the file ignored — no error, no warning, just bad output", "is_simulated": false },
+      { "source": "Slack",      "sentiment": "negative", "text": "p95 TTFT regression on gpt-4.1-128k traced to KV cache eviction policy change — confirmed via inference traces", "is_simulated": false },
+      { "source": "X",          "sentiment": "negative", "text": "anyone else seeing tool_calls stuck in a loop? my agent burned $4 calling get_weather 14 times before I killed it.", "is_simulated": false },
+      { "source": "Datadog",    "sentiment": "negative", "text": "[alert] inference.ttft.p95 > 12s on gpt-4.1 long-context for 7h, breach #3 this week, region: us-east", "is_simulated": false },
+      { "source": "Reddit",     "sentiment": "negative", "text": "Structured outputs schema enforcement breaks on nested oneOf with $ref since the 04/19 update. our pipeline rejects valid JSON now.", "is_simulated": false },
+      { "source": "Intercom",   "sentiment": "negative", "text": "Batch API processing time on long-context jobs is 4x the documented SLA — 24h jobs hitting 96h+ for our customer", "is_simulated": false },
+      { "source": "X",          "sentiment": "positive", "text": "the o-series tool-use reasoning is genuinely a step-change for agent eval scores. quietly impressive.", "is_simulated": false },
+      { "source": "Forum",      "sentiment": "neutral",  "text": "is the new responses API the recommended path for new builds or should I still use chat completions?", "is_simulated": false },
+      { "source": "Zendesk",    "sentiment": "negative", "text": "Assistants API thread-list pagination returns duplicate threads at cursor boundaries on workspaces with >5k threads", "is_simulated": false }
+    ]
+  },
+  "clusters": [
+    { "title": "gpt-4.1 long-context TTFT regression",          "signal_count": 3120, "rice_score": 92.0, "is_top": true },
+    { "title": "Tool-use infinite-call loops on agents",        "signal_count": 2410, "rice_score": 86.4, "is_top": false },
+    { "title": "Realtime API cost drift week-over-week",        "signal_count": 1620, "rice_score": 79.8, "is_top": false },
+    { "title": "Web search tool citation hallucinations",       "signal_count": 1280, "rice_score": 73.5, "is_top": false },
+    { "title": "Streaming SSE drops at ~8k tokens",             "signal_count":  920, "rice_score": 67.1, "is_top": false },
+    { "title": "Image upload silent drop above 18MB",           "signal_count":  610, "rice_score": 58.2, "is_top": false }
+  ],
+  "top_epic": {
+    "title": "Recover gpt-4.1 long-context TTFT to under 6s on 128k inputs",
+    "rationale": "3,120 signals across X, Slack Connect, Datadog and the developer forum point to the same regression: a KV cache eviction policy change has pushed long-context TTFT p95 from ~5s to 14.2s on gpt-4.1, breaching the inference SLO three times this week in us-east alone. Agent platforms running eval suites at 30s timeouts are silently failing — and those are the exact accounts driving Realtime API and Assistants growth.",
+    "verdict": "Revenue-critical — long-context latency is the #1 reason platform customers benchmark Anthropic and Google.",
+    "recommendation": "Revert the KV eviction change, ship a long-context TTFT SLO, and add an inference perf gate before any cache-policy PR ships.",
+    "rice": {
+      "reach":      92,
+      "impact":     92,
+      "confidence": 90,
+      "effort":     26,
+      "urgency":    92,
+      "strategy":   88,
+      "risk_inv":   72,
+      "composite":  92.0
+    },
+    "acceptance_criteria": [
+      "TTFT p95 < 6s on gpt-4.1 with 128k-token inputs across us-east, us-west, eu-west",
+      "KV cache hit-rate above 85% on long-context replay benchmark suite",
+      "Per-model TTFT SLO published with PagerDuty escalation at 8s breach",
+      "Inference CI gate fails any cache-policy PR that regresses TTFT p95 > 8%"
+    ],
+    "evidence": [
+      { "quote": "gpt-4.1 long-context p95 TTFT crept up to 14.2s last week.",                        "source": "X · agent eng" },
+      { "quote": "inference.ttft.p95 > 12s on gpt-4.1 long-context for 7h, breach #3 this week.",      "source": "Datadog · alert" },
+      { "quote": "p95 TTFT regression on gpt-4.1-128k traced to KV cache eviction policy change.",     "source": "Slack · inference" }
+    ]
+  },
+  "sync": {
+    "jira": {
+      "id": "INFER-7204",
+      "project": "INFER",
+      "type": "Epic",
+      "story_points": 34,
+      "status": "Created"
+    },
+    "confluence": {
+      "space": "INFER",
+      "title": "PRD · Long-context TTFT recovery on gpt-4.1",
+      "linked_jira": "INFER-7204",
+      "status": "Draft published"
+    }
+  },
+  "meta": {
+    "generated_at": "2026-04-26T12:34:56Z",
+    "generator": "catalog",
+    "seed": "openai.com"
+  }
+}

@@ -1,0 +1,98 @@
+{
+  "company": {
+    "slug": "slack",
+    "name": "Slack",
+    "domain": "slack.com",
+    "industry": "Productivity",
+    "tagline": "team chat platform",
+    "mark": { "bg": "#4A154B", "char": "S" },
+    "tier": "catalog"
+  },
+  "ingest": {
+    "signal_count": 41560,
+    "runtime_seconds": 39,
+    "sentiment_pct": { "positive": 21, "neutral": 32, "negative": 47 },
+    "sources": [
+      { "name": "X / Twitter",      "category": "external", "count": 14820 },
+      { "name": "Reddit",           "category": "external", "count":  4310 },
+      { "name": "App Store reviews","category": "external", "count":  2140 },
+      { "name": "Zendesk",          "category": "internal", "count":  9620 },
+      { "name": "Intercom",         "category": "internal", "count":  2480 },
+      { "name": "Slack (internal)", "category": "internal", "count":  4905 },
+      { "name": "GitHub Issues",    "category": "external", "count":  1380 },
+      { "name": "Jira (dev logs)",  "category": "internal", "count":  1905 }
+    ],
+    "stream_samples": [
+      { "source": "X",          "sentiment": "negative", "text": "huddle audio drops every 30s on macOS 14.4, only fix is leaving and rejoining. been like this for 2 weeks", "is_simulated": false },
+      { "source": "Reddit",     "sentiment": "negative", "text": "Slack notifications no longer respect iOS Focus modes after the 24.04 update — DMs from on-call are silenced when they should break through", "is_simulated": false },
+      { "source": "Zendesk",    "sentiment": "negative", "text": "[#44219 P1] Huddle screen-share freezes for all participants when one user on M1 toggles camera, audio keeps going", "is_simulated": false },
+      { "source": "Slack",      "sentiment": "negative", "text": "Search relevance dropped off a cliff in workspaces >200k messages. \"in:#eng-onboarding\" returns 6mo-old posts before yesterday's", "is_simulated": false },
+      { "source": "X",          "sentiment": "negative", "text": "@SlackHQ Connect channel let an external partner see a private canvas they shouldn't have access to. permission scope is broken", "is_simulated": false },
+      { "source": "Intercom",   "sentiment": "negative", "text": "Workflow Builder trigger \"new message in channel\" firing twice for threaded replies since the schema migration", "is_simulated": false },
+      { "source": "Reddit",     "sentiment": "negative", "text": "Two of us editing the same Canvas at the same time and our edits keep clobbering each other. CRDT must have regressed.", "is_simulated": false },
+      { "source": "Zendesk",    "sentiment": "negative", "text": "Customer reports notification delay of 4-7 minutes on iOS 17.4 with Focus enabled, even for explicit allow-listed contacts", "is_simulated": false },
+      { "source": "App Store",  "sentiment": "negative", "text": "Huddle audio sounds like it's underwater on macOS Sonoma. Switching to Bluetooth headphones makes it worse.", "is_simulated": false },
+      { "source": "Slack",      "sentiment": "negative", "text": "Huddle MOS score dropped from 4.2 to 3.6 on macOS clients post-24.03.30, AEC processor is the suspect", "is_simulated": false },
+      { "source": "Jira",       "sentiment": "negative", "text": "[huddle-rtc] AudioUnit reset cascade on macOS when CoreAudio device list changes mid-call, causes 30s silence", "is_simulated": false },
+      { "source": "X",          "sentiment": "positive", "text": "the new lists feature in slack is genuinely changing how my team tracks side quests, finally killed our notion db", "is_simulated": false },
+      { "source": "Zendesk",    "sentiment": "negative", "text": "Connect channel admin sees \"failed to fetch permissions\" when adding a guest, has to retry 3-4 times before it sticks", "is_simulated": false },
+      { "source": "Reddit",     "sentiment": "neutral",  "text": "anyone else notice slack desktop using 2.4gb of ram in a workspace with 8 huddles open? feels new", "is_simulated": false },
+      { "source": "Intercom",   "sentiment": "negative", "text": "Workflow with Google Sheets step silently truncates payloads >8kb since last week — no error, just missing rows", "is_simulated": false }
+    ]
+  },
+  "clusters": [
+    { "title": "Huddle audio quality regression on macOS Sonoma",       "signal_count": 2480, "rice_score": 89.7, "is_top": true },
+    { "title": "iOS notification delays with Focus modes",              "signal_count": 1820, "rice_score": 81.2, "is_top": false },
+    { "title": "Search relevance regression in large workspaces",       "signal_count": 1340, "rice_score": 74.6, "is_top": false },
+    { "title": "Connect channel permission scope leaks",                "signal_count":  960, "rice_score": 68.9, "is_top": false },
+    { "title": "Canvas concurrent-edit conflict (CRDT regression)",     "signal_count":  815, "rice_score": 62.4, "is_top": false },
+    { "title": "Workflow Builder triggers double-firing on threads",    "signal_count":  640, "rice_score": 55.8, "is_top": false }
+  ],
+  "top_epic": {
+    "title": "Restore Huddle audio quality on macOS Sonoma clients",
+    "rationale": "2,480 cross-channel signals — concentrated in macOS 14.x users — point to an AudioUnit reset cascade in the Huddle RTC stack when CoreAudio devices change mid-call. MOS scores dropped from 4.2 to 3.6 after the 24.03.30 desktop release, and Apple-silicon screen-share toggles are deterministically reproducible.",
+    "verdict": "Ship-critical — Huddle is the wedge against Zoom and audio is the table stake.",
+    "recommendation": "Roll back the AEC processor change behind a feature flag, ship a deterministic device-change handler, and add MOS-score telemetry to the desktop client.",
+    "rice": {
+      "reach":      88,
+      "impact":     86,
+      "confidence": 92,
+      "effort":     20,
+      "urgency":    88,
+      "strategy":   84,
+      "risk_inv":   80,
+      "composite":  89.7
+    },
+    "acceptance_criteria": [
+      "AudioUnit chain survives CoreAudio device-list changes without 30s silence",
+      "Huddle MOS score returns to >=4.1 P50 on macOS 14.x within 7 days of rollout",
+      "Screen-share + camera-toggle on M-series no longer freezes peer streams",
+      "Client emits huddle.audio.quality_degraded events with AEC reason codes"
+    ],
+    "evidence": [
+      { "quote": "huddle audio drops every 30s on macOS 14.4, only fix is leaving and rejoining.",         "source": "X · IC engineer" },
+      { "quote": "Huddle MOS score dropped from 4.2 to 3.6 on macOS clients post-24.03.30.",                "source": "Slack · #huddle-quality" },
+      { "quote": "AudioUnit reset cascade on macOS when CoreAudio device list changes mid-call.",          "source": "Jira · huddle-rtc" }
+    ]
+  },
+  "sync": {
+    "jira": {
+      "id": "HUDDLE-3187",
+      "project": "Huddle",
+      "type": "Epic",
+      "story_points": 21,
+      "status": "Created"
+    },
+    "confluence": {
+      "space": "HUDDLE",
+      "title": "PRD · macOS Huddle audio resilience + MOS telemetry",
+      "linked_jira": "HUDDLE-3187",
+      "status": "Draft published"
+    }
+  },
+  "meta": {
+    "generated_at": "2026-04-26T12:34:56Z",
+    "generator": "catalog",
+    "seed": "slack.com"
+  }
+}

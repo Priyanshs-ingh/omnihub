@@ -1,0 +1,98 @@
+{
+  "company": {
+    "slug": "canva",
+    "name": "Canva",
+    "domain": "canva.com",
+    "industry": "Design",
+    "tagline": "visual design for everyone",
+    "mark": { "bg": "#00C4CC", "char": "C" },
+    "tier": "catalog"
+  },
+  "ingest": {
+    "signal_count": 47820,
+    "runtime_seconds": 41,
+    "sentiment_pct": { "positive": 23, "neutral": 31, "negative": 46 },
+    "sources": [
+      { "name": "X / Twitter",        "category": "external", "count": 16240 },
+      { "name": "Reddit",             "category": "external", "count":  5120 },
+      { "name": "App Store reviews",  "category": "external", "count":  3680 },
+      { "name": "Zendesk",            "category": "internal", "count": 10420 },
+      { "name": "Intercom",           "category": "internal", "count":  3210 },
+      { "name": "Slack (internal)",   "category": "internal", "count":  4815 },
+      { "name": "Community forum",    "category": "external", "count":  2185 },
+      { "name": "Jira (dev logs)",    "category": "internal", "count":  2150 }
+    ],
+    "stream_samples": [
+      { "source": "X",          "sentiment": "negative", "text": "exported a 300dpi PDF for print and the embedded PNGs got resampled to 150dpi. printer rejected the file. canva pls fix", "is_simulated": false },
+      { "source": "Reddit",     "sentiment": "negative", "text": "Magic Resize cropped my client's logo out of the corner on every IG variant. The safe-area logic doesn't respect locked elements anymore.", "is_simulated": false },
+      { "source": "Zendesk",    "sentiment": "negative", "text": "[#71204 P1] Pro user — PDF Print export downscales raster fills to 150dpi regardless of source asset resolution, started ~April 18", "is_simulated": false },
+      { "source": "Intercom",   "sentiment": "negative", "text": "Devanagari text in our Hindi templates is rendering with broken conjuncts in PDF export — looks fine on screen, prints garbled", "is_simulated": false },
+      { "source": "X",          "sentiment": "negative", "text": "brand kit primary color shifted from #1A4FFF to #1B50FE on every shared template overnight. nobody on the team made an edit", "is_simulated": false },
+      { "source": "App Store",  "sentiment": "negative", "text": "Video timeline scrubbing on iPad Pro M2 is laggy beyond 30s clips. The playhead jumps in 2-3 frame increments now.", "is_simulated": false },
+      { "source": "Reddit",     "sentiment": "negative", "text": "Pro account hit \"AI image generation rate limit\" after 12 prompts today. Last month I could do 50+ before throttling. Did the SLA change silently?", "is_simulated": false },
+      { "source": "Slack",      "sentiment": "negative", "text": "Print-pipeline regression: ImageMagick worker is normalizing all raster fills to 150dpi before merging into the PDF stream. Bisected to deploy 2026.04.16.", "is_simulated": false },
+      { "source": "Zendesk",    "sentiment": "negative", "text": "Brand kit color drift complaints up 380% week-over-week — looks like an sRGB->Display P3 round-trip on shared templates", "is_simulated": false },
+      { "source": "Jira",       "sentiment": "negative", "text": "[export-pdf] PDF/X-1a profile dropping ICC color tags on raster layers, downstream prepress flagged as out-of-gamut", "is_simulated": false },
+      { "source": "X",          "sentiment": "positive", "text": "magic studio's new background remover is genuinely better than photoshop now, this is wild", "is_simulated": false },
+      { "source": "Community",  "sentiment": "negative", "text": "Arabic RTL templates: text-on-path is reversing letterforms after the Magic Resize step. Was fine last week, broken since Tuesday.", "is_simulated": false },
+      { "source": "Reddit",     "sentiment": "neutral",  "text": "anyone know how to force canva to keep my CMYK swatches as CMYK on export? it keeps converting to RGB", "is_simulated": false },
+      { "source": "Zendesk",    "sentiment": "negative", "text": "Magic Resize for Pinterest 1000x1500 crops the bottom CTA out 90% of the time when the original is square. Used to anchor correctly.", "is_simulated": false },
+      { "source": "Intercom",   "sentiment": "negative", "text": "Video editor: scrubbing past the 60s mark on M2 iPad Pro causes the timeline to detach from the preview. Have to refresh the doc.", "is_simulated": false }
+    ]
+  },
+  "clusters": [
+    { "title": "PDF Print export downsamples to 150dpi (raster regression)", "signal_count": 2640, "rice_score": 90.1, "is_top": true },
+    { "title": "Magic Resize crops locked elements out of safe-area",        "signal_count": 1820, "rice_score": 79.8, "is_top": false },
+    { "title": "Brand kit color drift (sRGB <-> Display P3)",                "signal_count": 1410, "rice_score": 73.2, "is_top": false },
+    { "title": "Non-Latin script rendering breaks in PDF export",            "signal_count":  990, "rice_score": 68.4, "is_top": false },
+    { "title": "Video timeline scrubbing lag on iPad Pro M2",                "signal_count":  720, "rice_score": 60.7, "is_top": false },
+    { "title": "AI image generation rate-limit tightened on Pro plan",       "signal_count":  580, "rice_score": 54.1, "is_top": false }
+  ],
+  "top_epic": {
+    "title": "Restore 300dpi raster fidelity in PDF Print export pipeline",
+    "rationale": "2,640 signals — heavily weighted toward Pro and Teams customers running print workflows — bisect cleanly to deploy 2026.04.16, when the ImageMagick worker began normalizing raster fills to 150dpi before merging into the PDF/X-1a stream. Prepress shops are rejecting files; brand-kit ICC tags are also being dropped in the same pass.",
+    "verdict": "Revenue-critical — print workflows are the core Pro retention loop.",
+    "recommendation": "Roll back the resampler default, preserve source DPI through the worker chain, and reattach ICC color tags for PDF/X-1a exports.",
+    "rice": {
+      "reach":      86,
+      "impact":     90,
+      "confidence": 92,
+      "effort":     24,
+      "urgency":    88,
+      "strategy":   84,
+      "risk_inv":   80,
+      "composite":  90.1
+    },
+    "acceptance_criteria": [
+      "Raster fills export at source DPI (up to 600dpi) without resampling",
+      "ICC color tags survive the PDF/X-1a merge step on every layer",
+      "Pre-flight checker warns user if export DPI < 300 for Print presets",
+      "P95 PDF export time remains within 10% of pre-regression baseline"
+    ],
+    "evidence": [
+      { "quote": "exported a 300dpi PDF for print and the embedded PNGs got resampled to 150dpi.",                  "source": "X · designer" },
+      { "quote": "Print-pipeline regression: ImageMagick worker normalizing raster fills to 150dpi.",              "source": "Slack · #print-pipeline" },
+      { "quote": "PDF/X-1a profile dropping ICC color tags on raster layers, prepress flagged out-of-gamut.",      "source": "Jira · export-pdf" }
+    ]
+  },
+  "sync": {
+    "jira": {
+      "id": "STUDIO-5042",
+      "project": "Studio",
+      "type": "Epic",
+      "story_points": 24,
+      "status": "Created"
+    },
+    "confluence": {
+      "space": "STUDIO",
+      "title": "PRD · PDF Print pipeline DPI + ICC fidelity restoration",
+      "linked_jira": "STUDIO-5042",
+      "status": "Draft published"
+    }
+  },
+  "meta": {
+    "generated_at": "2026-04-26T12:34:56Z",
+    "generator": "catalog",
+    "seed": "canva.com"
+  }
+}

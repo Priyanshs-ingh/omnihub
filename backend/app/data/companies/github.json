@@ -1,0 +1,97 @@
+{
+  "company": {
+    "slug": "github",
+    "name": "GitHub",
+    "domain": "github.com",
+    "industry": "Developer",
+    "tagline": "developer platform",
+    "mark": { "bg": "#0D1117", "char": "G" },
+    "tier": "catalog"
+  },
+  "ingest": {
+    "signal_count": 33614,
+    "runtime_seconds": 36,
+    "sentiment_pct": { "positive": 21, "neutral": 38, "negative": 41 },
+    "sources": [
+      { "name": "X / Twitter",        "category": "external", "count": 10240 },
+      { "name": "Reddit",             "category": "external", "count":  3120 },
+      { "name": "Hacker News",        "category": "external", "count":  1820 },
+      { "name": "GitHub Issues (own)","category": "external", "count":  4480 },
+      { "name": "Zendesk",            "category": "internal", "count":  6210 },
+      { "name": "Slack (internal)",   "category": "internal", "count":  3812 },
+      { "name": "Jira (dev logs)",    "category": "internal", "count":  1948 },
+      { "name": "Datadog (alerts)",   "category": "internal", "count":  1984 }
+    ],
+    "stream_samples": [
+      { "source": "X",          "sentiment": "negative", "text": "github actions runner cold-start back to 90s+ on linux-x64-large again. our CI budget is screaming.", "is_simulated": false },
+      { "source": "Reddit",     "sentiment": "negative", "text": "Copilot suggestion latency in our Bazel monorepo went from ~400ms to 2.5s after the v3 model rollout. unusable.", "is_simulated": false },
+      { "source": "Zendesk",    "sentiment": "negative", "text": "[#9215 P1] Enterprise SAML token refresh failing intermittently for Okta-federated orgs since 04/22", "is_simulated": false },
+      { "source": "HN",         "sentiment": "negative", "text": "Code search returning 6-month-old results for actively-edited files. Indexing lag must be huge right now.", "is_simulated": false },
+      { "source": "Issues",     "sentiment": "negative", "text": "actions/cache@v4 silently fails when ZSTD compression level is auto on Windows runners — degrades to no cache", "is_simulated": false },
+      { "source": "X",          "sentiment": "negative", "text": "copilot completions triggering on plain comments inside .env files. that's... not great for security.", "is_simulated": false },
+      { "source": "Slack",      "sentiment": "negative", "text": "Runner provisioning queue depth past 8k for hosted-large pool, p99 wait time crossed 4min for 90 consecutive minutes", "is_simulated": false },
+      { "source": "Reddit",     "sentiment": "negative", "text": "Audit log streaming to Splunk gaps for ~12min during peak hours daily. compliance team is asking questions.", "is_simulated": false },
+      { "source": "Issues",     "sentiment": "negative", "text": "REST API: list-pull-requests with state=closed returns paginated results that silently re-include open PRs", "is_simulated": false },
+      { "source": "X",          "sentiment": "positive", "text": "github copilot workspace's plan-mode is actually good for refactor PRs. pleasantly surprised.", "is_simulated": false },
+      { "source": "Datadog",    "sentiment": "negative", "text": "[alert] runner_cold_start_p95 SLO breach 3rd day running, > 75s threshold on linux-x64-large", "is_simulated": false },
+      { "source": "HN",         "sentiment": "neutral",  "text": "Anyone else find the new repo sidebar layout buries the Insights tab? minor, but breaks muscle memory.", "is_simulated": false },
+      { "source": "Zendesk",    "sentiment": "negative", "text": "Codespaces port-forwarding URL randomly invalidates mid-session, especially on long-lived devcontainers", "is_simulated": false },
+      { "source": "Jira",       "sentiment": "negative", "text": "[ci-runners] cold-start regression traced to v25.4 image bake — node_modules cache layer not being reused" , "is_simulated": false }
+    ]
+  },
+  "clusters": [
+    { "title": "Actions runner cold-start regression (linux-x64-large)", "signal_count": 1980, "rice_score": 90.3, "is_top": true },
+    { "title": "Copilot latency on monorepos post v3 model",              "signal_count": 1480, "rice_score": 82.1, "is_top": false },
+    { "title": "Enterprise SAML token refresh flakiness",                 "signal_count": 1110, "rice_score": 75.8, "is_top": false },
+    { "title": "Code search index lag on hot files",                      "signal_count":  920, "rice_score": 71.2, "is_top": false },
+    { "title": "Audit log streaming gaps to enterprise SIEMs",            "signal_count":  640, "rice_score": 64.9, "is_top": false },
+    { "title": "Codespaces port-forward URL invalidation",                "signal_count":  410, "rice_score": 56.0, "is_top": false }
+  ],
+  "top_epic": {
+    "title": "Restore Actions runner cold-start to sub-30s on hosted-large",
+    "rationale": "1,980 signals across X, HN, GitHub Issues and Datadog point to the v25.4 runner image bake regressing the node_modules cache layer reuse — cold-start p95 is sitting above 75s for 3 days running, breaching SLO. Customers on hosted-large pools are watching CI budgets balloon.",
+    "verdict": "Platform-critical — every minute of cold-start is billed against customers' CI budgets.",
+    "recommendation": "Roll back the v25.4 image, fix the cache layer, and ship with regression tests for layer-reuse before re-rolling.",
+    "rice": {
+      "reach":      88,
+      "impact":     88,
+      "confidence": 92,
+      "effort":     20,
+      "urgency":    86,
+      "strategy":   86,
+      "risk_inv":   78,
+      "composite":  90.3
+    },
+    "acceptance_criteria": [
+      "Cold-start p95 on linux-x64-large back to < 30s for 7 consecutive days",
+      "node_modules cache layer reuse rate > 95% in CI metrics",
+      "Image-bake CI gate that fails on layer-reuse regression",
+      "Runner provisioning queue depth alarm threshold lowered to 2k"
+    ],
+    "evidence": [
+      { "quote": "GitHub Actions runner cold-start back to 90s+ on linux-x64-large again. Our CI budget is screaming.", "source": "X · platform eng" },
+      { "quote": "runner_cold_start_p95 SLO breach 3rd day running, > 75s threshold on linux-x64-large.",               "source": "Datadog · alert" },
+      { "quote": "Cold-start regression traced to v25.4 image bake — node_modules cache layer not being reused.",       "source": "Jira · ci-runners" }
+    ]
+  },
+  "sync": {
+    "jira": {
+      "id": "PLATFORM-5104",
+      "project": "Platform",
+      "type": "Epic",
+      "story_points": 26,
+      "status": "Created"
+    },
+    "confluence": {
+      "space": "PLATFORM",
+      "title": "PRD · Actions runner cold-start recovery",
+      "linked_jira": "PLATFORM-5104",
+      "status": "Draft published"
+    }
+  },
+  "meta": {
+    "generated_at": "2026-04-26T12:34:56Z",
+    "generator": "catalog",
+    "seed": "github.com"
+  }
+}

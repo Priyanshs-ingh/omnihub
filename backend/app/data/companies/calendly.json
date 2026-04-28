@@ -1,0 +1,98 @@
+{
+  "company": {
+    "slug": "calendly",
+    "name": "Calendly",
+    "domain": "calendly.com",
+    "industry": "SaaS",
+    "tagline": "scheduling automation",
+    "mark": { "bg": "#006BFF", "char": "C" },
+    "tier": "catalog"
+  },
+  "ingest": {
+    "signal_count": 22640,
+    "runtime_seconds": 29,
+    "sentiment_pct": { "positive": 23, "neutral": 35, "negative": 42 },
+    "sources": [
+      { "name": "X / Twitter",        "category": "external", "count":  8420 },
+      { "name": "Reddit",             "category": "external", "count":  2680 },
+      { "name": "App Store reviews",  "category": "external", "count":   720 },
+      { "name": "Zendesk",            "category": "internal", "count":  5840 },
+      { "name": "Intercom",           "category": "internal", "count":  2280 },
+      { "name": "Slack (internal)",   "category": "internal", "count":  1640 },
+      { "name": "GitHub Issues",      "category": "external", "count":   420 },
+      { "name": "Jira (dev logs)",    "category": "internal", "count":   640 }
+    ],
+    "stream_samples": [
+      { "source": "X",          "sentiment": "negative", "text": "DST flipped over the weekend and Calendly is showing all my UK invitees a 1-hour-shifted slot. booking page says 9am their time, calendar invite says 10am.", "is_simulated": false },
+      { "source": "Reddit",     "sentiment": "negative", "text": "Connected my Outlook AND Google calendars and Calendly is double-booking me into Outlook events that are marked private. conflict detection only reads Google.", "is_simulated": false },
+      { "source": "Zendesk",    "sentiment": "negative", "text": "[#SCHED-4820 P1] customer: round-robin team of 8 SDRs assigning 71% of inbounds to two reps after the assignment-fairness migration on Apr 22", "is_simulated": false },
+      { "source": "Slack",      "sentiment": "negative", "text": "scheduling-core metrics: DST-week double-booking rate spiked 4.8x for users with multi-calendar connections. cross-tz invitees most affected.", "is_simulated": false },
+      { "source": "X",          "sentiment": "negative", "text": "Calendly Workflow 'send confirmation' fired three times for one rescheduled meeting today. invitee texted asking which time was real.", "is_simulated": false },
+      { "source": "Reddit",     "sentiment": "negative", "text": "Group event with 6 capacity is letting in 8 people because the booking lock isn't holding under concurrent submits. third weekend in a row.", "is_simulated": false },
+      { "source": "Zendesk",    "sentiment": "negative", "text": "[#AVAIL-3210 P2] enterprise: Embeds on customer portal blocked by their CSP — frame-ancestors directive needs explicit calendly.com but our embed snippet doesn't document it", "is_simulated": false },
+      { "source": "Intercom",   "sentiment": "negative", "text": "Slack integration: new-booking notifications going to #general instead of the channel I configured for that event type. routing rule ignored.", "is_simulated": false },
+      { "source": "App Store",  "sentiment": "negative", "text": "iOS app showing my availability in PT when my account is set to ET. invitees are getting confused booking pages all week.", "is_simulated": false },
+      { "source": "Slack",      "sentiment": "negative", "text": "support escalations: DST week saw 3.2x ticket volume vs baseline. 64% are timezone display or multi-calendar conflict. AE team flagged 4 enterprise pause-renewals.", "is_simulated": false },
+      { "source": "X",          "sentiment": "negative", "text": "round-robin assignment is supposed to be even but one rep on my team has 40 meetings this month and another has 6. fairness algorithm isn't.", "is_simulated": false },
+      { "source": "Reddit",     "sentiment": "neutral",  "text": "is there a way to force Calendly to use a specific calendar's free/busy as primary and the others as read-only? for conflict detection only", "is_simulated": false },
+      { "source": "Zendesk",    "sentiment": "negative", "text": "Workflow trigger 'event rescheduled' is firing on cancellations too since the v2 trigger refactor — sending two follow-ups when invitees cancel",  "is_simulated": false },
+      { "source": "X",          "sentiment": "positive", "text": "Calendly's new meeting polls feature actually replaced our doodle workflow cleanly today. small team meetings finally schedule themselves.", "is_simulated": false },
+      { "source": "Jira",       "sentiment": "negative", "text": "[scheduling-core] cross-calendar conflict check converts all events to invitee_tz before merge, dropping events where source_tz crosses DST boundary mid-window", "is_simulated": false }
+    ]
+  },
+  "clusters": [
+    { "title": "DST timezone display + multi-calendar conflict misses", "signal_count": 2040, "rice_score": 89.1, "is_top": true },
+    { "title": "Round-robin assignment fairness drift",                 "signal_count": 1180, "rice_score": 80.2, "is_top": false },
+    { "title": "Group event capacity overbooking under concurrency",    "signal_count":  860, "rice_score": 72.6, "is_top": false },
+    { "title": "Workflow triggers misfiring on reschedule/cancel",      "signal_count":  640, "rice_score": 65.4, "is_top": false },
+    { "title": "Slack integration channel routing ignored",             "signal_count":  420, "rice_score": 56.8, "is_top": false },
+    { "title": "Embeds CSP blocking on enterprise portals",             "signal_count":  310, "rice_score": 49.3, "is_top": false }
+  ],
+  "top_epic": {
+    "title": "Fix DST + multi-calendar conflict detection across timezones",
+    "rationale": "2,040 signals across Zendesk, X and Slack converge on the same failure mode: during DST week, double-booking rate for users with multi-calendar connections spiked 4.8x. The cross-calendar conflict checker converts all events to invitee_tz before merging, silently dropping events whose source_tz crosses a DST boundary mid-window. 64% of DST-week tickets are timezone or conflict misses, and four enterprise accounts have paused renewal conversations.",
+    "verdict": "Trust-critical — a scheduling tool that double-books during DST loses the core reason customers buy it.",
+    "recommendation": "Move conflict detection to UTC-canonical merge before tz projection, ship per-calendar provenance in conflict logs, and add a DST-week canary that verifies double-book rate stays within baseline before promoting any scheduling-core change.",
+    "rice": {
+      "reach":      82,
+      "impact":     89,
+      "confidence": 93,
+      "effort":     18,
+      "urgency":    92,
+      "strategy":   80,
+      "risk_inv":   80,
+      "composite":  89.1
+    },
+    "acceptance_criteria": [
+      "Conflict merge happens in UTC before invitee_tz projection",
+      "Double-book rate during DST week within 1.2x baseline across all multi-calendar configs",
+      "Conflict log shows source calendar, source_tz, and projected_tz per event",
+      "DST-week canary blocks scheduling-core promotion on >1.5x double-book regression"
+    ],
+    "evidence": [
+      { "quote": "DST-week double-booking rate spiked 4.8x for users with multi-calendar connections.",        "source": "Slack · scheduling-core" },
+      { "quote": "Connected Outlook AND Google and Calendly is double-booking me into private Outlook events.", "source": "r/calendly" },
+      { "quote": "Conflict check converts all events to invitee_tz before merge, drops DST-boundary events.",   "source": "Jira · scheduling-core" }
+    ]
+  },
+  "sync": {
+    "jira": {
+      "id": "SCHED-2208",
+      "project": "SCHED",
+      "type": "Epic",
+      "story_points": 21,
+      "status": "Created"
+    },
+    "confluence": {
+      "space": "SCHED",
+      "title": "PRD · DST-safe multi-calendar conflict detection",
+      "linked_jira": "SCHED-2208",
+      "status": "Draft published"
+    }
+  },
+  "meta": {
+    "generated_at": "2026-04-26T12:34:56Z",
+    "generator": "catalog",
+    "seed": "calendly.com"
+  }
+}

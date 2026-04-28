@@ -1,0 +1,97 @@
+{
+  "company": {
+    "slug": "vercel",
+    "name": "Vercel",
+    "domain": "vercel.com",
+    "industry": "Developer",
+    "tagline": "frontend cloud platform",
+    "mark": { "bg": "#000000", "char": "V" },
+    "tier": "catalog"
+  },
+  "ingest": {
+    "signal_count": 35720,
+    "runtime_seconds": 39,
+    "sentiment_pct": { "positive": 24, "neutral": 33, "negative": 43 },
+    "sources": [
+      { "name": "X / Twitter",        "category": "external", "count": 11820 },
+      { "name": "Reddit",             "category": "external", "count":  3210 },
+      { "name": "Hacker News",        "category": "external", "count":  1840 },
+      { "name": "GitHub Issues",      "category": "external", "count":  4120 },
+      { "name": "Zendesk",            "category": "internal", "count":  6480 },
+      { "name": "Intercom",           "category": "internal", "count":  2950 },
+      { "name": "Slack (internal)",   "category": "internal", "count":  3420 },
+      { "name": "Datadog (edge)",     "category": "internal", "count":  1880 }
+    ],
+    "stream_samples": [
+      { "source": "X",          "sentiment": "negative", "text": "edge function cold-start back to 1.4s p95 in iad1 since the runtime upgrade. used to be 280ms. our LCP regressed by half a second.", "is_simulated": false },
+      { "source": "Reddit",     "sentiment": "negative", "text": "ISR revalidate is taking 90s+ to invalidate across regions for a marketing site on Pro. my CMS team thinks the site is broken.", "is_simulated": false },
+      { "source": "Issues",     "sentiment": "negative", "text": "[#71204] Next 15.1.4 + App Router: streaming response stalls on Edge runtime when route-level cache headers are present", "is_simulated": false },
+      { "source": "Zendesk",    "sentiment": "negative", "text": "[#5803 P1] Build queue depth holding at 800+ on Pro since 09:00 UTC, customers reporting 12-15min queue waits for hobby-tier-style traffic", "is_simulated": false },
+      { "source": "HN",         "sentiment": "negative", "text": "Vercel KV connection pool exhaustion at ~600 RPM on Pro tier. Docs claim 10k. Support said \"reach out for higher limits\". yeah no.", "is_simulated": false },
+      { "source": "X",          "sentiment": "negative", "text": "preview deployment URLs randomized again on the latest CLI release. our QA scripts are all hardcoded. @vercel pls", "is_simulated": false },
+      { "source": "Slack",      "sentiment": "negative", "text": "edge_cold_start_p95 SLO breach for 9h, iad1 + sfo1 affected. region failover not pulling traffic away.", "is_simulated": false },
+      { "source": "Issues",     "sentiment": "negative", "text": "[adapter-next] Server Actions returning 504 on Edge runtime when payload >1MB — request body buffering broken since 15.1", "is_simulated": false },
+      { "source": "Reddit",     "sentiment": "negative", "text": "Postgres pool exhaustion on Vercel Postgres at ~150 concurrent connections. We're paying for the Pro tier.", "is_simulated": false },
+      { "source": "Datadog",    "sentiment": "negative", "text": "[alert] edge.cold_start.p95 > 1200ms threshold for 12 of 14 windows in past 6h, regions: iad1, sfo1, fra1", "is_simulated": false },
+      { "source": "Intercom",   "sentiment": "negative", "text": "Build cache miss rate jumped to ~40% after the v36.1 builder image roll-out. our 14min builds went to 22min.", "is_simulated": false },
+      { "source": "X",          "sentiment": "positive", "text": "v0 + ship-to-Vercel flow is genuinely magical for landing pages. shipped a campaign in 30 min.", "is_simulated": false },
+      { "source": "Reddit",     "sentiment": "neutral",  "text": "anyone know if the dashboard analytics are using the new pricing model already or still grandfathered?", "is_simulated": false },
+      { "source": "Zendesk",    "sentiment": "negative", "text": "Custom domain SSL cert renewal failed silently for 4 customers, expired before retry kicked in. now scrambling.", "is_simulated": false }
+    ]
+  },
+  "clusters": [
+    { "title": "Edge function cold-start regression on iad1/sfo1", "signal_count": 2280, "rice_score": 90.7, "is_top": true },
+    { "title": "Build queue depth on Pro tier",                    "signal_count": 1720, "rice_score": 83.4, "is_top": false },
+    { "title": "ISR revalidate cross-region invalidation lag",     "signal_count": 1340, "rice_score": 76.8, "is_top": false },
+    { "title": "Next.js 15.x edge streaming + Server Actions bugs","signal_count": 1080, "rice_score": 71.2, "is_top": false },
+    { "title": "KV / Postgres connection pool exhaustion",         "signal_count":  860, "rice_score": 65.5, "is_top": false },
+    { "title": "Preview deployment URL randomization",             "signal_count":  420, "rice_score": 52.0, "is_top": false }
+  ],
+  "top_epic": {
+    "title": "Restore edge function cold-start to sub-300ms on iad1/sfo1",
+    "rationale": "2,280 cross-channel signals (X, HN, GitHub Issues, Datadog) trace the same regression: edge cold-start p95 jumped from ~280ms to 1.4s after the runtime upgrade, breaching SLO across iad1, sfo1 and fra1 for 9 hours straight. Customers are watching their LCP regress by half a second — a directly measurable conversion hit on the marketing-site cohort.",
+    "verdict": "Revenue-critical — every 100ms of cold-start is a measurable conversion loss for our biggest customers.",
+    "recommendation": "Roll back the runtime upgrade, ship a snapshot-warm-pool fix, and gate future runtime PRs on a regional cold-start budget.",
+    "rice": {
+      "reach":      88,
+      "impact":     90,
+      "confidence": 92,
+      "effort":     24,
+      "urgency":    90,
+      "strategy":   84,
+      "risk_inv":   76,
+      "composite":  90.7
+    },
+    "acceptance_criteria": [
+      "Edge cold-start p95 < 300ms in iad1, sfo1 and fra1 for 7 consecutive days",
+      "Snapshot warm-pool hit-rate above 92% across all primary regions",
+      "Per-region cold-start SLO with PagerDuty escalation under 600ms",
+      "Runtime PR CI gate that fails on any regional p95 regression > 10%"
+    ],
+    "evidence": [
+      { "quote": "Edge function cold-start back to 1.4s p95 in iad1 since the runtime upgrade.",     "source": "X · platform eng" },
+      { "quote": "edge.cold_start.p95 > 1200ms threshold for 12 of 14 windows in past 6h.",          "source": "Datadog · alert" },
+      { "quote": "Build queue depth holding at 800+ on Pro since 09:00 UTC.",                        "source": "Zendesk · P1" }
+    ]
+  },
+  "sync": {
+    "jira": {
+      "id": "DEPLOY-3140",
+      "project": "DEPLOY",
+      "type": "Epic",
+      "story_points": 26,
+      "status": "Created"
+    },
+    "confluence": {
+      "space": "DEPLOY",
+      "title": "PRD · Edge runtime cold-start recovery",
+      "linked_jira": "DEPLOY-3140",
+      "status": "Draft published"
+    }
+  },
+  "meta": {
+    "generated_at": "2026-04-26T12:34:56Z",
+    "generator": "catalog",
+    "seed": "vercel.com"
+  }
+}

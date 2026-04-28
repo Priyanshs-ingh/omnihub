@@ -1,0 +1,96 @@
+{
+  "company": {
+    "slug": "notion",
+    "name": "Notion",
+    "domain": "notion.com",
+    "industry": "Productivity",
+    "tagline": "all-in-one workspace",
+    "mark": { "bg": "#111111", "char": "N" },
+    "tier": "catalog"
+  },
+  "ingest": {
+    "signal_count": 28940,
+    "runtime_seconds": 32,
+    "sentiment_pct": { "positive": 24, "neutral": 36, "negative": 40 },
+    "sources": [
+      { "name": "X / Twitter",        "category": "external", "count": 11420 },
+      { "name": "Reddit",             "category": "external", "count":  3820 },
+      { "name": "App Store reviews",  "category": "external", "count":  1480 },
+      { "name": "Zendesk",            "category": "internal", "count":  5640 },
+      { "name": "Intercom",           "category": "internal", "count":  2510 },
+      { "name": "Slack (internal)",   "category": "internal", "count":  2280 },
+      { "name": "Jira (dev logs)",    "category": "internal", "count":  1790 }
+    ],
+    "stream_samples": [
+      { "source": "X",          "sentiment": "negative", "text": "notion AI just hallucinated an entire meeting that never happened, with names and times. concerning.", "is_simulated": false },
+      { "source": "Reddit",     "sentiment": "negative", "text": "Q&A is making up sources from our enterprise wiki — citing pages that don't exist. how is this in prod?", "is_simulated": false },
+      { "source": "App Store",  "sentiment": "negative", "text": "Mobile editor lags 2-3 seconds per keystroke on long pages. iPad Pro M4. unusable for real work.", "is_simulated": false },
+      { "source": "Zendesk",    "sentiment": "negative", "text": "[#7740 P2] permission inheritance broken — child page restricted, parent grants admin, child still inherits", "is_simulated": false },
+      { "source": "Intercom",   "sentiment": "negative", "text": "Two of my teammates edited the same database row, one set silently won. no conflict warning, no history entry.", "is_simulated": false },
+      { "source": "X",          "sentiment": "negative", "text": "notion AI quoted a salary figure for someone that's just... wrong. confidently wrong. need a citation toggle.", "is_simulated": false },
+      { "source": "Reddit",     "sentiment": "negative", "text": "Sync conflicts on shared databases are biting us hard since the realtime backend rolled out. lost edits.", "is_simulated": false },
+      { "source": "Slack",      "sentiment": "negative", "text": "Q&A grounded-on-workspace toggle isn't sticking — defaults back to general LLM after every session", "is_simulated": false },
+      { "source": "Zendesk",    "sentiment": "negative", "text": "Mobile app freezes for 8-10s when opening pages with >50 inline databases", "is_simulated": false },
+      { "source": "X",          "sentiment": "positive", "text": "notion calendar's AI scheduling actually picked a slot that didn't conflict with my deep-work block. impressed.", "is_simulated": false },
+      { "source": "GitHub",     "sentiment": "negative", "text": "Notion API: page property updates silently dropped when a rate-limit retry hits during a transaction", "is_simulated": false },
+      { "source": "Reddit",     "sentiment": "neutral",  "text": "anyone else's Notion calendar showing duplicate events for cross-timezone meetings? rolled out to my workspace yesterday", "is_simulated": false },
+      { "source": "Intercom",   "sentiment": "negative", "text": "We need an audit log for AI usage on enterprise pages — legal is asking and we have nothing to show", "is_simulated": false },
+      { "source": "Jira",       "sentiment": "negative", "text": "[ai-grounding] retrieval index lags page edits by ~6min, AI answers go stale immediately after publish" , "is_simulated": false }
+    ]
+  },
+  "clusters": [
+    { "title": "AI Q&A hallucinations on enterprise workspaces", "signal_count": 1840, "rice_score": 89.1, "is_top": true },
+    { "title": "Realtime sync conflicts losing edits",            "signal_count": 1280, "rice_score": 80.6, "is_top": false },
+    { "title": "Mobile editor lag on long pages",                 "signal_count": 1110, "rice_score": 73.4, "is_top": false },
+    { "title": "Permission inheritance regressions",              "signal_count":  720, "rice_score": 66.2, "is_top": false },
+    { "title": "AI-grounding retrieval index lag",                "signal_count":  640, "rice_score": 60.5, "is_top": false },
+    { "title": "Calendar duplicate events on TZ-cross meetings",  "signal_count":  410, "rice_score": 49.0, "is_top": false }
+  ],
+  "top_epic": {
+    "title": "Ground Notion AI in workspace truth, with citations",
+    "rationale": "1,840 signals across X, Reddit and Zendesk converge on the same complaint: Notion AI is fabricating content on enterprise pages and citing pages that don't exist. The retrieval index also lags edits by ~6 minutes, which is why answers go stale right after publish. This is the #1 churn risk surfaced by Enterprise CSMs this quarter.",
+    "verdict": "Trust-critical — enterprise won't expand seats while AI is unreliable.",
+    "recommendation": "Force grounded-on-workspace by default for enterprise plans, surface inline citations, and tighten the retrieval index SLA.",
+    "rice": {
+      "reach":      86,
+      "impact":     88,
+      "confidence": 92,
+      "effort":     24,
+      "urgency":    84,
+      "strategy":   80,
+      "risk_inv":   74,
+      "composite":  89.1
+    },
+    "acceptance_criteria": [
+      "Default Q&A to workspace-grounded for enterprise plans",
+      "Inline citations linking to source page + block anchor",
+      "Retrieval index lag < 60s p95 after page publish",
+      "Refuse-to-answer when no grounding is available, with explainer"
+    ],
+    "evidence": [
+      { "quote": "Notion AI just hallucinated an entire meeting that never happened, with names and times.",   "source": "X · enterprise admin" },
+      { "quote": "Q&A is making up sources from our enterprise wiki — citing pages that don't exist.",         "source": "r/notion" },
+      { "quote": "Retrieval index lags page edits by ~6min, AI answers go stale immediately after publish.",   "source": "Jira · ai-grounding" }
+    ]
+  },
+  "sync": {
+    "jira": {
+      "id": "WORK-1822",
+      "project": "Workspace",
+      "type": "Epic",
+      "story_points": 21,
+      "status": "Created"
+    },
+    "confluence": {
+      "space": "WORK",
+      "title": "PRD · Grounded AI for enterprise workspaces",
+      "linked_jira": "WORK-1822",
+      "status": "Draft published"
+    }
+  },
+  "meta": {
+    "generated_at": "2026-04-26T12:34:56Z",
+    "generator": "catalog",
+    "seed": "notion.com"
+  }
+}

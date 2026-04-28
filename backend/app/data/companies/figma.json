@@ -1,0 +1,97 @@
+{
+  "company": {
+    "slug": "figma",
+    "name": "Figma",
+    "domain": "figma.com",
+    "industry": "Design",
+    "tagline": "collaborative design platform",
+    "mark": { "bg": "#F24E1E", "char": "F" },
+    "tier": "catalog"
+  },
+  "ingest": {
+    "signal_count": 41280,
+    "runtime_seconds": 41,
+    "sentiment_pct": { "positive": 22, "neutral": 35, "negative": 43 },
+    "sources": [
+      { "name": "X / Twitter",        "category": "external", "count": 13420 },
+      { "name": "Reddit",             "category": "external", "count":  4180 },
+      { "name": "Figma Community",    "category": "external", "count":  2840 },
+      { "name": "Zendesk",            "category": "internal", "count":  9120 },
+      { "name": "Intercom",           "category": "internal", "count":  3210 },
+      { "name": "Slack (internal)",   "category": "internal", "count":  4790 },
+      { "name": "Jira (DESIGN)",      "category": "internal", "count":  2104 },
+      { "name": "Datadog (frontend)", "category": "internal", "count":  1616 }
+    ],
+    "stream_samples": [
+      { "source": "X",          "sentiment": "negative", "text": "figma canvas frame-rate tanks to ~12fps once our DS file crosses 8 pages on M1 Air. zoom-out is unusable.", "is_simulated": false },
+      { "source": "Reddit",     "sentiment": "negative", "text": "Multiplayer cursors stuttering hard at 8+ collaborators in our weekly crit. cursor positions snap by ~400ms.", "is_simulated": false },
+      { "source": "Zendesk",    "sentiment": "negative", "text": "[#11204 P1] Auto-layout variant nesting drops padding to 0 when 3rd-level child uses fill-container on Chrome 131", "is_simulated": false },
+      { "source": "Slack",      "sentiment": "negative", "text": "Dev Mode CSS pane is showing stale local-variable values for ~30s after a publish. design eng caught it twice today.", "is_simulated": false },
+      { "source": "Community",  "sentiment": "negative", "text": "Plugin SDK v2: postMessage payloads >256kb silently fail since 04/19. our linter plugin just stops responding.", "is_simulated": false },
+      { "source": "X",          "sentiment": "negative", "text": "library publish has been spinning for 14 minutes on a 420mb file. no error, no progress bar movement. classic.", "is_simulated": false },
+      { "source": "Jira",       "sentiment": "negative", "text": "[DESIGN-2098] canvas raster tile cache eviction too aggressive at >6 pages — repeat re-rasterization on pan", "is_simulated": false },
+      { "source": "Reddit",     "sentiment": "negative", "text": "FigJam sticky note text input lagging ~500ms behind keystrokes during workshops. people gave up and switched to Miro.", "is_simulated": false },
+      { "source": "Zendesk",    "sentiment": "negative", "text": "Enterprise SSO loop on Edge 130 — SAML assertion accepted but session cookie not set, redirects back to /login", "is_simulated": false },
+      { "source": "Intercom",   "sentiment": "negative", "text": "Comments badge counter stuck on 47 unread for two days. clearing cache fixes it but customers won't do that.", "is_simulated": false },
+      { "source": "Datadog",    "sentiment": "negative", "text": "[alert] canvas_paint_p95 above 480ms threshold for 6h on multi-page files >5MB, breach #4 this week", "is_simulated": false },
+      { "source": "X",          "sentiment": "positive", "text": "the new Sites template gallery is genuinely lovely. shipping a marketing page in an afternoon.", "is_simulated": false },
+      { "source": "Reddit",     "sentiment": "neutral",  "text": "is anyone else's prototype hotspot drag offset weird since last update? not a blocker just annoying", "is_simulated": false },
+      { "source": "Slack",      "sentiment": "negative", "text": "design-systems team blocked: library publish fails silently on the iOS file (438mb). tried 4 times.", "is_simulated": false }
+    ]
+  },
+  "clusters": [
+    { "title": "Canvas perf collapse on multi-page files",       "signal_count": 2410, "rice_score": 92.4, "is_top": true },
+    { "title": "Multiplayer cursor stutter at 8+ collaborators", "signal_count": 1620, "rice_score": 84.1, "is_top": false },
+    { "title": "Auto-layout variant nesting padding bug",        "signal_count": 1280, "rice_score": 78.5, "is_top": false },
+    { "title": "Dev Mode CSS stale for local variables",         "signal_count":  980, "rice_score": 71.8, "is_top": false },
+    { "title": "Plugin SDK v2 postMessage size regression",      "signal_count":  720, "rice_score": 64.2, "is_top": false },
+    { "title": "Library publish silent fail on >400MB files",    "signal_count":  510, "rice_score": 56.3, "is_top": false }
+  ],
+  "top_epic": {
+    "title": "Restore canvas frame-rate to 60fps on multi-page files >5MB",
+    "rationale": "2,410 signals across X, Reddit, Zendesk and Datadog converge on the same regression: canvas paint p95 has crossed 480ms on multi-page files for six straight hours, and the raster tile cache is evicting too aggressively past 6 pages — every pan retriggers rasterization. Design-system files are the worst hit, and that is exactly the customer cohort Figma cannot afford to frustrate.",
+    "verdict": "Ship-critical — the design-system cohort is the single most strategic customer segment.",
+    "recommendation": "Tune raster tile retention and ship a multi-page perf budget gate before pushing the next canvas renderer change.",
+    "rice": {
+      "reach":      90,
+      "impact":     90,
+      "confidence": 94,
+      "effort":     20,
+      "urgency":    88,
+      "strategy":   86,
+      "risk_inv":   80,
+      "composite":  92.4
+    },
+    "acceptance_criteria": [
+      "Canvas paint p95 < 250ms on files with 8+ pages and 5MB+ assets",
+      "Raster tile cache hit-rate above 90% during pan/zoom interactions",
+      "60fps sustained on M1 Air at 100% zoom for the top 50 enterprise files",
+      "Perf-budget CI gate that fails canvas PRs regressing paint p95 by >5%"
+    ],
+    "evidence": [
+      { "quote": "Canvas frame-rate tanks to ~12fps once our DS file crosses 8 pages on M1 Air.",        "source": "X · design lead" },
+      { "quote": "canvas_paint_p95 above 480ms threshold for 6h on multi-page files >5MB.",              "source": "Datadog · alert" },
+      { "quote": "Raster tile cache eviction too aggressive at >6 pages — repeat re-rasterization.",     "source": "Jira · DESIGN-2098" }
+    ]
+  },
+  "sync": {
+    "jira": {
+      "id": "DESIGN-2104",
+      "project": "DESIGN",
+      "type": "Epic",
+      "story_points": 24,
+      "status": "Created"
+    },
+    "confluence": {
+      "space": "DESIGN",
+      "title": "PRD · Multi-page canvas perf recovery",
+      "linked_jira": "DESIGN-2104",
+      "status": "Draft published"
+    }
+  },
+  "meta": {
+    "generated_at": "2026-04-26T12:34:56Z",
+    "generator": "catalog",
+    "seed": "figma.com"
+  }
+}

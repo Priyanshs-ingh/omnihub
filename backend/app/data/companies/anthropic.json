@@ -1,0 +1,97 @@
+{
+  "company": {
+    "slug": "anthropic",
+    "name": "Anthropic",
+    "domain": "anthropic.com",
+    "industry": "AI",
+    "tagline": "AI safety research lab",
+    "mark": { "bg": "#D97757", "char": "A" },
+    "tier": "catalog"
+  },
+  "ingest": {
+    "signal_count": 32480,
+    "runtime_seconds": 37,
+    "sentiment_pct": { "positive": 28, "neutral": 34, "negative": 38 },
+    "sources": [
+      { "name": "X / Twitter",        "category": "external", "count": 11820 },
+      { "name": "Reddit",             "category": "external", "count":  3210 },
+      { "name": "Hacker News",        "category": "external", "count":  1840 },
+      { "name": "Developer Discord",  "category": "external", "count":  2480 },
+      { "name": "Zendesk",            "category": "internal", "count":  6820 },
+      { "name": "Intercom",           "category": "internal", "count":  2610 },
+      { "name": "Slack (internal)",   "category": "internal", "count":  2412 },
+      { "name": "Datadog (inference)","category": "internal", "count":  1288 }
+    ],
+    "stream_samples": [
+      { "source": "X",          "sentiment": "negative", "text": "claude prompt cache hit-rate dropped to ~40% on our system prompts since 04/22. used to be 90%+. token bill nearly 2x.", "is_simulated": false },
+      { "source": "Discord",    "sentiment": "negative", "text": "Extended thinking output truncating at ~32k tokens mid-reasoning, response just... stops. seen on sonnet 4.6 and 4.7.", "is_simulated": false },
+      { "source": "Zendesk",    "sentiment": "negative", "text": "[#9420 P1] Batch API for long-context jobs sitting in queue 18+ hours past SLA, customer eval pipeline blocked", "is_simulated": false },
+      { "source": "Reddit",     "sentiment": "negative", "text": "claude code agent loop edge case — when a tool returns an error, the model retries the same tool 8 times before giving up. burns context fast.", "is_simulated": false },
+      { "source": "X",          "sentiment": "negative", "text": "MCP server connection drops every ~45min on long sessions. reconnect handshake works but in-flight tool calls are lost.", "is_simulated": false },
+      { "source": "HN",         "sentiment": "negative", "text": "Computer-use vision recall on dense UIs (think Linear, Notion sidebars) is noticeably worse than the demo videos. clicking wrong elements ~15% of the time.", "is_simulated": false },
+      { "source": "Slack",      "sentiment": "negative", "text": "cache_read_input_tokens dropped from 88% to 41% across the top-50 platform customers since the inference fleet rotation 04/22", "is_simulated": false },
+      { "source": "Discord",    "sentiment": "negative", "text": "thinking budget honored intermittently — set 32k, getting ~12k actual on Sonnet 4.7 about 1 in 4 times", "is_simulated": false },
+      { "source": "Datadog",    "sentiment": "negative", "text": "[alert] cache.read_hit_rate < 50% threshold breached for 14 of 16 windows, region: us-east, model: claude-sonnet-4.7", "is_simulated": false },
+      { "source": "Zendesk",    "sentiment": "negative", "text": "Files API: PDF >50MB returns 200 but file_id refers to truncated content, only first 12 pages retained on retrieval", "is_simulated": false },
+      { "source": "Intercom",   "sentiment": "negative", "text": "Streaming response on /v1/messages occasionally drops the final stop_reason event, our SDK never resolves the promise", "is_simulated": false },
+      { "source": "X",          "sentiment": "positive", "text": "claude code's planning mode genuinely changed how I refactor. shipping 2x more in a day. quietly excellent.", "is_simulated": false },
+      { "source": "Reddit",     "sentiment": "neutral",  "text": "is the 1M context window beta widely available now or still gated? docs are unclear", "is_simulated": false },
+      { "source": "Slack",      "sentiment": "negative", "text": "platform-eng triage: 9 of 12 P1s this week are cache-related, all hitting our top-revenue accounts", "is_simulated": false }
+    ]
+  },
+  "clusters": [
+    { "title": "Prompt cache hit-rate collapse on system prompts", "signal_count": 2480, "rice_score": 89.5, "is_top": true },
+    { "title": "Extended thinking output truncation",              "signal_count": 1820, "rice_score": 82.7, "is_top": false },
+    { "title": "Batch API queue delays past SLA",                  "signal_count": 1240, "rice_score": 76.4, "is_top": false },
+    { "title": "MCP server connection drops on long sessions",     "signal_count":  980, "rice_score": 70.1, "is_top": false },
+    { "title": "Claude Code agent retry loops on tool errors",     "signal_count":  720, "rice_score": 64.2, "is_top": false },
+    { "title": "Computer-use vision recall on dense UIs",          "signal_count":  510, "rice_score": 56.8, "is_top": false }
+  ],
+  "top_epic": {
+    "title": "Restore prompt cache hit-rate above 85% on platform system prompts",
+    "rationale": "2,480 signals across X, Slack Connect, Datadog and Zendesk converge on the same regression: prompt cache hit-rate dropped from ~88% to 41% across the top-50 platform customers after the 04/22 inference fleet rotation. Token bills are nearly doubling on accounts running stable system prompts — and 9 of 12 P1s this week are cache-related, all hitting top-revenue accounts. Extended thinking truncation is a secondary symptom of the same fleet change.",
+    "verdict": "Revenue-critical — cache hit-rate is the single biggest knob on platform-customer cost-of-goods.",
+    "recommendation": "Roll back the affinity policy change, ship a per-customer cache hit-rate SLO, and gate inference fleet rotations on a cache-replay benchmark.",
+    "rice": {
+      "reach":      86,
+      "impact":     90,
+      "confidence": 90,
+      "effort":     24,
+      "urgency":    86,
+      "strategy":   90,
+      "risk_inv":   78,
+      "composite":  89.5
+    },
+    "acceptance_criteria": [
+      "Prompt cache hit-rate > 85% on top-50 platform customers for 7 consecutive days",
+      "cache_read_input_tokens ratio restored to pre-04/22 baseline (within 3 percentage points)",
+      "Per-customer cache hit-rate SLO published with paging on sustained < 70%",
+      "Inference fleet rotation CI gate that replays last 24h of cached system prompts pre-rollout"
+    ],
+    "evidence": [
+      { "quote": "Claude prompt cache hit-rate dropped to ~40% on our system prompts since 04/22.",         "source": "X · platform customer" },
+      { "quote": "cache.read_hit_rate < 50% threshold breached for 14 of 16 windows, model: sonnet-4.7.",   "source": "Datadog · alert" },
+      { "quote": "9 of 12 P1s this week are cache-related, all hitting our top-revenue accounts.",          "source": "Slack · platform-eng" }
+    ]
+  },
+  "sync": {
+    "jira": {
+      "id": "CLAUDE-5180",
+      "project": "CLAUDE",
+      "type": "Epic",
+      "story_points": 26,
+      "status": "Created"
+    },
+    "confluence": {
+      "space": "CLAUDE",
+      "title": "PRD · Prompt cache hit-rate recovery for platform customers",
+      "linked_jira": "CLAUDE-5180",
+      "status": "Draft published"
+    }
+  },
+  "meta": {
+    "generated_at": "2026-04-26T12:34:56Z",
+    "generator": "catalog",
+    "seed": "anthropic.com"
+  }
+}

@@ -1,0 +1,98 @@
+{
+  "company": {
+    "slug": "netflix",
+    "name": "Netflix",
+    "domain": "netflix.com",
+    "industry": "Consumer",
+    "tagline": "streaming entertainment service",
+    "mark": { "bg": "#E50914", "char": "N" },
+    "tier": "catalog"
+  },
+  "ingest": {
+    "signal_count": 56240,
+    "runtime_seconds": 46,
+    "sentiment_pct": { "positive": 18, "neutral": 35, "negative": 47 },
+    "sources": [
+      { "name": "X / Twitter",        "category": "external", "count": 21840 },
+      { "name": "Reddit",             "category": "external", "count":  7120 },
+      { "name": "App Store reviews",  "category": "external", "count":  4620 },
+      { "name": "Play Store reviews", "category": "external", "count":  2810 },
+      { "name": "Zendesk",            "category": "internal", "count":  9840 },
+      { "name": "Slack (internal)",   "category": "internal", "count":  5310 },
+      { "name": "Player Telemetry",   "category": "internal", "count":  3210 },
+      { "name": "Jira (dev logs)",    "category": "internal", "count":  1490 }
+    ],
+    "stream_samples": [
+      { "source": "X",          "sentiment": "negative", "text": "netflix on apple tv crashes every single time I try to switch profiles. tvOS 18.2, atv 4k 3rd gen. been like this for 2 weeks", "is_simulated": false },
+      { "source": "Reddit",     "sentiment": "negative", "text": "Continue Watching is showing me shows I finished a month ago. Cleared the row 4 times, comes back. Beverly Hills Cop is haunting me.", "is_simulated": false },
+      { "source": "Zendesk",    "sentiment": "negative", "text": "[#PLAYER-7741 P1] audio drifts ~400ms behind video after the app is backgrounded for >30s on iOS. Repro on every iPhone 15 we tested.", "is_simulated": false },
+      { "source": "X",          "sentiment": "negative", "text": "the Netflix homepage recommendations have been *terrible* since last Tuesday. it's just true crime and reality TV no matter what I watch", "is_simulated": false },
+      { "source": "Player",     "sentiment": "negative", "text": "Vizio M-Series Quantum is reporting Dolby Vision capability when it only supports HDR10. We're sending DV streams that the panel renders washed out.", "is_simulated": false },
+      { "source": "Slack",      "sentiment": "negative", "text": "tvOS player crash rate up 4.8x on profile-switch since 7.142 build. Apple TV 4K 3rd gen + tvOS 18.2 is the cohort. Crash signature is in the user-store deserialize path.", "is_simulated": false },
+      { "source": "App Store",  "sentiment": "negative", "text": "Audio out of sync with picture after I unlock my phone. Have to fully close and reopen the app to fix. Galaxy S24 Ultra.", "is_simulated": false },
+      { "source": "Reddit",     "sentiment": "negative", "text": "Recommendations regression is real. The new model is showing me 90% of the same 30 titles in different rows. Diversity collapsed.", "is_simulated": false },
+      { "source": "Zendesk",    "sentiment": "negative", "text": "[#REC-2218] ad-tier user got the same Sour Patch Kids creative 8 times in one episode. Frequency cap appears broken on FAST channels.", "is_simulated": false },
+      { "source": "Player",     "sentiment": "negative", "text": "Ad-tier creative load timeouts up 12% on Roku since the SSAI v3.2 rollout. Manifest stitcher is occasionally serving expired pre-roll URLs.",                                              "is_simulated": false },
+      { "source": "X",          "sentiment": "positive",  "text": "the new spatial audio mix on the Black Mirror season is incredible. genuinely impressed", "is_simulated": false },
+      { "source": "Reddit",     "sentiment": "neutral",   "text": "is anyone else's Continue Watching just full of stuff they already finished? mine has 6 ghosts on it right now", "is_simulated": false },
+      { "source": "Jira",       "sentiment": "negative", "text": "[player-tvos] profile-switch crash repros when user-prefs blob exceeds 64KB. introduced in 7.142 by the watch-history payload increase.", "is_simulated": false },
+      { "source": "Zendesk",    "sentiment": "negative", "text": "Vizio OLED user reports Dolby Vision content looks gray and washed out. Forcing HDR10 in advanced settings fixes it. Capability mistag confirmed.", "is_simulated": false },
+      { "source": "Slack",      "sentiment": "negative", "text": "Recs model v4.1 collapsed catalog diversity score 0.71 -> 0.42 in A/B. Engagement is up 3% but D30 retention is flat to negative. Quality call needed.", "is_simulated": false }
+    ]
+  },
+  "clusters": [
+    { "title": "tvOS profile-switch crash on Apple TV 4K (7.142)",   "signal_count": 2640, "rice_score": 90.7, "is_top": true },
+    { "title": "Recs v4.1 catalog diversity collapse",                "signal_count": 2180, "rice_score": 84.2, "is_top": false },
+    { "title": "Continue Watching shows finished content",            "signal_count": 1480, "rice_score": 76.5, "is_top": false },
+    { "title": "Audio desync on iOS/Android after backgrounding",     "signal_count": 1220, "rice_score": 71.3, "is_top": false },
+    { "title": "Dolby Vision mistag on Vizio panels",                 "signal_count":  840, "rice_score": 64.8, "is_top": false },
+    { "title": "Ad-tier creative load failures on Roku (SSAI v3.2)",  "signal_count":  680, "rice_score": 58.4, "is_top": false }
+  ],
+  "top_epic": {
+    "title": "Fix tvOS profile-switch crash on Apple TV 4K",
+    "rationale": "2,640 signals concentrate on a single signature: the player crashes on profile switch when the user-prefs blob exceeds 64KB, introduced in 7.142 when the watch-history payload was expanded. tvOS player crash rate is up 4.8x on Apple TV 4K (3rd gen) running tvOS 18.2 — a high-LTV, high-visibility cohort. Profile switching is the entry point for every household session; losing it is functionally an outage for shared accounts.",
+    "verdict": "Player-critical — every household session opens with a profile switch.",
+    "recommendation": "Ship a 7.142.1 hotfix with a streaming user-prefs deserializer, cap the watch-history payload, and add a profile-switch crash SLO with paging.",
+    "rice": {
+      "reach":      90,
+      "impact":     86,
+      "confidence": 93,
+      "effort":     20,
+      "urgency":    88,
+      "strategy":   86,
+      "risk_inv":   80,
+      "composite":  90.7
+    },
+    "acceptance_criteria": [
+      "tvOS player switches to streaming user-prefs deserializer; tolerates blobs > 64KB without OOM/crash",
+      "Watch-history payload capped at 32KB on the wire; older entries paged in lazily on demand",
+      "Profile-switch crash rate on Apple TV 4K (3rd gen, tvOS 18.x) returns to under 0.05% per session",
+      "Profile-switch crash SLO wired to PagerDuty with a 0.1% p99 threshold over a 30-min window"
+    ],
+    "evidence": [
+      { "quote": "tvOS player crash rate up 4.8x on profile-switch since 7.142 build. Apple TV 4K 3rd gen + tvOS 18.2 cohort.", "source": "Slack · #player-health" },
+      { "quote": "profile-switch crash repros when user-prefs blob exceeds 64KB. introduced in 7.142.",                          "source": "Jira · player-tvos" },
+      { "quote": "Netflix on Apple TV crashes every single time I try to switch profiles. tvOS 18.2.",                            "source": "X · subscriber" }
+    ]
+  },
+  "sync": {
+    "jira": {
+      "id": "PLAYER-6612",
+      "project": "Player",
+      "type": "Epic",
+      "story_points": 21,
+      "status": "Created"
+    },
+    "confluence": {
+      "space": "PLAYER",
+      "title": "PRD · tvOS profile-switch hotfix + watch-history payload cap",
+      "linked_jira": "PLAYER-6612",
+      "status": "Draft published"
+    }
+  },
+  "meta": {
+    "generated_at": "2026-04-26T12:34:56Z",
+    "generator": "catalog",
+    "seed": "netflix.com"
+  }
+}

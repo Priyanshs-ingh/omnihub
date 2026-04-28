@@ -1,0 +1,97 @@
+{
+  "company": {
+    "slug": "linear",
+    "name": "Linear",
+    "domain": "linear.app",
+    "industry": "Developer",
+    "tagline": "issue tracking for product teams",
+    "mark": { "bg": "#5E6AD2", "char": "L" },
+    "tier": "catalog"
+  },
+  "ingest": {
+    "signal_count": 26840,
+    "runtime_seconds": 33,
+    "sentiment_pct": { "positive": 27, "neutral": 36, "negative": 37 },
+    "sources": [
+      { "name": "X / Twitter",        "category": "external", "count":  9120 },
+      { "name": "Reddit",             "category": "external", "count":  2410 },
+      { "name": "Hacker News",        "category": "external", "count":  1180 },
+      { "name": "Customer Slack Connect", "category": "external", "count": 2204 },
+      { "name": "Zendesk",            "category": "internal", "count":  4910 },
+      { "name": "Intercom",           "category": "internal", "count":  2890 },
+      { "name": "Slack (internal)",   "category": "internal", "count":  2820 },
+      { "name": "Linear (dogfood)",   "category": "internal", "count":  1306 }
+    ],
+    "stream_samples": [
+      { "source": "X",          "sentiment": "negative", "text": "linear graphql endpoint p95 has been 4.2s for our 38k-issue workspace for two weeks. issues.list with filter is the worst.", "is_simulated": false },
+      { "source": "Customer",   "sentiment": "negative", "text": "Reassigning a sub-issue's parent across cycles wipes the estimate and assignee. Lost 30 min of context in a triage today.", "is_simulated": false },
+      { "source": "Zendesk",    "sentiment": "negative", "text": "[#7402 P1] Cycle automation moving completed sub-issues back to Backlog when the parent rolls over a cycle boundary", "is_simulated": false },
+      { "source": "Reddit",     "sentiment": "negative", "text": "Search relevance regressed hard last week — typing the issue title verbatim returns it 4th, behind unrelated archived ones.", "is_simulated": false },
+      { "source": "HN",         "sentiment": "negative", "text": "GraphQL pagination with first:250 and a label filter on a big workspace times out at 30s. Used to be fine in January.", "is_simulated": false },
+      { "source": "Slack",      "sentiment": "negative", "text": "Mobile widget loading state stuck at \"Syncing\" indefinitely on iOS 18.2 after backgrounding the app for >10min", "is_simulated": false },
+      { "source": "Intercom",   "sentiment": "negative", "text": "Sub-issue cascade rule for \"close parent when all children done\" misfires when a child is canceled (not completed)", "is_simulated": false },
+      { "source": "X",          "sentiment": "negative", "text": "linear's API rate limits are way too aggressive for backfill scripts now. 429ing on 800 req/min, docs still say 1500.", "is_simulated": false },
+      { "source": "Linear",     "sentiment": "negative", "text": "[ENG-4180] graphql resolver N+1 on issue.children when filter includes labels — confirmed via APM trace", "is_simulated": false },
+      { "source": "Reddit",     "sentiment": "neutral",  "text": "is the keyboard shortcut for \"move to project\" different on the new release? muscle memory broken", "is_simulated": false },
+      { "source": "Zendesk",    "sentiment": "negative", "text": "Initiative roll-up progress bar shows 0% for initiatives with archived projects, even when active projects are 80% done", "is_simulated": false },
+      { "source": "X",          "sentiment": "positive", "text": "the new Linear async standup view is exactly what I wanted. finally killed our daily sync.", "is_simulated": false },
+      { "source": "Customer",   "sentiment": "negative", "text": "Slack notification for issue mention is firing 3-4 times per mention since the v2025.4.2 release. devs are turning notifications off.", "is_simulated": false },
+      { "source": "Slack",      "sentiment": "negative", "text": "support-eng triage: 11 P1s this week tagged graphql-perf, all from workspaces >25k issues", "is_simulated": false }
+    ]
+  },
+  "clusters": [
+    { "title": "GraphQL p95 latency on large workspaces",       "signal_count": 1860, "rice_score": 89.5, "is_top": true },
+    { "title": "Sub-issue parent reassignment data loss",       "signal_count": 1240, "rice_score": 81.4, "is_top": false },
+    { "title": "Cycle automation regressing completed children","signal_count":  980, "rice_score": 75.2, "is_top": false },
+    { "title": "Search relevance regression",                   "signal_count":  810, "rice_score": 68.7, "is_top": false },
+    { "title": "Slack notification duplication",                "signal_count":  640, "rice_score": 61.0, "is_top": false },
+    { "title": "Mobile widget sync stalls after background",    "signal_count":  430, "rice_score": 53.4, "is_top": false }
+  ],
+  "top_epic": {
+    "title": "Cut GraphQL p95 to under 800ms on workspaces with 25k+ issues",
+    "rationale": "1,860 signals from X, HN, Slack Connect and internal Linear telemetry trace the same root cause: an N+1 in the issue.children resolver when label filters are present is dragging p95 to 4.2s on Linear's largest customer cohort. Eleven P1s in seven days — every one from a workspace north of 25k issues. This is the cohort with the highest expansion ARR per seat.",
+    "verdict": "Platform-critical — query latency is the single biggest churn signal for enterprise.",
+    "recommendation": "Land the resolver dataloader fix, add per-resolver SLOs to CI, and roll out a workspace-size perf gate before any new filter ships.",
+    "rice": {
+      "reach":      86,
+      "impact":     88,
+      "confidence": 92,
+      "effort":     22,
+      "urgency":    84,
+      "strategy":   86,
+      "risk_inv":   80,
+      "composite":  89.5
+    },
+    "acceptance_criteria": [
+      "issue.children resolver p95 < 250ms on workspaces with 25k+ issues",
+      "GraphQL endpoint p95 overall < 800ms across the top-100 enterprise workspaces",
+      "Per-resolver latency SLO published and tracked in the engineering dashboard",
+      "CI perf gate fails any resolver PR that regresses p95 by more than 10%"
+    ],
+    "evidence": [
+      { "quote": "GraphQL p95 has been 4.2s for our 38k-issue workspace for two weeks.",                  "source": "X · staff eng" },
+      { "quote": "graphql resolver N+1 on issue.children when filter includes labels.",                    "source": "Jira · ENG-4180" },
+      { "quote": "11 P1s this week tagged graphql-perf, all from workspaces >25k issues.",                 "source": "Slack · support-eng" }
+    ]
+  },
+  "sync": {
+    "jira": {
+      "id": "ENG-4218",
+      "project": "ENG",
+      "type": "Epic",
+      "story_points": 21,
+      "status": "Created"
+    },
+    "confluence": {
+      "space": "ENG",
+      "title": "PRD · GraphQL latency recovery for enterprise workspaces",
+      "linked_jira": "ENG-4218",
+      "status": "Draft published"
+    }
+  },
+  "meta": {
+    "generated_at": "2026-04-26T12:34:56Z",
+    "generator": "catalog",
+    "seed": "linear.app"
+  }
+}

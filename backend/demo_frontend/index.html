@@ -1,0 +1,340 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>OmniHub — Live demo</title>
+<meta name="description" content="OmniHub turns scattered customer noise into the next ranked, explainable product decision. Live demo.">
+<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 28 28'><rect width='28' height='28' rx='8' fill='%231BA9C9'/><rect x='9' y='9' width='10' height='10' rx='2' fill='white' transform='rotate(45 14 14)'/></svg>">
+<link rel="stylesheet" href="styles.css" />
+</head>
+<body>
+
+<!-- Sticky pill navbar — matches the production design system -->
+<nav class="topnav">
+  <div class="brand">
+    <div class="brand-mark"></div>
+    <div class="brand-text">
+      <div class="n">OMNIHUB</div>
+      <div class="s">Real-time product intelligence</div>
+    </div>
+  </div>
+  <div class="nav-tag">Investor demo · live API</div>
+  <div class="spacer"></div>
+  <button class="btn-ghost" id="methodologyBtn" type="button">How it works</button>
+  <div class="pill" id="backendPill" data-state="checking"><span class="gdot"></span> <span id="backendPillText">Checking backend…</span></div>
+  <div class="lotus-badge">Built with Lotus X</div>
+</nav>
+
+<div class="shell">
+
+  <!-- ============================================================
+       HOME VIEW — hero + URL input + 25-tile picker grid
+       ============================================================ -->
+  <section id="home">
+    <div class="hero-stack">
+      <div class="hero-eyebrow"><span class="dot"></span> Decision OS · Live pipeline</div>
+      <h1 class="hero-h1">
+        Turn scattered customer noise<br/>into the next <em>roadmap decision</em>.
+      </h1>
+      <p class="hero-sub">
+        Paste any company URL. OmniHub ingests tens of thousands of signals from
+        X, Reddit, Hacker News, Zendesk, Slack and Jira — clusters them into themes,
+        scores the top epic with RICE++, and drafts the Jira and Confluence sync.
+      </p>
+
+      <form id="urlForm" class="url-row" autocomplete="off">
+        <div class="url-input-wrap">
+          <span class="prefix">https://</span>
+          <input
+            id="urlInput"
+            class="url-input"
+            type="text"
+            placeholder="stripe.com  or  any company you want to test"
+            spellcheck="false"
+            autocapitalize="off"
+          />
+        </div>
+        <button class="btn-gr" type="submit">Run demo →</button>
+      </form>
+
+      <div class="helper">
+        Try <b>stripe.com</b>, <b>figma.com</b>, <b>openai.com</b> for hand-authored runs —
+        or <b>any other domain</b> for a deterministic synthetic run.
+      </div>
+    </div>
+
+    <div class="section-head">
+      <h3>25 ready-to-demo companies</h3>
+      <span class="meta">click to launch</span>
+    </div>
+
+    <div id="tileGrid" class="tile-grid">
+      <!-- tiles injected by app.js; skeletons shown while loading -->
+    </div>
+  </section>
+
+  <!-- ============================================================
+       RUN VIEW — animated 5-stage pipeline driven by SSE
+       ============================================================ -->
+  <section id="run">
+    <div class="run-topbar">
+      <a href="#" class="back-link" id="backLink">← All companies</a>
+      <span class="domain-pill" id="domainPill">domain</span>
+      <div class="spacer"></div>
+      <span class="domain-pill" id="tierPill">tier</span>
+    </div>
+
+    <header class="run-header">
+      <div>
+        <div class="hero-eyebrow"><span class="dot"></span> Live run · <span id="coIndustry">—</span></div>
+        <h1>Listening for <em id="coName">—</em></h1>
+        <div class="run-controls">
+          <button class="btn-replay" id="replayBtn">▶ Replay run</button>
+          <div class="progress-wrap">
+            <span id="progText">00 / 05</span>
+            <div class="bar"><div class="fill" id="progFill"></div></div>
+          </div>
+        </div>
+      </div>
+      <p class="sub" id="coSub">
+        OmniHub opens a real-time signal feed for the selected domain, then compresses what it hears into the single epic your team should ship next.
+      </p>
+    </header>
+
+    <div class="error-banner" id="errorBanner"></div>
+
+    <!-- Stage rail -->
+    <nav class="stage-rail" id="stageRail">
+      <button type="button" class="stage-chip active" data-stage="0">
+        <span class="n">§ 01</span><span class="t">Ingest</span>
+      </button>
+      <button type="button" class="stage-chip" data-stage="1">
+        <span class="n">§ 02</span><span class="t">Cluster</span>
+      </button>
+      <button type="button" class="stage-chip" data-stage="2">
+        <span class="n">§ 03</span><span class="t">Score</span>
+      </button>
+      <button type="button" class="stage-chip" data-stage="3">
+        <span class="n">§ 04</span><span class="t">Recommend</span>
+      </button>
+      <button type="button" class="stage-chip" data-stage="4">
+        <span class="n">§ 05</span><span class="t">Sync</span>
+      </button>
+    </nav>
+
+    <!-- Board -->
+    <div class="board">
+      <div class="board-head">
+        <span class="t" id="boardTitle">§ 01 · Omnichannel ingestion</span>
+        <span class="live-dot" id="liveDot">LIVE</span>
+      </div>
+      <div class="board-body">
+
+        <!-- Stage 1: Ingest -->
+        <div class="stage active" data-stage="0">
+          <div class="ingest-grid">
+            <div class="col-card">
+              <div class="card-head-row">
+                <h4>Sources online · provenance</h4>
+                <span class="health-badge" id="healthBadge"><span class="hd-dot"></span><span id="healthText">awaiting feed…</span></span>
+              </div>
+              <ul class="source-list" id="sourceList"></ul>
+              <button class="methodology" id="methodologyFootnote" type="button" title="How OmniHub turns noise into shippable epics">
+                Production pipeline · OAuth + webhook hardened · 14-day retention
+                <span class="method-cta">View methodology →</span>
+              </button>
+            </div>
+            <div class="col-card">
+              <h4>Live signal stream</h4>
+              <div class="stream" id="stream"></div>
+            </div>
+            <div class="col-card">
+              <h4>Volume</h4>
+              <div class="counter"><span id="counter">0</span><small>signals captured</small></div>
+              <div class="mini-stats">
+                <div class="row pos"><span class="k">Positive</span><span class="v" id="pctPos">—</span></div>
+                <div class="row"><span class="k">Neutral</span><span class="v" id="pctNeu">—</span></div>
+                <div class="row neg"><span class="k">Negative</span><span class="v" id="pctNeg">—</span></div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Stage 2: Cluster -->
+        <div class="stage" data-stage="1">
+          <div class="cluster-grid">
+            <div class="galaxy">
+              <svg id="galaxySvg" viewBox="0 0 800 500" preserveAspectRatio="xMidYMid meet"></svg>
+            </div>
+            <div>
+              <h4 style="font-family:var(--mono);font-size:10.5px;letter-spacing:.14em;text-transform:uppercase;color:var(--ink-3);font-weight:600;margin-bottom:14px;">Epics emerging</h4>
+              <div class="epic-list" id="epicList"></div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Stage 3: Score -->
+        <div class="stage" data-stage="2">
+          <div class="score-grid">
+            <div class="score-left">
+              <div class="k">Top candidate epic</div>
+              <h3 id="scoreTitle">—</h3>
+              <p class="desc" id="scoreDesc">—</p>
+              <div class="rice-bars" id="riceBars">
+                <div class="rice-bar"        data-k="reach"     ><span class="lab">Reach</span><span class="track"><span class="trackfill"></span></span><span class="val">0</span></div>
+                <div class="rice-bar"        data-k="impact"    ><span class="lab">Impact</span><span class="track"><span class="trackfill"></span></span><span class="val">0</span></div>
+                <div class="rice-bar"        data-k="confidence"><span class="lab">Confidence</span><span class="track"><span class="trackfill"></span></span><span class="val">0</span></div>
+                <div class="rice-bar accent" data-k="effort"    ><span class="lab">Effort ↓</span><span class="track"><span class="trackfill"></span></span><span class="val">0</span></div>
+                <div class="rice-bar"        data-k="urgency"   ><span class="lab">Urgency</span><span class="track"><span class="trackfill"></span></span><span class="val">0</span></div>
+                <div class="rice-bar"        data-k="strategy"  ><span class="lab">Strategy</span><span class="track"><span class="trackfill"></span></span><span class="val">0</span></div>
+                <div class="rice-bar"        data-k="risk_inv"  ><span class="lab">Risk-inverse</span><span class="track"><span class="trackfill"></span></span><span class="val">0</span></div>
+              </div>
+            </div>
+            <div class="big-score">
+              <div class="t">Composite RICE++</div>
+              <div class="num"><span id="scoreNum">0.0</span><em>/100</em></div>
+              <div class="band" id="scoreBand"></div>
+              <p class="verdict" id="scoreVerdict">—</p>
+              <p class="ex">Every input is explainable; the formula is deterministic. Drop into the API to see the math reproduce.</p>
+            </div>
+          </div>
+        </div>
+
+        <!-- Stage 4: Recommend -->
+        <div class="stage" data-stage="3">
+          <div class="rec-grid">
+            <div class="rec-card">
+              <span class="sticker">Recommended epic</span>
+              <div class="kicker" id="recKicker">Epic · Priority 1</div>
+              <h2 id="recTitle">—</h2>
+              <p class="why" id="recWhy">—</p>
+              <ul class="accept" id="acceptList"></ul>
+              <div class="reco">→ <span id="recReco">—</span></div>
+            </div>
+            <div class="evidence-col">
+              <h4>Representative evidence</h4>
+              <div id="quoteList"></div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Stage 5: Sync -->
+        <div class="stage" data-stage="4">
+          <div class="sync-grid">
+            <div class="ticket" id="jiraTicket">
+              <div class="head">
+                <span class="sys">Jira · atlassian</span>
+                <span class="id" id="jiraId">—</span>
+              </div>
+              <div class="body">
+                <div class="tag-row">
+                  <span class="tag">Epic</span>
+                  <span class="tag" id="jiraProj">—</span>
+                  <span class="tag">auto-synced</span>
+                  <span class="tag">omnihub</span>
+                </div>
+                <h3 id="jiraTitle">—</h3>
+                <p id="jiraDesc">—</p>
+                <div class="fields">
+                  <span class="k">Reporter</span>   <span class="v">OmniHub bot</span>
+                  <span class="k">Points</span>     <span class="v" id="jiraPts">—</span>
+                  <span class="k">Status</span>     <span class="v status" id="jiraStatus">Pending sync…</span>
+                </div>
+              </div>
+            </div>
+            <div class="ticket" id="confTicket">
+              <div class="head">
+                <span class="sys">Confluence · PRD</span>
+                <span class="id" id="confSpace">—</span>
+              </div>
+              <div class="body">
+                <div class="tag-row">
+                  <span class="tag">PRD</span>
+                  <span class="tag">draft</span>
+                  <span class="tag">OmniHub</span>
+                </div>
+                <h3 id="confTitle">—</h3>
+                <p id="confDesc">Auto-generated from the recommended epic — problem statement, user stories, acceptance criteria, rollout plan.</p>
+                <div class="fields">
+                  <span class="k">Sections</span>   <span class="v">Problem · Users · AC · Rollout</span>
+                  <span class="k">Linked</span>     <span class="v" id="confLinked">—</span>
+                  <span class="k">Status</span>     <span class="v status" id="confStatus">Pending sync…</span>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+      </div>
+    </div>
+
+    <p class="finale" id="finale">
+      From <em id="finSignals">0</em> signals to <em>one</em> shippable epic, in <em id="finTime">0s</em>.
+    </p>
+
+  </section>
+
+</div>
+
+<!-- Methodology modal — overlay + content -->
+<div class="modal-backdrop" id="modalBackdrop" aria-hidden="true">
+  <div class="modal" role="dialog" aria-modal="true" aria-labelledby="modalTitle">
+    <button class="modal-close" id="modalClose" type="button" aria-label="Close">×</button>
+    <div class="modal-header">
+      <span class="kicker">Methodology</span>
+      <h2 id="modalTitle">How OmniHub turns noise into <em>shippable epics</em></h2>
+      <p class="lead">A look under the hood — the production data sources, pipeline stages, and the guarantees we ship with the MVP. The prototype renders synthetic data; the architecture below is what we'll wire up for live customers.</p>
+    </div>
+
+    <section class="modal-section">
+      <h3>Pipeline architecture</h3>
+      <div class="arch-diagram">
+        <div class="arch-step"><div class="n">§ 01</div><div class="t">Ingest</div><div class="d">Normalize, dedupe, sentiment-score every signal at the edge.</div></div>
+        <div class="arch-step"><div class="n">§ 02</div><div class="t">Cluster</div><div class="d">Embeddings + LLM theme extraction; 60s rolling window.</div></div>
+        <div class="arch-step"><div class="n">§ 03</div><div class="t">Score</div><div class="d">RICE++ on every cluster — explainable, deterministic.</div></div>
+        <div class="arch-step"><div class="n">§ 04</div><div class="t">Recommend</div><div class="d">Top-1 epic with rationale, evidence, acceptance criteria.</div></div>
+        <div class="arch-step"><div class="n">§ 05</div><div class="t">Sync</div><div class="d">Jira epic + Confluence PRD draft, with linked references.</div></div>
+      </div>
+    </section>
+
+    <section class="modal-section">
+      <h3>Data sources · 8 connectors live</h3>
+      <p>Every external connector is rate-aware and idempotent. Every internal connector is OAuth + webhook-based — no polling, no scraping of private data.</p>
+      <table class="conn-table">
+        <thead>
+          <tr><th>Source</th><th>Method</th><th>Category</th></tr>
+        </thead>
+        <tbody>
+          <tr><td class="src">X / Twitter</td>      <td class="met">X API v2 · Apify scraper</td>           <td class="cat ext">External</td></tr>
+          <tr><td class="src">Reddit</td>           <td class="met">Reddit Official API</td>                 <td class="cat ext">External</td></tr>
+          <tr><td class="src">Hacker News</td>      <td class="met">Algolia HN Search API</td>               <td class="cat ext">External</td></tr>
+          <tr><td class="src">App Store reviews</td><td class="met">App Store Connect API</td>               <td class="cat ext">External</td></tr>
+          <tr><td class="src">Google Play reviews</td><td class="met">Play Console feedback API</td>         <td class="cat ext">External</td></tr>
+          <tr><td class="src">GitHub Issues</td>    <td class="met">GitHub App webhook</td>                  <td class="cat ext">External</td></tr>
+          <tr><td class="src">Zendesk</td>          <td class="met">Webhook subscription</td>                <td class="cat int">Internal</td></tr>
+          <tr><td class="src">Intercom</td>         <td class="met">Events API</td>                          <td class="cat int">Internal</td></tr>
+          <tr><td class="src">Slack</td>            <td class="met">OAuth · Events API</td>                  <td class="cat int">Internal</td></tr>
+          <tr><td class="src">Jira</td>             <td class="met">Webhook · REST API</td>                  <td class="cat int">Internal</td></tr>
+          <tr><td class="src">Datadog</td>          <td class="met">Webhook integration</td>                 <td class="cat int">Internal</td></tr>
+        </tbody>
+      </table>
+    </section>
+
+    <section class="modal-section">
+      <h3>Guarantees</h3>
+      <ul class="guarantee-list">
+        <li>14-day raw-signal retention for replay & audit</li>
+        <li>OAuth-only writes — no PII at rest beyond hash + reference</li>
+        <li>Per-source rate limiting + circuit breakers</li>
+        <li>Deterministic RICE++ scoring — every input traceable</li>
+        <li>SOC2 path · SSO + RBAC on the admin console</li>
+        <li>Single-tenant deployment available for enterprise</li>
+      </ul>
+    </section>
+  </div>
+</div>
+
+<script src="app.js"></script>
+</body>
+</html>

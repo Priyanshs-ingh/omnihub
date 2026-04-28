@@ -1,0 +1,99 @@
+{
+  "company": {
+    "slug": "zoom",
+    "name": "Zoom",
+    "domain": "zoom.com",
+    "industry": "Productivity",
+    "tagline": "video meetings and collaboration",
+    "mark": { "bg": "#2D8CFF", "char": "Z" },
+    "tier": "catalog"
+  },
+  "ingest": {
+    "signal_count": 42180,
+    "runtime_seconds": 36,
+    "sentiment_pct": { "positive": 21, "neutral": 33, "negative": 46 },
+    "sources": [
+      { "name": "X / Twitter",      "category": "external", "count": 16240 },
+      { "name": "Reddit",           "category": "external", "count":  4180 },
+      { "name": "App Store",        "category": "external", "count":   980 },
+      { "name": "Zendesk",          "category": "internal", "count":  9120 },
+      { "name": "Intercom",         "category": "internal", "count":  2340 },
+      { "name": "Slack (internal)", "category": "internal", "count":  5610 },
+      { "name": "GitHub Issues",    "category": "external", "count":  1180 },
+      { "name": "Jira (dev logs)",  "category": "internal", "count":  2530 }
+    ],
+    "stream_samples": [
+      { "source": "X",          "sentiment": "negative", "text": "third meeting today where Zoom dropped me into 'reconnecting...' for 40 seconds on hotel wifi. teams call from the same network was fine.", "is_simulated": false },
+      { "source": "Reddit",     "sentiment": "negative", "text": "AI Companion summary said our director 'committed to a Q3 launch' — he literally said the opposite. now I have to walk it back in writing.", "is_simulated": false },
+      { "source": "Zendesk",    "sentiment": "negative", "text": "[#MEET-9112 P1] customers on macOS Sonoma 14.5 report echo from their own mic ~30s into call, only when AirPods Pro 2 are connected", "is_simulated": false },
+      { "source": "Slack",      "sentiment": "negative", "text": "client metrics: median reconnect duration on lossy networks went from 4.2s to 11.6s after the 6.1.4 client rolled out. regression.", "is_simulated": false },
+      { "source": "X",          "sentiment": "negative", "text": "breakout rooms keep dumping me back to main session every time host re-broadcasts. lost 8 minutes of class redoing groups.", "is_simulated": false },
+      { "source": "Reddit",     "sentiment": "negative", "text": "Zoom Phone caller ID showing 'Unknown' for half my inbound calls since the carrier change last month. ATA logs look fine.", "is_simulated": false },
+      { "source": "Zendesk",    "sentiment": "negative", "text": "[#VIDEO-7340 P2] screen share on Linux client (Ubuntu 22.04) drops to 4-6 fps when sharing Chrome with hardware accel on", "is_simulated": false },
+      { "source": "Intercom",   "sentiment": "negative", "text": "Whiteboard updates lag 8-12 seconds for remote participants — looks like the websocket batch flush isn't keeping up on >20 person sessions", "is_simulated": false },
+      { "source": "X",          "sentiment": "negative", "text": "AI Companion attributed a quote to me that I never said. I wasn't even unmuted. how do I dispute this in the post-meeting recap?", "is_simulated": false },
+      { "source": "Slack",      "sentiment": "negative", "text": "support is escalating macOS echo cluster — 142 enterprise tickets this week, all Sonoma 14.5+, all AirPods/Beats. CSAT for the segment dropped 9pp.", "is_simulated": false },
+      { "source": "Zendesk",    "sentiment": "negative", "text": "Webinar attendees on flaky 4G can't rejoin after a drop without re-registering — the rejoin token expires in 60s", "is_simulated": false },
+      { "source": "X",          "sentiment": "positive", "text": "Zoom AI Companion saved me 20 min of post-meeting notes today. when it's right, it's a productivity unlock.", "is_simulated": false },
+      { "source": "Reddit",     "sentiment": "neutral",  "text": "anyone else's Zoom Phone disconnecting after exactly 4 hours on a single call? happens daily, looks like a session timer", "is_simulated": false },
+      { "source": "Jira",       "sentiment": "negative", "text": "[meeting-sdk] reconnect logic on packet loss > 8% retries with same RTP port instead of NAT-rebind, blocking recovery on symmetric NATs", "is_simulated": false },
+      { "source": "Intercom",   "sentiment": "negative", "text": "Enterprise admin: AI Companion summaries are blocked by our DLP policy but the toggle keeps flipping back on after every client update", "is_simulated": false }
+    ]
+  },
+  "clusters": [
+    { "title": "Meeting reconnect failures on lossy networks",     "signal_count": 2480, "rice_score": 90.8, "is_top": true },
+    { "title": "macOS Sonoma echo with AirPods/Beats",             "signal_count": 1820, "rice_score": 83.4, "is_top": false },
+    { "title": "AI Companion summary attribution errors",          "signal_count": 1640, "rice_score": 78.6, "is_top": false },
+    { "title": "Breakout room re-entry drops on rebroadcast",      "signal_count":  920, "rice_score": 69.2, "is_top": false },
+    { "title": "Linux screen share frame rate collapse",           "signal_count":  710, "rice_score": 61.8, "is_top": false },
+    { "title": "Zoom Phone caller ID 'Unknown' regressions",       "signal_count":  560, "rice_score": 55.4, "is_top": false },
+    { "title": "Whiteboard sync lag on large sessions",            "signal_count":  430, "rice_score": 47.9, "is_top": false }
+  ],
+  "top_epic": {
+    "title": "Harden meeting reconnect on lossy and roaming networks",
+    "rationale": "2,480 signals across X, Zendesk and Slack converge on the same failure: clients sit in 'reconnecting...' for 8-12 seconds and frequently never recover on hotel/4G/symmetric-NAT networks since the 6.1.4 rollout. Median reconnect time regressed from 4.2s to 11.6s, and Webinar rejoin tokens expire before users can re-register. Competing platforms recover transparently on the same networks.",
+    "verdict": "Reliability-critical — every dropped reconnect is a visible product failure in front of customers.",
+    "recommendation": "Treat reconnect as a first-class SLO. Fix NAT-rebind on packet loss, extend rejoin token TTL, and ship a client-side recovery telemetry stream before any new AI surface area lands.",
+    "rice": {
+      "reach":      88,
+      "impact":     90,
+      "confidence": 92,
+      "effort":     22,
+      "urgency":    88,
+      "strategy":   82,
+      "risk_inv":   78,
+      "composite":  90.8
+    },
+    "acceptance_criteria": [
+      "Median reconnect time < 5s p95 on 8% packet-loss profile",
+      "NAT-rebind triggered on RTP timeout instead of port retry",
+      "Webinar rejoin token TTL extended to 5 min with rotating refresh",
+      "Client emits reconnect.recovered event with cause + duration"
+    ],
+    "evidence": [
+      { "quote": "Median reconnect duration on lossy networks went from 4.2s to 11.6s after 6.1.4.", "source": "Slack · client-metrics" },
+      { "quote": "Third meeting today where Zoom dropped me into 'reconnecting...' for 40 seconds.", "source": "X · enterprise user" },
+      { "quote": "Reconnect retries with same RTP port instead of NAT-rebind, blocking symmetric NATs.", "source": "Jira · meeting-sdk" }
+    ]
+  },
+  "sync": {
+    "jira": {
+      "id": "MEET-2174",
+      "project": "MEET",
+      "type": "Epic",
+      "story_points": 21,
+      "status": "Created"
+    },
+    "confluence": {
+      "space": "MEET",
+      "title": "PRD · Reconnect resilience on lossy networks",
+      "linked_jira": "MEET-2174",
+      "status": "Draft published"
+    }
+  },
+  "meta": {
+    "generated_at": "2026-04-26T12:34:56Z",
+    "generator": "catalog",
+    "seed": "zoom.com"
+  }
+}

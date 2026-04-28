@@ -1,0 +1,99 @@
+{
+  "company": {
+    "slug": "dropbox",
+    "name": "Dropbox",
+    "domain": "dropbox.com",
+    "industry": "Productivity",
+    "tagline": "cloud storage and collaboration",
+    "mark": { "bg": "#0061FF", "char": "D" },
+    "tier": "catalog"
+  },
+  "ingest": {
+    "signal_count": 31420,
+    "runtime_seconds": 33,
+    "sentiment_pct": { "positive": 19, "neutral": 37, "negative": 44 },
+    "sources": [
+      { "name": "X / Twitter",        "category": "external", "count": 11820 },
+      { "name": "Reddit",             "category": "external", "count":  3640 },
+      { "name": "App Store reviews",  "category": "external", "count":  1450 },
+      { "name": "Zendesk",            "category": "internal", "count":  7820 },
+      { "name": "Intercom",           "category": "internal", "count":  2160 },
+      { "name": "Slack (internal)",   "category": "internal", "count":  2890 },
+      { "name": "GitHub Issues",      "category": "external", "count":   780 },
+      { "name": "Jira (dev logs)",    "category": "internal", "count":   860 }
+    ],
+    "stream_samples": [
+      { "source": "X",          "sentiment": "negative", "text": "Smart Sync just re-downloaded 28GB of online-only files overnight. macbook ran out of disk before standup. third time this month.", "is_simulated": false },
+      { "source": "Reddit",     "sentiment": "negative", "text": "Camera upload created 4,200 duplicate photos on my Pixel after the 380.x mobile update. dedupe job ran for 6 hours and missed half.", "is_simulated": false },
+      { "source": "Zendesk",    "sentiment": "negative", "text": "[#SYNC-6611 P1] enterprise customer: Smart Sync hydrated 1.2TB across 340 seats unprompted, blew their bandwidth budget for the month", "is_simulated": false },
+      { "source": "Slack",      "sentiment": "negative", "text": "Smart Sync hydration regression confirmed in 200.4.x desktop client — file_state cache invalidates on focus event, triggers full re-pull. fix in 200.4.7 nightly.", "is_simulated": false },
+      { "source": "X",          "sentiment": "negative", "text": "share link with 'editor' permission keeps reverting to 'commenter' for external collaborators after 24h. nobody changed it.", "is_simulated": false },
+      { "source": "Reddit",     "sentiment": "negative", "text": "Paper migration deadline is in 6 weeks and the export keeps dropping table formatting and inline media. raised 2 tickets, no fix ETA.", "is_simulated": false },
+      { "source": "Zendesk",    "sentiment": "negative", "text": "[#FILE-4882 P2] 11GB video upload stalls at 5.1GB on every retry. chunked uploader times out before resume token refreshes.", "is_simulated": false },
+      { "source": "Intercom",   "sentiment": "negative", "text": "Dropbox Dash returns my own draft notes ahead of the canonical confluence page everyone references. ranking feels off.", "is_simulated": false },
+      { "source": "App Store",  "sentiment": "negative", "text": "iOS app keeps prompting 'free up space' even with 80GB available. then it deletes my offline-pinned folders silently.", "is_simulated": false },
+      { "source": "Slack",      "sentiment": "negative", "text": "support load: 41% of P1s this week are Smart Sync re-hydration. enterprise CSMs are escalating, two accounts paused renewal conversations.", "is_simulated": false },
+      { "source": "X",          "sentiment": "negative", "text": "Replay timestamp comments are landing 2-3 seconds off the actual frame after the new transcoder rolled out. video review is unusable for cuts.", "is_simulated": false },
+      { "source": "Zendesk",    "sentiment": "negative", "text": "Share link with password expires after 7 days even when 'never expire' is set. team is regenerating links daily for client portals.", "is_simulated": false },
+      { "source": "X",          "sentiment": "positive", "text": "Dropbox Dash actually pulled the right Notion doc on the first query today. when it works it feels magical.", "is_simulated": false },
+      { "source": "Reddit",     "sentiment": "neutral",  "text": "is there a way to disable Smart Sync entirely on managed devices? our IT keeps getting bandwidth tickets and we just want plain sync", "is_simulated": false },
+      { "source": "Jira",       "sentiment": "negative", "text": "[smart-sync] file_state cache key collides on case-insensitive filesystems, causes spurious hydration on rename-to-different-case", "is_simulated": false }
+    ]
+  },
+  "clusters": [
+    { "title": "Smart Sync re-hydrating online-only files",        "signal_count": 2310, "rice_score": 89.3, "is_top": true },
+    { "title": "Mobile camera upload duplicate explosion",         "signal_count": 1480, "rice_score": 81.7, "is_top": false },
+    { "title": "Share link permission downgrade after 24h",        "signal_count": 1120, "rice_score": 75.4, "is_top": false },
+    { "title": "Large file upload stalls past 5GB",                "signal_count":  840, "rice_score": 68.1, "is_top": false },
+    { "title": "Paper export drops formatting on migration",       "signal_count":  690, "rice_score": 60.5, "is_top": false },
+    { "title": "Dropbox Dash relevance ranking misses",            "signal_count":  520, "rice_score": 53.2, "is_top": false },
+    { "title": "Replay timestamp comment drift after transcode",   "signal_count":  340, "rice_score": 46.8, "is_top": false }
+  ],
+  "top_epic": {
+    "title": "Stop Smart Sync from re-hydrating online-only files",
+    "rationale": "2,310 signals across Zendesk, X and Slack point to the same regression: Smart Sync silently re-downloads online-only files after the 200.4.x desktop client rollout. The file_state cache invalidates on focus events and on case-insensitive filesystem renames, triggering full re-pulls. One enterprise account hydrated 1.2TB across 340 seats unprompted; 41% of this week's P1 tickets are this exact failure, and two accounts have paused renewal conversations.",
+    "verdict": "Trust-critical — the core promise of Smart Sync is that online-only stays online-only.",
+    "recommendation": "Fix file_state cache invalidation, add a hard rate-limit on hydration per device per hour, and ship a CSM-facing dashboard so enterprise admins can see and cap re-hydration before bandwidth bills land.",
+    "rice": {
+      "reach":      86,
+      "impact":     88,
+      "confidence": 92,
+      "effort":     24,
+      "urgency":    86,
+      "strategy":   82,
+      "risk_inv":   78,
+      "composite":  89.3
+    },
+    "acceptance_criteria": [
+      "file_state cache survives focus events and case-rename on APFS/NTFS",
+      "Hydration rate-limited to admin-configurable GB/device/hour",
+      "Admin console shows per-device hydration in last 24h with cap controls",
+      "Telemetry event smartsync.hydrate.unexpected emitted with root cause"
+    ],
+    "evidence": [
+      { "quote": "Smart Sync just re-downloaded 28GB of online-only files overnight, third time this month.", "source": "X · power user" },
+      { "quote": "Smart Sync hydrated 1.2TB across 340 seats unprompted, blew their bandwidth budget.",        "source": "Zendesk · enterprise P1" },
+      { "quote": "file_state cache key collides on case-insensitive filesystems, causes spurious hydration.",  "source": "Jira · smart-sync" }
+    ]
+  },
+  "sync": {
+    "jira": {
+      "id": "SYNC-1947",
+      "project": "SYNC",
+      "type": "Epic",
+      "story_points": 21,
+      "status": "Created"
+    },
+    "confluence": {
+      "space": "SYNC",
+      "title": "PRD · Smart Sync hydration safety controls",
+      "linked_jira": "SYNC-1947",
+      "status": "Draft published"
+    }
+  },
+  "meta": {
+    "generated_at": "2026-04-26T12:34:56Z",
+    "generator": "catalog",
+    "seed": "dropbox.com"
+  }
+}

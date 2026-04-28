@@ -1,0 +1,98 @@
+{
+  "company": {
+    "slug": "duolingo",
+    "name": "Duolingo",
+    "domain": "duolingo.com",
+    "industry": "EdTech",
+    "tagline": "language learning app",
+    "mark": { "bg": "#58CC02", "char": "D" },
+    "tier": "catalog"
+  },
+  "ingest": {
+    "signal_count": 36420,
+    "runtime_seconds": 36,
+    "sentiment_pct": { "positive": 24, "neutral": 30, "negative": 46 },
+    "sources": [
+      { "name": "X / Twitter",        "category": "external", "count": 13280 },
+      { "name": "Reddit",             "category": "external", "count":  4920 },
+      { "name": "App Store reviews",  "category": "external", "count":  3640 },
+      { "name": "Google Play reviews","category": "external", "count":  2810 },
+      { "name": "Zendesk",            "category": "internal", "count":  6120 },
+      { "name": "Slack (internal)",   "category": "internal", "count":  3420 },
+      { "name": "Crashlytics",        "category": "internal", "count":  1270 },
+      { "name": "Jira (dev logs)",    "category": "internal", "count":   960 }
+    ],
+    "stream_samples": [
+      { "source": "X",          "sentiment": "negative", "text": "duolingo speech recognition keeps rejecting my perfectly pronounced spanish. v3 is way worse than v2 was", "is_simulated": false },
+      { "source": "Reddit",     "sentiment": "negative", "text": "Lost a 412-day streak because the app rolled the day over at 11pm local instead of midnight. Travelled across one timezone. Streak repair won't accept it.", "is_simulated": false },
+      { "source": "Google Play","sentiment": "negative", "text": "App crashes mid-lesson on Pixel 8, Android 14, every time I hit the listening exercise. Lost XP twice today.", "is_simulated": false },
+      { "source": "Zendesk",    "sentiment": "negative", "text": "[#19887 P1] Family plan invite link returns \"plan full\" for slot 2 of 6, billing confirms only owner is active", "is_simulated": false },
+      { "source": "X",          "sentiment": "negative", "text": "@duolingo your speech rec keeps marking my Japanese pitch accent wrong on perfectly correct words. JP teacher confirmed", "is_simulated": false },
+      { "source": "App Store",  "sentiment": "negative", "text": "Diamond league tier reset me to Bronze on Sunday for no reason. I finished top-10 last week. Support said \"known issue\".", "is_simulated": false },
+      { "source": "Reddit",     "sentiment": "negative", "text": "Lily's hint quality has nosedived since the model swap. Asked her why \"haben\" not \"hat\" and she explained French grammar.", "is_simulated": false },
+      { "source": "Slack",      "sentiment": "negative", "text": "Speech recog v3 false-reject rate is 14.8% on Spanish (was 6.1% on v2). Acoustic model regressed on /r/ trills and aspirated stops.", "is_simulated": false },
+      { "source": "Crashlytics","sentiment": "negative", "text": "Android NDK crash in audio.rec.Capture.onBufferReady, 38k events/24h, all on Android 14 Pixel + Samsung One UI 6.1", "is_simulated": false },
+      { "source": "Zendesk",    "sentiment": "negative", "text": "Streak loss complaints up 2.6x WoW after the daylight-saving transition — appears to be a UTC offset bug at the day boundary", "is_simulated": false },
+      { "source": "X",          "sentiment": "positive", "text": "duo's new music course is shockingly good for a free app. my 8yo is hooked", "is_simulated": false },
+      { "source": "Reddit",     "sentiment": "neutral",  "text": "is there a way to set duolingo to use 24h time for the streak rollover? mine ticks at weird hours when I travel", "is_simulated": false },
+      { "source": "Jira",       "sentiment": "negative", "text": "[speech-rec-v3] Spanish acoustic model trained on en-US biased corpus, /r/ FRR is 2.4x v2 baseline, escalated to ML team", "is_simulated": false },
+      { "source": "Google Play","sentiment": "negative", "text": "After the 7.42 update my streak shows 0 even though I did a lesson. Refresh doesn't fix it. Lost 184 days.", "is_simulated": false },
+      { "source": "Zendesk",    "sentiment": "negative", "text": "Family plan: invite link generates with stale JWT, accepting member sees \"plan full\" until owner re-shares from settings", "is_simulated": false }
+    ]
+  },
+  "clusters": [
+    { "title": "Speech Rec v3 false-reject regression on Spanish",     "signal_count": 2920, "rice_score": 91.7, "is_top": true },
+    { "title": "Streak loss on timezone / DST boundary",                "signal_count": 2140, "rice_score": 82.5, "is_top": false },
+    { "title": "Mid-lesson Android crashes (Crashlytics spike)",        "signal_count": 1480, "rice_score": 76.8, "is_top": false },
+    { "title": "Family plan invite link \"plan full\" bug",             "signal_count":  980, "rice_score": 69.4, "is_top": false },
+    { "title": "Diamond league tier reset on Sunday rollover",          "signal_count":  720, "rice_score": 62.1, "is_top": false },
+    { "title": "AI tutor (Lily) hint quality regression post model-swap","signal_count":  610, "rice_score": 56.3, "is_top": false }
+  ],
+  "top_epic": {
+    "title": "Roll back Speech Rec v3 false-reject regression on Spanish acoustic model",
+    "rationale": "2,920 signals concentrated in Spanish learners — backed by a measured 14.8% false-reject rate on v3 vs. 6.1% on v2. Bisect points to a v3 acoustic model trained on an en-US-biased corpus that regresses on /r/ trills and aspirated stops. Streak risk and lesson-completion drop are downstream of every false reject.",
+    "verdict": "Ship-critical — speech-rec is the core practice loop and the v3 regression directly drives streak loss.",
+    "recommendation": "Pin Spanish learners to v2 acoustic model behind a feature flag, retrain v3 with a balanced ES-LATAM/ES-ES corpus, gate v3 rollout on FRR parity.",
+    "rice": {
+      "reach":      88,
+      "impact":     90,
+      "confidence": 94,
+      "effort":     22,
+      "urgency":    90,
+      "strategy":   86,
+      "risk_inv":   82,
+      "composite":  91.7
+    },
+    "acceptance_criteria": [
+      "Spanish acoustic FRR <=6.5% on the held-out evaluation set before re-rollout",
+      "Per-locale model pinning lets us hold v2 while v3 is repaired",
+      "Speech-rec false-reject events emit phoneme + locale tags for monitoring",
+      "Streak shielding triggers automatically when FRR exceeds rollback threshold"
+    ],
+    "evidence": [
+      { "quote": "speech recognition keeps rejecting my perfectly pronounced spanish. v3 is way worse than v2.",  "source": "X · learner" },
+      { "quote": "Speech recog v3 false-reject rate is 14.8% on Spanish (was 6.1% on v2).",                       "source": "Slack · #ml-speech" },
+      { "quote": "v3 Spanish acoustic model trained on en-US biased corpus, /r/ FRR is 2.4x v2 baseline.",         "source": "Jira · speech-rec-v3" }
+    ]
+  },
+  "sync": {
+    "jira": {
+      "id": "LEARN-2814",
+      "project": "Learn",
+      "type": "Epic",
+      "story_points": 21,
+      "status": "Created"
+    },
+    "confluence": {
+      "space": "LEARN",
+      "title": "PRD · Speech Rec v3 Spanish FRR rollback + retrain",
+      "linked_jira": "LEARN-2814",
+      "status": "Draft published"
+    }
+  },
+  "meta": {
+    "generated_at": "2026-04-26T12:34:56Z",
+    "generator": "catalog",
+    "seed": "duolingo.com"
+  }
+}

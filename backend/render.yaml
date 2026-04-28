@@ -1,0 +1,16 @@
+services:
+  - type: web
+    name: omnihub-backend
+    runtime: python
+    plan: free
+    region: oregon
+    buildCommand: pip install --upgrade pip && pip install .
+    startCommand: gunicorn app.main:app -w 2 -k uvicorn.workers.UvicornWorker --bind 0.0.0.0:$PORT
+    envVars:
+      - key: PYTHON_VERSION
+        value: 3.11.9
+      - key: FRONTEND_ORIGINS
+        # Set this to the deployed frontend origin(s) before going live.
+        sync: false
+    healthCheckPath: /api/health
+    autoDeploy: true

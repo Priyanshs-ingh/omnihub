@@ -1,0 +1,795 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>OmniHub — Live prototype</title>
+<link rel="stylesheet" href="styles.css" />
+<link rel="stylesheet" href="prototype.css" />
+</head>
+<body class="proto grain">
+
+<!-- Floating nav -->
+<nav class="topnav">
+  <div class="brand">
+    <div class="brand-mark"></div>
+    <div class="brand-text">
+      <div class="n">OMNIHUB</div>
+      <div class="s">Real-time product intelligence</div>
+    </div>
+  </div>
+  <div class="nav-tag">Animated prototype · live pipeline</div>
+  <div class="links">
+    <a href="index.html#platform">Platform</a>
+    <a href="#" class="active">Prototype</a>
+    <a href="index.html#architecture">Architecture</a>
+    <a href="index.html#roadmap">Roadmap</a>
+  </div>
+  <div class="pill"><span class="gdot"></span> Investor demo mode</div>
+  <div class="lotus-badge">
+    <span class="lab">Built<br/>with</span>
+    <img src="assets/lotusx.png" alt="Lotus X Ventures" />
+  </div>
+  <button class="btn-pri" onclick="location.href='index.html'">← Home</button>
+</nav>
+
+<div class="shell">
+
+  <!-- Row: back + switcher -->
+  <div class="proto-nav-row">
+    <a class="back-link" href="index.html">← All companies</a>
+    <div class="co-switch" id="coSwitch"></div>
+  </div>
+
+  <!-- Header -->
+  <header class="proto-header">
+    <div>
+      <span class="eyebrow"><span class="dot"></span> Live run · <span id="coBadge">—</span></span>
+      <h1 id="coH1">Listening for <em>—</em></h1>
+      <div class="run-controls">
+        <button id="playBtn" class="btn-play">▶ Replay run</button>
+        <button id="stepBtn" class="btn-step">Step ›</button>
+        <div class="progress-wrap">
+          <span id="progText">00 / 05</span>
+          <div class="bar"><div class="fill" id="progFill"></div></div>
+          <span id="elapsed">00:00</span>
+        </div>
+      </div>
+    </div>
+    <p class="sub" id="coSub">
+      OmniHub opens a real-time sentiment feed for the selected domain, then compresses what it hears into the five-to-ten epics your team should ship next.
+    </p>
+  </header>
+
+  <!-- Stage rail -->
+  <nav class="stage-rail" id="stageRail">
+    <button type="button" class="stage-chip" data-stage="0"><span class="n">§ 01</span><span class="t">Ingest</span><span class="hint">replay</span></button>
+    <button type="button" class="stage-chip" data-stage="1"><span class="n">§ 02</span><span class="t">Cluster</span><span class="hint">replay</span></button>
+    <button type="button" class="stage-chip" data-stage="2"><span class="n">§ 03</span><span class="t">Score</span><span class="hint">replay</span></button>
+    <button type="button" class="stage-chip" data-stage="3"><span class="n">§ 04</span><span class="t">Recommend</span><span class="hint">replay</span></button>
+    <button type="button" class="stage-chip" data-stage="4"><span class="n">§ 05</span><span class="t">Sync</span><span class="hint">replay</span></button>
+  </nav>
+
+  <!-- Board -->
+  <section class="pipeline">
+    <div class="board">
+      <div class="board-head">
+        <span id="boardTitle">§ 01 · Omnichannel ingestion</span>
+        <span class="live-dot">LIVE</span>
+      </div>
+      <div class="board-body">
+
+        <!-- Stage 1: Ingest -->
+        <div class="stage ingest-grid active" data-stage="0">
+          <div class="col-card">
+            <h4>Sources online</h4>
+            <ul class="source-list" id="sourceList"></ul>
+          </div>
+          <div class="col-card stream-col">
+            <h4>Live signal stream</h4>
+            <div class="stream" id="stream"></div>
+          </div>
+          <div class="col-card count-card">
+            <h4>Volume</h4>
+            <div class="counter"><span id="counter">0</span><small>signals</small></div>
+            <div class="counter-sub" id="counterSub">Backfill · 12 months · resuming</div>
+            <div class="mini-stats">
+              <div class="row"><span class="k">Positive</span><span class="v" id="pctPos">0%</span></div>
+              <div class="row"><span class="k">Neutral</span><span class="v" id="pctNeu">0%</span></div>
+              <div class="row"><span class="k">Negative</span><span class="v" id="pctNeg">0%</span></div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Stage 2: Cluster -->
+        <div class="stage cluster-stage" data-stage="1">
+          <div class="galaxy" id="galaxy">
+            <svg id="galaxySvg" viewBox="0 0 800 540" preserveAspectRatio="xMidYMid meet"></svg>
+          </div>
+          <div class="cluster-side">
+            <h4>Epics emerging</h4>
+            <div class="epic-list" id="epicList"></div>
+          </div>
+        </div>
+
+        <!-- Stage 3: Score -->
+        <div class="stage score-stage" data-stage="2">
+          <div class="score-left">
+            <div class="k">Top candidate epic</div>
+            <h3 id="scoreTitle">—</h3>
+            <p class="e-desc" id="scoreDesc">—</p>
+            <div class="rice-bars" id="riceBars">
+              <div class="rice-bar"><span class="lab">Reach</span><span class="track"><span class="trackfill" data-k="R"></span></span><span class="val" data-v="R">0</span></div>
+              <div class="rice-bar"><span class="lab">Impact</span><span class="track"><span class="trackfill" data-k="I"></span></span><span class="val" data-v="I">0</span></div>
+              <div class="rice-bar"><span class="lab">Confidence</span><span class="track"><span class="trackfill" data-k="C"></span></span><span class="val" data-v="C">0</span></div>
+              <div class="rice-bar accent"><span class="lab">Effort ↓</span><span class="track"><span class="trackfill" data-k="E"></span></span><span class="val" data-v="E">0</span></div>
+            </div>
+          </div>
+          <div class="big-score">
+            <div class="t">Composite RICE</div>
+            <div class="num"><span id="scoreNum">0.0</span><em>/100</em></div>
+            <div class="band" id="scoreBand"></div>
+            <p class="verdict" id="scoreVerdict">—</p>
+            <!-- Math reveal -->
+            <div class="math-reveal" id="mathReveal">
+              <div class="mr-row">
+                <span class="mr-eq">(R <b id="mrR">0</b> × I <b id="mrI">0</b> × C <b id="mrC">0</b>)</span>
+                <span class="mr-op">÷</span>
+                <span class="mr-eq">E <b id="mrE">0</b></span>
+                <span class="mr-op">=</span>
+                <span class="mr-num" id="mrRaw">0</span>
+              </div>
+              <div class="mr-row mr-row-2">
+                <span class="mr-arrow">→</span>
+                <span class="mr-norm">normalized × urgency × strategy × risk</span>
+              </div>
+              <div class="mr-final">
+                <span><b id="mrFinal">0.0</b> / 100</span>
+              </div>
+            </div>
+            <!-- Runners up -->
+            <div class="runners-up" id="runnersUp">
+              <span class="ru-l">runners-up</span>
+              <span class="ru-list" id="ruList"></span>
+            </div>
+            <p class="ex" id="scoreEx">Every factor is explainable; overrides are tracked. The numbers above plug into a deterministic formula — change a data point and you can see the score move.</p>
+          </div>
+        </div>
+
+        <!-- Stage 4: Recommend -->
+        <div class="stage rec-stage" data-stage="3">
+          <div class="rec-card">
+            <span class="sticker">Recommended epic</span>
+            <div class="kicker" id="recKicker">Epic · PRIORITY 1</div>
+            <h2 id="recTitle">—</h2>
+            <p class="why" id="recWhy">—</p>
+            <ul class="accept" id="acceptList"></ul>
+            <div style="font-family:var(--mono);font-size:10.5px;letter-spacing:0.14em;text-transform:uppercase;color:var(--teal-ink);font-weight:600">
+              <span id="recReco">—</span>
+            </div>
+          </div>
+          <div class="ev-col">
+            <h4>Representative evidence</h4>
+            <div id="quoteList"></div>
+          </div>
+        </div>
+
+        <!-- Stage 5: Sync -->
+        <div class="stage sync-stage" data-stage="4">
+          <div class="ticket" id="jiraTicket">
+            <div class="head">
+              <span class="sys">Jira · atlassian</span>
+              <span class="id" id="jiraId">—</span>
+            </div>
+            <div class="body">
+              <div class="tag-row">
+                <span class="tag">Epic</span>
+                <span class="tag" id="jiraProj">—</span>
+                <span class="tag">auto-synced</span>
+                <span class="tag">omnihub</span>
+              </div>
+              <h3 id="jiraTitle">—</h3>
+              <p id="jiraDesc">—</p>
+              <div class="fields">
+                <span class="k">Reporter</span><span class="v">OmniHub bot</span>
+                <span class="k">Points</span><span class="v" id="jiraPts">—</span>
+                <span class="k">Status</span><span class="v" id="jiraStatus">Pending sync…</span>
+              </div>
+            </div>
+          </div>
+          <div class="ticket" id="confTicket">
+            <div class="head">
+              <span class="sys">Confluence · PRD</span>
+              <span class="id" id="confSpace">—</span>
+            </div>
+            <div class="body">
+              <div class="tag-row">
+                <span class="tag">PRD</span>
+                <span class="tag">draft</span>
+                <span class="tag" id="confAuthor">—</span>
+              </div>
+              <h3 id="confTitle">—</h3>
+              <p id="confDesc">—</p>
+              <div class="fields">
+                <span class="k">Sections</span><span class="v">Problem · Users · AC · Rollout</span>
+                <span class="k">Linked</span><span class="v" id="confLinked">—</span>
+                <span class="k">Status</span><span class="v" id="confStatus">Pending sync…</span>
+              </div>
+            </div>
+          </div>
+        </div>
+
+      </div>
+    </div>
+
+    <p class="finale" id="finale">
+      From <em id="finSignals">0</em> signals to <em>one</em> shippable epic, in <em id="finTime">0s</em>.
+      <button type="button" class="replay-pill" id="replayPill">↻ Replay run</button>
+    </p>
+  </section>
+
+  <!-- Toast container for sync notifications -->
+  <div class="toast-stack" id="toastStack"></div>
+
+</div>
+
+<script src="companies.js"></script>
+<script>
+// ---- Router
+const params = new URLSearchParams(location.search);
+const slug = (params.get('co') || 'stripe').toLowerCase();
+const labelOverride = (params.get('label') || '').trim();
+const data = COMPANIES[slug] || COMPANIES.stripe;
+// If user typed an unknown company at the hero, run Stripe data but display their label
+const displayName = labelOverride && !COMPANIES[labelOverride.toLowerCase()]
+  ? (labelOverride.charAt(0).toUpperCase() + labelOverride.slice(1).replace(/\.com$/, ''))
+  : data.name;
+const displayNote = labelOverride && !COMPANIES[labelOverride.toLowerCase()]
+  ? `representative data · running on ${data.name}`
+  : data.note;
+
+// ---- Populate chrome
+const _ck = document.getElementById('coKind'); if (_ck) _ck.textContent = `${data.kind} · prototype`;
+document.getElementById('coBadge').textContent = displayName + ' · ' + displayNote;
+document.getElementById('coH1').innerHTML = `Listening for <em>${displayName}</em>`;
+
+// switcher
+const switcher = document.getElementById('coSwitch');
+switcher.innerHTML = Object.keys(COMPANIES).map(s => {
+  const c = COMPANIES[s];
+  return `<button data-slug="${s}" class="${s===slug?'active':''}"><span class="lg" style="background:${c.mark.bg}">${c.mark.char}</span>${c.name}</button>`;
+}).join('');
+switcher.addEventListener('click', (e) => {
+  const b = e.target.closest('button');
+  if (!b) return;
+  location.href = 'prototype.html?co=' + b.dataset.slug;
+});
+
+// ---- Stage controller
+let currentStage = -1;
+let runTimer = null;
+let runStart = 0;
+let timers = [];
+
+function clearTimers() { timers.forEach(clearTimeout); timers = []; if (runTimer) clearInterval(runTimer); }
+function after(ms, fn) { timers.push(setTimeout(fn, ms)); }
+
+function setStage(i) {
+  currentStage = i;
+  document.querySelectorAll('.stage').forEach(s => s.classList.toggle('active', +s.dataset.stage === i));
+  document.querySelectorAll('.stage-chip').forEach((c, ci) => {
+    c.classList.toggle('active', ci === i);
+    c.classList.toggle('done', ci < i);
+  });
+  const titles = [
+    '§ 01 · Omnichannel ingestion',
+    '§ 02 · Thematic epic clustering',
+    '§ 03 · Auto-RICE scoring',
+    '§ 04 · Recommendation brief',
+    '§ 05 · Atlassian workflow sync',
+  ];
+  document.getElementById('boardTitle').textContent = titles[i];
+  document.getElementById('progText').textContent = String(i+1).padStart(2,'0') + ' / 05';
+  document.getElementById('progFill').style.width = ((i+1)/5*100) + '%';
+}
+
+// ---- Stage 1: Ingest
+function runIngest() {
+  // seed sources
+  const sl = document.getElementById('sourceList');
+  sl.innerHTML = data.sources.map(s =>
+    `<li data-src="${s.n}"><span class="sdot"></span>${s.n}<span class="sc">0</span></li>`
+  ).join('');
+  // ensure ingest mini-stream layer exists
+  let miniLayer = document.getElementById('miniStreamLayer');
+  if (!miniLayer) {
+    miniLayer = document.createElement('div');
+    miniLayer.id = 'miniStreamLayer';
+    miniLayer.className = 'mini-stream-layer';
+    document.querySelector('.ingest-grid').appendChild(miniLayer);
+  } else miniLayer.innerHTML = '';
+
+  // counters
+  const counterEl = document.getElementById('counter');
+  const target = data.counts.signals;
+  const duration = 5500;
+  let t0 = performance.now();
+
+  const tick = () => {
+    const t = Math.min(1, (performance.now() - t0) / duration);
+    const eased = 1 - Math.pow(1 - t, 2);
+    counterEl.textContent = Math.floor(target * eased).toLocaleString();
+    // sentiment pct
+    document.getElementById('pctPos').textContent = Math.floor(data.counts.pct.pos * eased) + '%';
+    document.getElementById('pctNeu').textContent = Math.floor(data.counts.pct.neu * eased) + '%';
+    document.getElementById('pctNeg').textContent = Math.floor(data.counts.pct.neg * eased) + '%';
+    if (t < 1) requestAnimationFrame(tick);
+  };
+  requestAnimationFrame(tick);
+
+  // light up sources sequentially + emit mini-streams toward the central column
+  data.sources.forEach((s, i) => {
+    after(150 + i * 220, () => {
+      const li = sl.querySelector(`[data-src="${CSS.escape(s.n)}"]`);
+      if (li) {
+        li.classList.add('active');
+        emitMiniStream(li);
+        // count up per-source
+        const sc = li.querySelector('.sc');
+        let v = 0;
+        const step = Math.ceil(s.k / 40);
+        const iv = setInterval(() => {
+          v = Math.min(s.k, v + step);
+          sc.textContent = v.toLocaleString();
+          if (v >= s.k) clearInterval(iv);
+        }, 45);
+      }
+    });
+  });
+
+  function emitMiniStream(li) {
+    const grid = document.querySelector('.ingest-grid');
+    if (!grid) return;
+    const sourceRect = li.getBoundingClientRect();
+    const gridRect = grid.getBoundingClientRect();
+    const streamCol = document.querySelector('.stream-col');
+    if (!streamCol) return;
+    const streamRect = streamCol.getBoundingClientRect();
+    const startX = sourceRect.right - gridRect.left - 8;
+    const startY = sourceRect.top + sourceRect.height/2 - gridRect.top;
+    const endX = streamRect.left - gridRect.left + 12;
+    const endY = streamRect.top + 36 + Math.random() * 80 - gridRect.top;
+    for (let i = 0; i < 3; i++) {
+      const dot = document.createElement('span');
+      dot.className = 'mini-pulse';
+      dot.style.left = startX + 'px';
+      dot.style.top = startY + 'px';
+      dot.style.setProperty('--dx', (endX - startX) + 'px');
+      dot.style.setProperty('--dy', (endY - startY) + 'px');
+      dot.style.animationDelay = (i * 110) + 'ms';
+      miniLayer.appendChild(dot);
+      setTimeout(() => dot.remove(), 1400);
+    }
+  }
+
+  // stream in signals
+  const stream = document.getElementById('stream');
+  stream.innerHTML = '';
+  data.stream.forEach((sig, i) => {
+    after(400 + i * 320, () => {
+      const el = document.createElement('div');
+      el.className = 'sig';
+      const clock = new Date(Date.now() - (data.stream.length - i) * 4200);
+      el.innerHTML = `
+        <span class="src">${sig.src}</span>
+        <span class="sent ${sig.s}">${sig.s === 'neg' ? '▼ neg' : sig.s === 'pos' ? '▲ pos' : '◆ neu'}</span>
+        <span class="body">${sig.t}</span>
+        <span class="time">${clock.toTimeString().slice(0,5)}</span>
+      `;
+      stream.insertBefore(el, stream.firstChild);
+      // prune
+      while (stream.children.length > 8) stream.lastChild.remove();
+    });
+  });
+
+  // advance
+  after(6400, () => { setStage(1); runCluster(); });
+}
+
+// ---- Stage 2: Cluster
+function runCluster() {
+  const svg = document.getElementById('galaxySvg');
+  svg.innerHTML = '';
+  const W = 800, H = 540;
+
+  // seed ~160 dots, with ~5% outliers that drift to the edge
+  const clusters = data.clusters;
+  const centers = [
+    {x: 180, y: 160}, {x: 560, y: 140}, {x: 640, y: 380},
+    {x: 280, y: 400}, {x: 440, y: 260}, {x: 680, y: 240}, {x: 180, y: 300},
+  ].slice(0, clusters.length);
+
+  const N = 160;
+  const OUTLIERS = 7;
+  const dots = [];
+  const outliers = [];
+  for (let i = 0; i < N; i++) {
+    const start = { x: Math.random() * W, y: Math.random() * H };
+    const dot = document.createElementNS('http://www.w3.org/2000/svg', 'circle');
+    dot.setAttribute('cx', start.x);
+    dot.setAttribute('cy', start.y);
+    dot.setAttribute('opacity', 0);
+    svg.appendChild(dot);
+
+    if (i < OUTLIERS) {
+      // outliers drift to one of four edge positions and fade
+      const edge = Math.random() < .5
+        ? { x: Math.random() < .5 ? 30 : W - 30, y: Math.random() * H }
+        : { x: Math.random() * W, y: Math.random() < .5 ? 30 : H - 30 };
+      dot.setAttribute('r', 1.8);
+      dot.setAttribute('fill', '#A39E95');
+      outliers.push({ el: dot, start, end: edge, delay: Math.random() * 800 });
+    } else {
+      const ci = Math.floor(Math.pow(Math.random(), 1.2) * clusters.length);
+      const c = centers[ci];
+      const angle = Math.random() * Math.PI * 2;
+      const rad = 14 + Math.random() * 44;
+      const end = { x: c.x + Math.cos(angle) * rad, y: c.y + Math.sin(angle) * rad };
+      dot.setAttribute('r', 2.2);
+      dot.setAttribute('fill', ci === 0 ? '#0E6A5E' : '#151515');
+      dots.push({ el: dot, start, end, ci, delay: Math.random() * 800 });
+    }
+  }
+
+  // fade dots in
+  dots.forEach(d => {
+    after(d.delay, () => d.el.setAttribute('opacity', 0.8));
+  });
+  outliers.forEach(d => {
+    after(d.delay, () => d.el.setAttribute('opacity', 0.6));
+  });
+
+  // outlier caption
+  const galaxy = document.getElementById('galaxy');
+  let cap = galaxy.querySelector('.outlier-cap');
+  if (!cap) {
+    cap = document.createElement('div');
+    cap.className = 'outlier-cap';
+    cap.textContent = '~3% outliers held for review';
+    galaxy.appendChild(cap);
+  }
+  cap.classList.remove('show');
+
+  // fly to clusters
+  after(1200, () => {
+    const t0 = performance.now();
+    const dur = 1800;
+    function step() {
+      const t = Math.min(1, (performance.now() - t0) / dur);
+      const e = t < .5 ? 2*t*t : 1 - Math.pow(-2*t+2, 2)/2;
+      dots.forEach(d => {
+        d.el.setAttribute('cx', d.start.x + (d.end.x - d.start.x) * e);
+        d.el.setAttribute('cy', d.start.y + (d.end.y - d.start.y) * e);
+      });
+      // outliers drift slower, fading on arrival
+      outliers.forEach(d => {
+        d.el.setAttribute('cx', d.start.x + (d.end.x - d.start.x) * e);
+        d.el.setAttribute('cy', d.start.y + (d.end.y - d.start.y) * e);
+        d.el.setAttribute('opacity', 0.6 * (1 - e));
+      });
+      if (t < 1) requestAnimationFrame(step);
+    }
+    step();
+    after(1900, () => cap.classList.add('show'));
+
+    // draw rings + labels
+    centers.forEach((c, ci) => {
+      after(1400 + ci * 220, () => {
+        const ring = document.createElementNS('http://www.w3.org/2000/svg', 'ellipse');
+        ring.setAttribute('cx', c.x);
+        ring.setAttribute('cy', c.y);
+        ring.setAttribute('rx', 64);
+        ring.setAttribute('ry', 50);
+        ring.setAttribute('fill', 'none');
+        ring.setAttribute('stroke', ci === 0 ? '#0E6A5E' : '#151515');
+        ring.setAttribute('stroke-opacity', ci === 0 ? 0.5 : 0.2);
+        ring.setAttribute('stroke-dasharray', '3 4');
+        ring.setAttribute('stroke-width', ci === 0 ? 1.2 : 1);
+        svg.appendChild(ring);
+      });
+    });
+  });
+
+  // reveal epic items
+  const epicList = document.getElementById('epicList');
+  epicList.innerHTML = clusters.map((c, i) => `
+    <div class="epic-item ${c.top ? 'top' : ''}" data-i="${i}">
+      <div class="etitle">${c.title}</div>
+      <div class="emeta">
+        <span>${c.size.toLocaleString()} signals</span>
+        <span class="score">RICE ${c.score.toFixed(1)}</span>
+      </div>
+    </div>
+  `).join('');
+  clusters.forEach((_, i) => {
+    after(2400 + i * 260, () => {
+      epicList.querySelector(`[data-i="${i}"]`)?.classList.add('visible');
+    });
+  });
+
+  after(5200, () => { setStage(2); runScore(); });
+}
+
+// ---- Stage 3: Score
+function runScore() {
+  const t = data.top;
+  document.getElementById('scoreTitle').textContent = t.title;
+  document.getElementById('scoreDesc').textContent = '“' + t.why + '”';
+  document.getElementById('scoreVerdict').textContent = t.verdict;
+
+  // reset math reveal + runner-ups
+  ['mrR','mrI','mrC','mrE','mrRaw','mrFinal'].forEach(id => {
+    const el = document.getElementById(id);
+    if (el) el.textContent = '0';
+  });
+  document.getElementById('mathReveal').classList.remove('show');
+  // runner-ups: clusters[1..5] scores
+  const runners = (data.clusters || []).slice(1, 6).map(c => c.score.toFixed(1));
+  document.getElementById('ruList').innerHTML = runners.map(s => `<em>${s}</em>`).join(' · ');
+  document.getElementById('runnersUp').classList.remove('show');
+
+  // fill bars + populate math vars
+  ['R','I','C','E'].forEach((k, i) => {
+    const v = t.rice[k];
+    const fill = document.querySelector(`.trackfill[data-k="${k}"]`);
+    const val = document.querySelector(`.val[data-v="${k}"]`);
+    after(300 + i * 250, () => {
+      fill.style.width = v + '%';
+      animateVal(val, 0, v, 900);
+      const mrEl = document.getElementById('mr' + k);
+      if (mrEl) animateVal(mrEl, 0, v, 900);
+    });
+  });
+
+  // big score + math reveal
+  const scoreNum = document.getElementById('scoreNum');
+  after(1600, () => {
+    animateVal(scoreNum, 0, t.score, 1400, 1);
+    document.getElementById('mathReveal').classList.add('show');
+    const raw = Math.round(t.rice.R * t.rice.I * t.rice.C / Math.max(1, t.rice.E));
+    animateVal(document.getElementById('mrRaw'), 0, raw, 1300);
+    after(1100, () => {
+      document.getElementById('mrFinal').textContent = t.score.toFixed(1);
+      document.getElementById('runnersUp').classList.add('show');
+    });
+  });
+  after(1600, () => {
+    const band = document.getElementById('scoreBand');
+    band.style.setProperty('--w', t.score + '%');
+    band.classList.add('filled');
+  });
+
+  after(4400, () => { setStage(3); runRec(); });
+}
+
+function animateVal(el, from, to, dur, decimals = 0) {
+  const t0 = performance.now();
+  function step() {
+    const t = Math.min(1, (performance.now() - t0) / dur);
+    const e = 1 - Math.pow(1 - t, 3);
+    const v = from + (to - from) * e;
+    el.textContent = decimals ? v.toFixed(decimals) : Math.floor(v);
+    if (t < 1) requestAnimationFrame(step);
+  }
+  requestAnimationFrame(step);
+}
+
+// ---- Stage 4: Recommend
+function runRec() {
+  const t = data.top;
+  document.getElementById('recKicker').textContent = `Epic · Priority 1 · Score ${t.score}`;
+  document.getElementById('recTitle').textContent = t.title;
+  document.getElementById('recWhy').textContent = t.why;
+  document.getElementById('recReco').textContent = '→ ' + t.rec;
+  const al = document.getElementById('acceptList');
+  al.innerHTML = t.accept.map(a => `<li>${a}</li>`).join('');
+
+  const ql = document.getElementById('quoteList');
+  ql.innerHTML = '';
+
+  // Set up attribution overlay (SVG covering the rec stage)
+  let attrSvg = document.getElementById('attrSvg');
+  const recStage = document.querySelector('.rec-stage');
+  if (!attrSvg && recStage) {
+    attrSvg = document.createElementNS('http://www.w3.org/2000/svg', 'svg');
+    attrSvg.id = 'attrSvg';
+    attrSvg.classList.add('attr-svg');
+    recStage.appendChild(attrSvg);
+  }
+
+  t.evidence.forEach((e, i) => {
+    after(400 + i * 550, () => {
+      const div = document.createElement('div');
+      div.className = 'quote';
+      div.innerHTML = `“${e.q}”<span class="qsrc">${e.src}</span>`;
+      div.style.animation = 'sigIn .5s ease';
+      ql.appendChild(div);
+      drawAttribution(attrSvg, div);
+    });
+  });
+
+  after(3400, () => { setStage(4); runSync(); });
+}
+
+function drawAttribution(svg, quoteEl) {
+  if (!svg) return;
+  const stage = svg.parentElement;
+  const sR = stage.getBoundingClientRect();
+  const qR = quoteEl.getBoundingClientRect();
+  // start point: top-left of rec card (stand-in for cluster origin)
+  const x1 = 20;
+  const y1 = 60;
+  const x2 = qR.left - sR.left;
+  const y2 = qR.top - sR.top + qR.height/2;
+  const path = document.createElementNS('http://www.w3.org/2000/svg', 'path');
+  const cx1 = x1 + 80, cx2 = x2 - 80;
+  path.setAttribute('d', `M ${x1} ${y1} C ${cx1} ${y1}, ${cx2} ${y2}, ${x2} ${y2}`);
+  path.setAttribute('class', 'attr-path');
+  path.setAttribute('stroke', '#1BA9C9');
+  path.setAttribute('fill', 'none');
+  path.setAttribute('stroke-width', '1.4');
+  path.setAttribute('stroke-dasharray', '4 4');
+  path.setAttribute('opacity', '0');
+  svg.appendChild(path);
+  // fade in then out
+  requestAnimationFrame(() => path.setAttribute('opacity', '0.85'));
+  setTimeout(() => path.setAttribute('opacity', '0'), 1400);
+  setTimeout(() => path.remove(), 2200);
+}
+
+// ---- Stage 5: Sync
+function runSync() {
+  const t = data.top;
+  // jira
+  const jira = document.getElementById('jiraTicket');
+  document.getElementById('jiraId').textContent = t.jira.id;
+  document.getElementById('jiraProj').textContent = t.jira.proj;
+  document.getElementById('jiraTitle').textContent = t.title;
+  document.getElementById('jiraDesc').textContent = t.why;
+  document.getElementById('jiraPts').textContent = t.jira.pts + ' story pts';
+  document.getElementById('jiraStatus').textContent = 'Syncing…';
+
+  after(800, () => {
+    jira.classList.add('syncing');
+    document.getElementById('jiraStatus').textContent = 'Created · ' + t.jira.id;
+    jira.classList.add('created');
+    flashRing(jira);
+    spawnToast({ kind: 'jira', title: '3 reviewers auto-assigned', body: 'Marta G., Lina P., Yusuf A. · Slack notified', ticket: t.jira.id });
+  });
+
+  // conf
+  const conf = document.getElementById('confTicket');
+  document.getElementById('confSpace').textContent = 'space · ' + t.conf.space;
+  document.getElementById('confTitle').textContent = t.conf.title;
+  document.getElementById('confDesc').textContent = 'Auto-generated PRD with problem statement, user stories, acceptance criteria, and rollout plan. Linked to ' + t.jira.id + '.';
+  document.getElementById('confLinked').textContent = t.jira.id;
+  document.getElementById('confAuthor').textContent = 'OmniHub';
+  document.getElementById('confStatus').textContent = 'Syncing…';
+
+  after(1800, () => {
+    conf.classList.add('syncing');
+    document.getElementById('confStatus').textContent = 'Draft published';
+    conf.classList.add('created');
+    flashRing(conf);
+  });
+
+  after(3000, () => spawnToast({ kind: 'conf', title: 'Confluence PRD published', body: 'Linked to ' + t.jira.id + ' · 4 sections drafted', ticket: 'space · ' + t.conf.space }));
+
+  after(3200, () => {
+    document.getElementById('finSignals').textContent = data.counts.signals.toLocaleString();
+    document.getElementById('finTime').textContent = data.counts.runtimeSec + 's';
+    document.getElementById('finale').classList.add('visible');
+    // mark last chip done
+    document.querySelectorAll('.stage-chip')[4].classList.add('done');
+    clearInterval(runTimer);
+  });
+}
+
+function flashRing(card) {
+  card.classList.remove('ring-flash');
+  void card.offsetWidth; // restart animation
+  card.classList.add('ring-flash');
+  setTimeout(() => card.classList.remove('ring-flash'), 700);
+}
+
+function spawnToast({ kind, title, body, ticket }) {
+  const stack = document.getElementById('toastStack');
+  if (!stack) return;
+  const t = document.createElement('div');
+  t.className = 'toast toast-' + kind;
+  t.innerHTML = `
+    <div class="toast-icon">🔔</div>
+    <div class="toast-body">
+      <div class="toast-h">${title}</div>
+      <div class="toast-d">${body}</div>
+      <div class="toast-t">${ticket}</div>
+    </div>
+    <button class="toast-x" type="button">×</button>
+  `;
+  stack.appendChild(t);
+  requestAnimationFrame(() => t.classList.add('show'));
+  const dismiss = () => {
+    t.classList.remove('show');
+    setTimeout(() => t.remove(), 350);
+  };
+  t.querySelector('.toast-x').addEventListener('click', dismiss);
+  setTimeout(dismiss, 6500);
+}
+
+// ---- Elapsed counter
+let lastFinalElapsed = '00:00';
+function startElapsed() {
+  runStart = performance.now();
+  runTimer = setInterval(() => {
+    const s = Math.floor((performance.now() - runStart) / 1000);
+    const mm = String(Math.floor(s / 60)).padStart(2,'0');
+    const ss = String(s % 60).padStart(2,'0');
+    lastFinalElapsed = mm + ':' + ss;
+    document.getElementById('elapsed').textContent = lastFinalElapsed;
+  }, 250);
+}
+
+// ---- Full run
+function runAll() {
+  clearTimers();
+  // crossfade replay (if not first run)
+  const board = document.querySelector('.board');
+  if (board && board.classList.contains('finished')) {
+    board.classList.add('cross');
+    setTimeout(() => board.classList.remove('cross'), 380);
+  }
+  board && board.classList.remove('finished');
+  document.getElementById('finale').classList.remove('visible');
+  document.getElementById('toastStack').innerHTML = '';
+  document.querySelectorAll('.stage-chip').forEach(c => c.classList.remove('done'));
+  setStage(0);
+  startElapsed();
+  runIngest();
+  // when sync finishes, hold final time for 4s
+  // (handled in runSync via the finale + a delayed "finished" mark below)
+  // Watcher: when finale shows, mark board finished after 4s
+  const watcher = setInterval(() => {
+    if (document.getElementById('finale').classList.contains('visible')) {
+      clearInterval(watcher);
+      const board = document.querySelector('.board');
+      board && board.classList.add('finished');
+      // hold elapsed for 4s, then revert to fresh
+      setTimeout(() => { /* keep displayed elapsed */ }, 4000);
+    }
+  }, 500);
+}
+
+// ---- Controls
+document.getElementById('playBtn').addEventListener('click', runAll);
+document.getElementById('stepBtn').addEventListener('click', () => {
+  // jump to the end of the current stage, then trigger next
+  clearTimers();
+  const next = Math.min(4, currentStage + 1);
+  setStage(next);
+  [runIngest, runCluster, runScore, runRec, runSync][next]();
+});
+document.getElementById('replayPill').addEventListener('click', runAll);
+document.querySelectorAll('.stage-chip').forEach((c, i) => {
+  c.addEventListener('click', () => {
+    clearTimers();
+    setStage(i);
+    [runIngest, runCluster, runScore, runRec, runSync][i]();
+  });
+});
+
+// ---- Kickoff
+runAll();
+</script>
+
+</body>
+</html>
