@@ -148,17 +148,17 @@ p { margin: 0; }
   display: flex;
   align-items: center;
   gap: 10px;
-  padding: 6px 14px;
-  border-radius: 999px;
-  background: #fff;
-  border: 1px solid var(--rule);
+  padding: 0;
+  border-radius: 0;
+  background: transparent;
+  border: 0;
   font-size: 10px;
   letter-spacing: 0.14em;
   text-transform: uppercase;
   color: var(--ink-4);
   flex-shrink: 0;
 }
-.lotus-badge img { height: 30px; width: auto; display: block; }
+.lotus-badge img { height: 38px; width: auto; display: block; }
 .lotus-badge .lab { line-height: 1.1; }
 .btn-pri {
   padding: 10px 18px;
@@ -1083,18 +1083,27 @@ footer h4 {
 footer ul { list-style: none; padding: 0; margin: 0; }
 footer li { padding: 4px 0; }
 footer li a:hover { color: var(--teal-ink); }
+.footer-brand {
+  display: inline-block;
+  line-height: 0;
+}
+.footer-brand img {
+  height: 86px;
+  width: auto;
+  display: block;
+}
 footer .lotus-foot {
   display: flex;
   align-items: center;
-  gap: 12px;
-  margin-top: 14px;
-  padding: 10px 14px;
-  background: #fff;
-  border: 1px solid var(--rule);
-  border-radius: 12px;
+  gap: 14px;
+  margin-top: 22px;
+  padding: 0;
+  background: transparent;
+  border: 0;
+  border-radius: 0;
   width: fit-content;
 }
-footer .lotus-foot img { height: 28px; }
+footer .lotus-foot img { height: 64px; width: auto; display: block; }
 footer .lotus-foot .lab { font-size: 11px; color: var(--ink-4); letter-spacing: 0.12em; text-transform: uppercase; }
 
 /* ============================================================
