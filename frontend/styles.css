@@ -1,4 +1,4 @@
-/* OmniHub SaaS — refreshed system */
+/* Observify SaaS — refreshed system */
 @import url('https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap');
 
 :root {
@@ -75,20 +75,11 @@ p { margin: 0; }
   flex-shrink: 0;
 }
 .brand-mark {
-  width: 28px; height: 28px;
-  background: var(--grad);
-  border-radius: 8px;
+  width: 30px; height: 30px;
+  background: url('assets/observify-mark.png') center / contain no-repeat;
+  border-radius: 0;
   position: relative;
-  display: grid;
-  place-items: center;
-  box-shadow: 0 4px 12px rgba(27,169,201,0.3);
-}
-.brand-mark::before {
-  content: '';
-  width: 10px; height: 10px;
-  background: #fff;
-  border-radius: 2px;
-  transform: rotate(45deg);
+  flex-shrink: 0;
 }
 .brand-text {
   line-height: 1;
@@ -167,7 +158,7 @@ p { margin: 0; }
   color: var(--ink-4);
   flex-shrink: 0;
 }
-.lotus-badge img { height: 22px; width: auto; display: block; }
+.lotus-badge img { height: 30px; width: auto; display: block; }
 .lotus-badge .lab { line-height: 1.1; }
 .btn-pri {
   padding: 10px 18px;
@@ -1526,7 +1517,7 @@ footer .lotus-foot .lab { font-size: 11px; color: var(--ink-4); letter-spacing: 
   z-index: 1;
 }
 
-/* ---- "What OmniHub is not" section ---- */
+/* ---- "What Observify is not" section ---- */
 .not-section {
   padding: 72px 0 56px;
 }
