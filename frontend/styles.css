@@ -201,7 +201,19 @@ p { margin: 0; }
   display: grid;
   grid-template-columns: 1fr 1.1fr;
   gap: 40px;
-  align-items: start;
+  align-items: center;
+}
+.hero-belt {
+  margin-top: 36px;
+  display: grid;
+  grid-template-columns: 1.05fr 1fr;
+  gap: 28px;
+  align-items: center;
+}
+.hero-belt .compression-viz { margin-top: 0; }
+.hero-belt .hero-io { margin-top: 0; }
+@media (max-width: 1100px) {
+  .hero-belt { grid-template-columns: 1fr; }
 }
 .kicker {
   display: inline-block;

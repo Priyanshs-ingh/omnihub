@@ -84,45 +84,6 @@
           <button class="btn-gr proto-jump" data-co="stripe">Launch live demo →</button>
           <a class="btn-outline" href="#roadmap">See rollout path</a>
         </div>
-
-        <!-- Signal Compression animation (replaces static hero-stats) -->
-        <div class="compression-viz" id="compressionViz" aria-label="Signal compression demonstration">
-          <svg viewBox="0 0 520 160" preserveAspectRatio="xMidYMid meet">
-            <defs>
-              <linearGradient id="cvBrain" x1="0" x2="0" y1="0" y2="1">
-                <stop offset="0" stop-color="#4ED0B8"/>
-                <stop offset="1" stop-color="#1BA9C9"/>
-              </linearGradient>
-              <radialGradient id="cvHalo" cx="0.5" cy="0.5" r="0.5">
-                <stop offset="0" stop-color="#1BA9C9" stop-opacity=".25"/>
-                <stop offset="1" stop-color="#1BA9C9" stop-opacity="0"/>
-              </radialGradient>
-            </defs>
-            <!-- Brain bar -->
-            <rect x="248" y="10" width="24" height="140" rx="12" fill="url(#cvBrain)" opacity="0.18"/>
-            <rect x="252" y="10" width="16" height="140" rx="8" fill="url(#cvBrain)"/>
-            <ellipse cx="260" cy="80" rx="60" ry="80" fill="url(#cvHalo)"/>
-            <text x="260" y="78" text-anchor="middle" font-family="JetBrains Mono" font-size="9" fill="#fff" letter-spacing="1.6" font-weight="700">OBSER</text>
-            <text x="260" y="92" text-anchor="middle" font-family="JetBrains Mono" font-size="9" fill="#fff" letter-spacing="1.6" font-weight="700">VIFY</text>
-            <!-- Cluster rings (right side, 7 rings) -->
-            <g id="cvRings"></g>
-            <!-- Source dots get appended dynamically -->
-            <g id="cvDots"></g>
-          </svg>
-          <div class="cv-counter">
-            <span class="cv-from"><b id="cvFrom">142</b><em>raw signals</em></span>
-            <span class="cv-arrow">→</span>
-            <span class="cv-to"><b id="cvTo">7</b><em>epic clusters</em></span>
-          </div>
-          <div class="cv-cap">100 : 1 signal compression, every minute · cross-channel · explainable</div>
-        </div>
-
-        <div class="hero-io">
-          <div class="k">Inputs</div>
-          <div class="v">Support · social · reviews · analytics · Jira · Slack · app stores</div>
-          <div class="k">Outputs</div>
-          <div class="v">Ranked epics · evidence · auto-RICE · Jira tickets · Confluence PRDs</div>
-        </div>
       </div>
 
       <!-- Live preview card (hero right) — Sample decision card mini-demo -->
@@ -169,6 +130,50 @@
             <span class="md-foot-r"><span class="md-replay">↻ replays</span></span>
           </div>
         </div>
+      </div>
+    </div>
+
+    <!-- Full-width: signal compression + I/O strip -->
+    <div class="hero-belt">
+      <div class="compression-viz" id="compressionViz" aria-label="Signal compression demonstration">
+        <svg viewBox="0 0 520 160" preserveAspectRatio="xMidYMid meet">
+          <defs>
+            <linearGradient id="cvBrain" x1="0" x2="0" y1="0" y2="1">
+              <stop offset="0" stop-color="#4ED0B8"/>
+              <stop offset="1" stop-color="#1BA9C9"/>
+            </linearGradient>
+            <radialGradient id="cvHalo" cx="0.5" cy="0.5" r="0.5">
+              <stop offset="0" stop-color="#1BA9C9" stop-opacity=".25"/>
+              <stop offset="1" stop-color="#1BA9C9" stop-opacity="0"/>
+            </radialGradient>
+          </defs>
+          <!-- Brain bar -->
+          <rect x="248" y="10" width="24" height="140" rx="12" fill="url(#cvBrain)" opacity="0.18"/>
+          <rect x="252" y="10" width="16" height="140" rx="8" fill="url(#cvBrain)"/>
+          <ellipse cx="260" cy="80" rx="60" ry="80" fill="url(#cvHalo)"/>
+          <circle cx="260" cy="44"  r="2.2" fill="#fff" opacity="0.85"/>
+          <circle cx="260" cy="64"  r="2.2" fill="#fff" opacity="0.85"/>
+          <circle cx="260" cy="84"  r="2.2" fill="#fff" opacity="0.85"/>
+          <circle cx="260" cy="104" r="2.2" fill="#fff" opacity="0.85"/>
+          <circle cx="260" cy="124" r="2.2" fill="#fff" opacity="0.85"/>
+          <!-- Cluster rings (right side, 7 rings) -->
+          <g id="cvRings"></g>
+          <!-- Source dots get appended dynamically -->
+          <g id="cvDots"></g>
+        </svg>
+        <div class="cv-counter">
+          <span class="cv-from"><b id="cvFrom">142</b><em>raw signals</em></span>
+          <span class="cv-arrow">→</span>
+          <span class="cv-to"><b id="cvTo">7</b><em>epic clusters</em></span>
+        </div>
+        <div class="cv-cap">100 : 1 signal compression, every minute · cross-channel · explainable</div>
+      </div>
+
+      <div class="hero-io">
+        <div class="k">Inputs</div>
+        <div class="v">Support · social · reviews · analytics · Jira · Slack · app stores</div>
+        <div class="k">Outputs</div>
+        <div class="v">Ranked epics · evidence · auto-RICE · Jira tickets · Confluence PRDs</div>
       </div>
     </div>
   </section>
