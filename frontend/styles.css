@@ -76,7 +76,7 @@ p { margin: 0; }
 }
 .brand-mark {
   width: 30px; height: 30px;
-  background: url('assets/observify-mark.png') center / contain no-repeat;
+  background: url('assets/observify-mark.png?v=3') center / contain no-repeat;
   border-radius: 0;
   position: relative;
   flex-shrink: 0;
