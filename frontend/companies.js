@@ -1,4 +1,4 @@
-// Observify prototype — per-company dataset
+// Obzervify prototype — per-company dataset
 // Each company is a distinct narrative: sources, signals, epics, scores, and a recommended epic.
 
 window.COMPANIES = {

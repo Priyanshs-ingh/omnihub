@@ -3,10 +3,10 @@
 <head>
 <meta charset="utf-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1" />
-<title>Observify — Live prototype</title>
-<link rel="icon" type="image/png" href="assets/observify-mark.png?v=3" />
-<link rel="stylesheet" href="styles.css?v=3" />
-<link rel="stylesheet" href="prototype.css?v=3" />
+<title>Obzervify — Live prototype</title>
+<link rel="icon" type="image/png" href="assets/observify-mark.png?v=4" />
+<link rel="stylesheet" href="styles.css?v=4" />
+<link rel="stylesheet" href="prototype.css?v=4" />
 </head>
 <body class="proto grain">
 
@@ -15,7 +15,7 @@
   <div class="brand">
     <div class="brand-mark"></div>
     <div class="brand-text">
-      <div class="n">OBSERVIFY</div>
+      <div class="n">OBZERVIFY</div>
       <div class="s">Real-time product intelligence</div>
     </div>
   </div>
@@ -29,7 +29,7 @@
   <div class="pill"><span class="gdot"></span> Investor demo mode</div>
   <div class="lotus-badge">
     <span class="lab">Built<br/>with</span>
-    <img src="assets/lotusx.png?v=3" alt="Lotus X Ventures" />
+    <img src="assets/lotusx.png?v=4" alt="Lotus X Ventures" />
   </div>
   <button class="btn-pri" onclick="location.href='index.html'">← Home</button>
 </nav>
@@ -58,7 +58,7 @@
       </div>
     </div>
     <p class="sub" id="coSub">
-      Observify opens a real-time sentiment feed for the selected domain, then compresses what it hears into the five-to-ten epics your team should ship next.
+      Obzervify opens a real-time sentiment feed for the selected domain, then compresses what it hears into the five-to-ten epics your team should ship next.
     </p>
   </header>
 
@@ -187,12 +187,12 @@
                 <span class="tag">Epic</span>
                 <span class="tag" id="jiraProj">—</span>
                 <span class="tag">auto-synced</span>
-                <span class="tag">observify</span>
+                <span class="tag">obzervify</span>
               </div>
               <h3 id="jiraTitle">—</h3>
               <p id="jiraDesc">—</p>
               <div class="fields">
-                <span class="k">Reporter</span><span class="v">Observify bot</span>
+                <span class="k">Reporter</span><span class="v">Obzervify bot</span>
                 <span class="k">Points</span><span class="v" id="jiraPts">—</span>
                 <span class="k">Status</span><span class="v" id="jiraStatus">Pending sync…</span>
               </div>
@@ -674,7 +674,7 @@ function runSync() {
   document.getElementById('confTitle').textContent = t.conf.title;
   document.getElementById('confDesc').textContent = 'Auto-generated PRD with problem statement, user stories, acceptance criteria, and rollout plan. Linked to ' + t.jira.id + '.';
   document.getElementById('confLinked').textContent = t.jira.id;
-  document.getElementById('confAuthor').textContent = 'Observify';
+  document.getElementById('confAuthor').textContent = 'Obzervify';
   document.getElementById('confStatus').textContent = 'Syncing…';
 
   after(1800, () => {
