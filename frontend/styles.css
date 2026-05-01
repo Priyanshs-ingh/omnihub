@@ -76,7 +76,7 @@ p { margin: 0; }
 }
 .brand-mark {
   width: 30px; height: 30px;
-  background: url('assets/observify-mark.png?v=4') center / contain no-repeat;
+  background: url('assets/obzervify-mark.png?v=5') center / contain no-repeat;
   border-radius: 0;
   position: relative;
   flex-shrink: 0;
@@ -1096,28 +1096,13 @@ footer ul { list-style: none; padding: 0; margin: 0; }
 footer li { padding: 4px 0; }
 footer li a:hover { color: var(--teal-ink); }
 .footer-brand {
-  display: inline-flex;
-  align-items: center;
-  gap: 12px;
-  text-decoration: none;
-  line-height: 1;
+  display: inline-block;
+  line-height: 0;
 }
-.footer-brand .fb-mark {
-  height: 56px;
+.footer-brand img {
+  height: 96px;
   width: auto;
   display: block;
-  flex-shrink: 0;
-}
-.footer-brand .fb-word {
-  font-family: var(--sans);
-  font-weight: 800;
-  font-size: 44px;
-  letter-spacing: -0.03em;
-  line-height: 1;
-  background: linear-gradient(95deg, #5B4CF7 0%, #1BA9C9 35%, #0A1628 70%);
-  -webkit-background-clip: text;
-  background-clip: text;
-  color: transparent;
 }
 footer .lotus-foot {
   display: flex;
