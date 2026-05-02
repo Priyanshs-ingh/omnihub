@@ -1261,3 +1261,16 @@ body.proto {
   .proto-header { grid-template-columns: 1fr; }
   .stage-rail { grid-template-columns: repeat(5, 1fr); overflow-x: auto; }
 }
+
+/* mobile pass */
+@media (max-width: 720px) {
+  .proto-nav-row { flex-wrap: wrap; gap: 8px; }
+  .co-switch { width: 100%; overflow-x: auto; flex-wrap: nowrap; padding-bottom: 4px; }
+  .proto-header h1 { font-size: 28px; line-height: 1.1; }
+  .run-controls { flex-wrap: wrap; gap: 8px; }
+  .stage-rail { grid-template-columns: repeat(5, minmax(120px, 1fr)); overflow-x: auto; gap: 6px; }
+  .stage-chip { padding: 8px 10px; font-size: 11px; }
+  .board { padding: 14px 12px; }
+  .pipeline { padding: 0; }
+  .ingest-grid, .cluster-stage, .score-stage, .rec-stage, .sync-stage { gap: 12px; }
+}
